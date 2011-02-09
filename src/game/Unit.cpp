@@ -7395,6 +7395,7 @@ uint32 Unit::MeleeDamageBonusDone(Unit *pVictim, uint32 pdamage,WeaponAttackType
 
     if (spellProto)
     {
+        const SpellClassOptionsEntry* classOptions = spellProto->GetSpellClassOptions();
         // Frost Strike
         if (classOptions && classOptions->SpellFamilyName == SPELLFAMILY_DEATHKNIGHT && classOptions->SpellFamilyFlags & UI64LIT(0x0000000400000000))
         {
@@ -8882,35 +8883,39 @@ int32 Unit::CalculateSpellDuration(SpellEntry const* spellProto, SpellEffectInde
 
     if (duration > 0 && unitPlayer && target == this)
     {
-        switch(spellProto->SpellFamilyName)
+        SpellClassOptionsEntry const* classOpt = spellProto->GetSpellClassOptions();
+        if (classOpt)
         {
-            case SPELLFAMILY_DRUID:
-                // Thorns
-                if (spellProto->SpellIconID == 53 && (spellProto->SpellFamilyFlags & UI64LIT(0x0000000000000100)))
-                {
-                    // Glyph of Thorns
-                    if (Aura *aur = GetAura(57862, EFFECT_INDEX_0))
-                        duration += aur->GetModifier()->m_amount * MINUTE * IN_MILLISECONDS;
-                }
-                break;
-            case SPELLFAMILY_PALADIN:
-                // Blessing of Might
-                if (spellProto->SpellIconID == 298 && spellProto->SpellFamilyFlags & UI64LIT(0x0000000000000002))
-                {
-                    // Glyph of Blessing of Might
-                    if (Aura *aur = GetAura(57958, EFFECT_INDEX_0))
-                        duration += aur->GetModifier()->m_amount * MINUTE * IN_MILLISECONDS;
-                }
-                // Blessing of Wisdom
-                else if (spellProto->SpellIconID == 306 && spellProto->SpellFamilyFlags & UI64LIT(0x0000000000010000))
-                {
-                    // Glyph of Blessing of Wisdom
-                    if (Aura *aur = GetAura(57979, EFFECT_INDEX_0))
-                        duration += aur->GetModifier()->m_amount * MINUTE * IN_MILLISECONDS;
-                }
-                break;
-            default:
-                break;
+            switch(classOpt->SpellFamilyName)
+            {
+                case SPELLFAMILY_DRUID:
+                    // Thorns
+                    if (spellProto->SpellIconID == 53 && (classOpt->SpellFamilyFlags & UI64LIT(0x0000000000000100)))
+                    {
+                        // Glyph of Thorns
+                        if (Aura *aur = GetAura(57862, EFFECT_INDEX_0))
+                            duration += aur->GetModifier()->m_amount * MINUTE * IN_MILLISECONDS;
+                    }
+                    break;
+                case SPELLFAMILY_PALADIN:
+                    // Blessing of Might
+                    if (spellProto->SpellIconID == 298 && classOpt->SpellFamilyFlags & UI64LIT(0x0000000000000002))
+                    {
+                        // Glyph of Blessing of Might
+                        if (Aura *aur = GetAura(57958, EFFECT_INDEX_0))
+                            duration += aur->GetModifier()->m_amount * MINUTE * IN_MILLISECONDS;
+                    }
+                    // Blessing of Wisdom
+                    else if (spellProto->SpellIconID == 306 && classOpt->SpellFamilyFlags & UI64LIT(0x0000000000010000))
+                    {
+                        // Glyph of Blessing of Wisdom
+                        if (Aura *aur = GetAura(57979, EFFECT_INDEX_0))
+                            duration += aur->GetModifier()->m_amount * MINUTE * IN_MILLISECONDS;
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -9457,9 +9462,8 @@ uint32 Unit::GetCreatePowers( Powers power ) const
         case POWER_HAPPINESS:   return (GetTypeId() == TYPEID_PLAYER || !((Creature const*)this)->IsPet() || ((Pet const*)this)->getPetType() != HUNTER_PET ? 0 : 1050000);
         case POWER_RUNE:        return (GetTypeId() == TYPEID_PLAYER && ((Player const*)this)->getClass() == CLASS_DEATH_KNIGHT ? 8 : 0);
         case POWER_RUNIC_POWER: return (GetTypeId() == TYPEID_PLAYER && ((Player const*)this)->getClass() == CLASS_DEATH_KNIGHT ? 1000 : 0);
-#error FIX ME !
-        case POWER_SOUL_SHARDS: return 0;                   // TODO: fix me
-        case POWER_ECLIPSE:     return 0;                   // TODO: fix me
+        case POWER_SOUL_SHARDS: return 0;
+        case POWER_ECLIPSE:     return 0;
     }
 
     return 0;

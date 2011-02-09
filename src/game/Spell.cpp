@@ -534,7 +534,7 @@ void Spell::FillTargetMap()
                         if (!(m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION) || m_IsTriggeredSpell)
                             if (WorldObject* castObject = GetAffectiveCasterObject())
                                 m_targets.setDestination(castObject->GetPositionX(), castObject->GetPositionY(), castObject->GetPositionZ());
-                        SetTargetMap(SpellEffectIndex(i), m_spellInfo->EffectImplicitTargetB[i], tmpUnitMap);
+                        SetTargetMap(SpellEffectIndex(i), spellEffect->EffectImplicitTargetB, tmpUnitMap);
                         break;
                     // target pre-selection required
                     case TARGET_INNKEEPER_COORDINATES:
@@ -1090,7 +1090,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
             caster->ProcDamageAndSpell(unitTarget, real_caster ? procAttacker : PROC_FLAG_NONE, procVictim, procEx, damageInfo.damage, m_attackType, m_spellInfo);
 
         // trigger weapon enchants for weapon based spells; exclude spells that stop attack, because may break CC
-        if (m_caster->GetTypeId() == TYPEID_PLAYER && m_spellInfo->EquippedItemClass == ITEM_CLASS_WEAPON &&
+        if (m_caster->GetTypeId() == TYPEID_PLAYER && m_spellInfo->GetEquippedItemClass() == ITEM_CLASS_WEAPON &&
             !(m_spellInfo->Attributes & SPELL_ATTR_STOP_ATTACK_TARGET))
             ((Player*)m_caster)->CastItemCombatSpell(unitTarget, m_attackType);
 
@@ -2489,7 +2489,7 @@ void Spell::SetTargetMap(SpellEffectIndex effIndex, uint32 targetMode, UnitList&
                 // "at the base of", in difference to 0 which appear to be "directly in front of".
                 // TODO: some summoned will make caster be half inside summoned object. Need to fix
                 // that in the below code (nearpoint vs closepoint, etc).
-                if (m_spellInfo->EffectRadiusIndex[effIndex] == 0)
+                if (spellEffect->EffectRadiusIndex == 0)
                     radius = 0.0f;
 
                 if (m_spellInfo->Id == 50019)               // Hawk Hunting, problematic 50K radius
@@ -4329,7 +4329,7 @@ void Spell::HandleThreatSpells()
     bool positive = true;
     uint8 effectMask = 0;
     for (int i = 0; i < MAX_EFFECT_INDEX; ++i)
-        if (m_spellInfo->Effect[i])
+        if (m_spellInfo->GetSpellEffect(SpellEffectIndex(i)))
             effectMask |= (1<<i);
 
     if (m_negativeEffectMask & effectMask)
@@ -4583,7 +4583,7 @@ SpellCastResult Spell::CheckCast(bool strict)
         {
             // target state requirements (apply to non-self only), to allow cast affects to self like Dirty Deeds
             if (auraRestrictions && auraRestrictions->TargetAuraState && !target->HasAuraStateForCaster(AuraState(auraRestrictions->TargetAuraState),m_caster->GetGUID()) &&
-                !m_caster->IsIgnoreUnitState(m_spellInfo, m_spellInfo->TargetAuraState == AURA_STATE_FROZEN ? IGNORE_UNIT_TARGET_NON_FROZEN : IGNORE_UNIT_TARGET_STATE))
+                !m_caster->IsIgnoreUnitState(m_spellInfo, auraRestrictions->TargetAuraState == AURA_STATE_FROZEN ? IGNORE_UNIT_TARGET_NON_FROZEN : IGNORE_UNIT_TARGET_STATE))
                 return SPELL_FAILED_TARGET_AURASTATE;
 
             // Not allow casting on flying player
@@ -6016,7 +6016,8 @@ bool Spell::IgnoreItemRequirements() const
 
         /// Some triggered spells have same reagents that have master spell
         /// expected in test: master spell have reagents in first slot then triggered don't must use own
-        if (m_triggeredBySpellInfo && !m_triggeredBySpellInfo->Reagent[0])
+        const SpellReagentsEntry* reagents = m_triggeredBySpellInfo ? m_triggeredBySpellInfo->GetSpellReagents() : NULL;
+        if (m_triggeredBySpellInfo && (!reagents || !reagents->Reagent[0]))
             return false;
 
         return true;

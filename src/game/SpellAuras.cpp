@@ -2244,7 +2244,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
             {
                 // Fingers of Frost stacks set to max at apply
                 if (GetId() == 74396)
-                    GetHolder()->SetAuraCharges(GetSpellProto()->StackAmount);
+                    GetHolder()->SetAuraCharges(GetSpellProto()->GetStackAmount());
                 break;
             }
             case SPELLFAMILY_HUNTER:
@@ -7890,7 +7890,7 @@ void Aura::PeriodicDummyTick()
 //            if (spell->SpellIconID == 30412)
 //                return;
             // Hysteria
-            if (spell->SpellFamilyFlags & UI64LIT(0x0000000020000000))
+            if (classOptions && classOptions->SpellFamilyFlags & UI64LIT(0x0000000020000000))
             {
                 // damage not expected to be show in logs, not any damage spell related to damage apply
                 uint32 deal = m_modifier.m_amount * target->GetMaxHealth() / 100;
@@ -8281,7 +8281,7 @@ m_permanent(false), m_isRemovedOnShapeLost(true), m_deleted(false), m_in_use(0)
         case 55166:                                         // Tidal Force
         case 58914:                                         // Kill Command (pet part)
         case 71564:                                         // Deadly Precision
-            m_stackAmount = m_spellProto->StackAmount;
+            m_stackAmount = m_spellProto->GetStackAmount();
             break;
     }
 
@@ -9123,7 +9123,7 @@ void SpellAuraHolder::HandleSpellSpecificBoosts(bool apply)
                 }
                 default:
                     // Freezing Trap Effect
-                    if (m_spellProto->SpellFamilyFlags & UI64LIT(0x0000000000000008))
+                    if (classOptions && classOptions->SpellFamilyFlags & UI64LIT(0x0000000000000008))
                     {
                         if(!apply)
                         {
@@ -9141,7 +9141,7 @@ void SpellAuraHolder::HandleSpellSpecificBoosts(bool apply)
                             return;
                     }
                     // Aspect of the Dragonhawk dodge
-                    else if (GetSpellProto()->SpellFamilyFlags2 & 0x00001000)
+                    else if (classOptions && classOptions->SpellFamilyFlags2 & 0x00001000)
                     {
                         spellId1 = 61848;
 

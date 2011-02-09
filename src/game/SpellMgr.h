@@ -477,7 +477,7 @@ inline bool IsAutoRepeatRangedSpell(SpellEntry const* spellInfo)
 
 inline bool IsSpellRequiresRangedAP(SpellEntry const* spellInfo)
 {
-    return (spellInfo->SpellFamilyName == SPELLFAMILY_HUNTER && spellInfo->DmgClass != SPELL_DAMAGE_CLASS_MELEE);
+    return (spellInfo->GetSpellFamilyName() == SPELLFAMILY_HUNTER && spellInfo->GetDmgClass() != SPELL_DAMAGE_CLASS_MELEE);
 }
 
 SpellCastResult GetErrorAtShapeshiftedCast (SpellEntry const *spellInfo, uint32 form);
@@ -493,7 +493,7 @@ inline bool IsNeedCastSpellAtFormApply(SpellEntry const* spellInfo, ShapeshiftFo
         return false;
 
     // passive spells with SPELL_ATTR_EX2_NOT_NEED_SHAPESHIFT are already active without shapeshift, do no recast!
-    return (spellInfo->Stances & (1<<(form-1)) && !(spellInfo->AttributesEx2 & SPELL_ATTR_EX2_NOT_NEED_SHAPESHIFT));
+    return (spellInfo->GetStances() & (1<<(form-1)) && !(spellInfo->AttributesEx2 & SPELL_ATTR_EX2_NOT_NEED_SHAPESHIFT));
 }
 
 

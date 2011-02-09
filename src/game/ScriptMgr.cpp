@@ -580,11 +580,12 @@ void ScriptMgr::LoadSpellScripts()
         bool found = false;
         for(int i = 0; i < MAX_EFFECT_INDEX; ++i)
         {
+            const SpellEffectEntry* effect = spellInfo->GetSpellEffect(SpellEffectIndex(i));
             // skip empty effects
-            if (!spellInfo->Effect[i])
+            if (!effect || !effect->Effect)
                 continue;
 
-            if (spellInfo->Effect[i] == SPELL_EFFECT_SCRIPT_EFFECT)
+            if (effect->Effect == SPELL_EFFECT_SCRIPT_EFFECT)
             {
                 found =  true;
                 break;
@@ -616,10 +617,15 @@ void ScriptMgr::LoadEventScripts()
         {
             for(int j = 0; j < MAX_EFFECT_INDEX; ++j)
             {
-                if (spell->Effect[j] == SPELL_EFFECT_SEND_EVENT)
+                const SpellEffectEntry* effect = spell->GetSpellEffect(SpellEffectIndex(i));
+                // skip empty effects
+                if (!effect)
+                    continue;
+
+                if (effect->Effect == SPELL_EFFECT_SEND_EVENT)
                 {
-                    if (spell->EffectMiscValue[j])
-                        evt_scripts.insert(spell->EffectMiscValue[j]);
+                    if (effect->EffectMiscValue)
+                        evt_scripts.insert(effect->EffectMiscValue);
                 }
             }
         }
@@ -788,10 +794,15 @@ void ScriptMgr::LoadEventIdScripts()
         {
             for(int j = 0; j < MAX_EFFECT_INDEX; ++j)
             {
-                if (spell->Effect[j] == SPELL_EFFECT_SEND_EVENT)
+                const SpellEffectEntry* effect = spell->GetSpellEffect(SpellEffectIndex(i));
+                // skip empty effects
+                if (!effect)
+                    continue;
+
+                if (effect->Effect == SPELL_EFFECT_SEND_EVENT)
                 {
-                    if (spell->EffectMiscValue[j])
-                        evt_scripts.insert(spell->EffectMiscValue[j]);
+                    if (effect->EffectMiscValue)
+                        evt_scripts.insert(effect->EffectMiscValue);
                 }
             }
         }

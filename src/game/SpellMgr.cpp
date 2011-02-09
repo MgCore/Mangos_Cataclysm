@@ -1729,8 +1729,12 @@ struct DoSpellThreat
         // effects have same targets, otherwise, we'd need to seperate it by effect index
         if (ste.threat || ste.ap_bonus != 0.f)
         {
-            const uint32 *targetA = spell->EffectImplicitTargetA;
-            const uint32 *targetB = spell->EffectImplicitTargetB;
+            uint32 targetA[MAX_EFFECT_INDEX];
+            for (int i = 0; i < MAX_EFFECT_INDEX; ++i)
+            {
+                const SpellEffectEntry* effect = spell->GetSpellEffect(SpellEffectIndex(i));
+                targetA[i] = effect ? effect->EffectImplicitTargetA : 0;
+            }
             if ((targetA[EFFECT_INDEX_1] && targetA[EFFECT_INDEX_1] != targetA[EFFECT_INDEX_0]) ||
                 (targetA[EFFECT_INDEX_2] && targetA[EFFECT_INDEX_2] != targetA[EFFECT_INDEX_0]))
                 sLog.outErrorDb("Spell %u listed in `spell_threat` has effects with different targets, threat may be assigned incorrectly", spell->Id);
@@ -2087,10 +2091,10 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2) cons
                 return false;
             break;
         case SPELLFAMILY_WARRIOR:
-            if (classOptions2 && classOptions1->SpellFamilyName == SPELLFAMILY_WARRIOR )
+            if (classOptions2 && classOptions1 && classOptions1->SpellFamilyName == SPELLFAMILY_WARRIOR )
             {
                 // Rend and Deep Wound
-                if (classOptions1 && (classOptions1->SpellFamilyFlags & UI64LIT(0x20)) && (classOptions2->SpellFamilyFlags & UI64LIT(0x1000000000)) ||
+                if ((classOptions1->SpellFamilyFlags & UI64LIT(0x20)) && (classOptions2->SpellFamilyFlags & UI64LIT(0x1000000000)) ||
                     (classOptions2->SpellFamilyFlags & UI64LIT(0x20)) && (classOptions1->SpellFamilyFlags & UI64LIT(0x1000000000)) )
                     return false;
 
@@ -2100,8 +2104,8 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2) cons
                     return false;
 
                 // Defensive/Berserker/Battle stance aura can not stack (needed for dummy auras)
-                if (((spellInfo_1->SpellFamilyFlags & UI64LIT(0x800000)) && (spellInfo_2->SpellFamilyFlags & UI64LIT(0x800000))) ||
-                    ((spellInfo_2->SpellFamilyFlags & UI64LIT(0x800000)) && (spellInfo_1->SpellFamilyFlags & UI64LIT(0x800000))))
+                if (((classOptions1->SpellFamilyFlags & UI64LIT(0x800000)) && (classOptions2->SpellFamilyFlags & UI64LIT(0x800000))) ||
+                    ((classOptions2->SpellFamilyFlags & UI64LIT(0x800000)) && (classOptions1->SpellFamilyFlags & UI64LIT(0x800000))))
                     return true;
             }
 

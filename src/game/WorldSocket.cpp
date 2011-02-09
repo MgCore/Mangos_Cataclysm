@@ -756,15 +756,7 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     WorldPacket packet;
 
     // Read the content of the packet
-#error FIX ME!
-    recvPacket.read(digest, 20);
-    recvPacket.read_skip<uint64>();
-    recvPacket.read_skip<uint32>();
-    recvPacket >> clientSeed;
-    recvPacket >> ClientBuild;
-    recvPacket.read_skip<uint8>();
-    recvPacket >> account;
-    recvPacket.read_skip<uint32>();                         // addon data size
+    //TODO read
 
     DEBUG_LOG ("WorldSocket::HandleAuthSession: client build %u, account %s, clientseed %X",
                 ClientBuild,

@@ -368,7 +368,7 @@ void Spell::EffectSchoolDMG(SpellEffectEntry const* effect)
                     // Touch the Nightmare
                     case 50341:
                     {
-                        if (effect_idx == EFFECT_INDEX_2)
+                        if (SpellEffectIndex(effect->EffectIndex) == EFFECT_INDEX_2)
                             damage = int32(unitTarget->GetMaxHealth() * 0.3f);
                         break;
                     }
@@ -1595,7 +1595,7 @@ void Spell::EffectDummy(SpellEffectEntry const* effect)
                     {
                         const SpellEntry *pSpell = sSpellStore.LookupEntry(spellCredit[i]);
 
-                        if (pSpell->EffectMiscValue[EFFECT_INDEX_0] == unitTarget->GetEntry())
+                        if (pSpell->GetEffectMiscValue(EFFECT_INDEX_0) == unitTarget->GetEntry())
                         {
                             m_caster->CastSpell(m_caster, spellCredit[i], true);
                             break;
@@ -4790,7 +4790,7 @@ void Spell::DoSummonGuardian(SpellEffectEntry const* effect, uint32 forceFaction
     if (!pet_entry)
         return;
 
-    SummonPropertiesEntry const* propEntry = sSummonPropertiesStore.LookupEntry(m_spellInfo->EffectMiscValueB[eff_idx]);
+    SummonPropertiesEntry const* propEntry = sSummonPropertiesStore.LookupEntry(effect->EffectMiscValueB);
     if (!propEntry)
         return;
 
@@ -5503,7 +5503,7 @@ void Spell::EffectWeaponDmg(SpellEffectEntry const* effect)
 
                 // Devastate causing Sunder Armor Effect
                 // and no need to cast over max stack amount
-                if (!sunder || sunder->GetStackAmount() < sunder->GetSpellProto()->StackAmount)
+                if (!sunder || sunder->GetStackAmount() < sunder->GetSpellProto()->GetStackAmount())
                     m_caster->CastSpell(unitTarget, 58567, true);
             }
             break;

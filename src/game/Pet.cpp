@@ -699,17 +699,18 @@ void Pet::Unsummon(PetSaveMode mode, Unit* owner /*= NULL*/)
 
                 if (spellInfo)
                 {
+                    const SpellReagentsEntry* reagents = spellInfo->GetSpellReagents();
                     for(uint32 i = 0; i < MAX_SPELL_REAGENTS; ++i)
                     {
-                        if (spellInfo->Reagent[i] > 0)
+                        if (reagents->Reagent[i])
                         {
                             ItemPosCountVec dest;           //for succubus, voidwalker, felhunter and felguard credit soulshard when despawn reason other than death (out of range, logout)
-                            uint8 msg = p_owner->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, spellInfo->Reagent[i], spellInfo->ReagentCount[i]);
+                            uint8 msg = p_owner->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, reagents->Reagent[i], reagents->ReagentCount[i]);
                             if (msg == EQUIP_ERR_OK)
                             {
-                                Item* item = p_owner->StoreNewItem(dest, spellInfo->Reagent[i], true);
+                                Item* item = p_owner->StoreNewItem(dest, reagents->Reagent[i], true);
                                 if (p_owner->IsInWorld())
-                                    p_owner->SendNewItem(item, spellInfo->ReagentCount[i], true, false);
+                                    p_owner->SendNewItem(item, reagents->ReagentCount[i], true, false);
                             }
                         }
                     }

@@ -1715,12 +1715,15 @@ struct MANGOS_DLL_SPEC SpellEntry
 
     bool IsFitToFamilyMask(uint64 familyFlags, uint32 familyFlags2 = 0) const
     {
-        return (SpellFamilyFlags & familyFlags) || (SpellFamilyFlags2 & familyFlags2);
+        const SpellClassOptionsEntry* class_opt = GetSpellClassOptions();
+        return class_opt && ((class_opt->SpellFamilyFlags & familyFlags) || (class_opt->SpellFamilyFlags2 & familyFlags2));
     }
 
     bool IsFitToFamily(SpellFamily family, uint64 familyFlags, uint32 familyFlags2 = 0) const
     {
-        return SpellFamily(SpellFamilyName) == family && IsFitToFamilyMask(familyFlags, familyFlags2);
+        const SpellClassOptionsEntry* class_opt = GetSpellClassOptions();
+        return class_opt && SpellFamily(class_opt->SpellFamilyName) == family
+            && ((class_opt->SpellFamilyFlags & familyFlags) || (class_opt->SpellFamilyFlags2 & familyFlags2));
     }
 
     // helpers
