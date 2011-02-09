@@ -1248,7 +1248,7 @@ void Pet::_LoadAuras(uint32 timediff)
                 continue;
 
             // prevent wrong values of remaincharges
-            uint32 procCharges = spellproto->procCharges;
+            uint32 procCharges = spellproto->GetProcCharges();
             if(procCharges)
             {
                 if(remaincharges <= 0 || remaincharges > (int32)procCharges)
@@ -1257,8 +1257,8 @@ void Pet::_LoadAuras(uint32 timediff)
             else
                 remaincharges = 0;
 
-            if (spellproto->StackAmount < stackcount)
-                stackcount = spellproto->StackAmount;
+            if (spellproto->GetStackAmount() < stackcount)
+                stackcount = spellproto->GetStackAmount();
 
             SpellAuraHolder *holder = CreateSpellAuraHolder(spellproto, this, NULL);
             for (int32 i = 0; i < MAX_EFFECT_INDEX; ++i)
@@ -1313,9 +1313,13 @@ void Pet::_SaveAuras()
         for (int32 j = 0; j < MAX_EFFECT_INDEX; ++j)
         {
             SpellEntry const* spellInfo = holder->GetSpellProto();
-            if (spellInfo->EffectApplyAuraName[j] == SPELL_AURA_MOD_STEALTH ||
-                        spellInfo->Effect[j] == SPELL_EFFECT_APPLY_AREA_AURA_OWNER ||
-                        spellInfo->Effect[j] == SPELL_EFFECT_APPLY_AREA_AURA_PET )
+            SpellEffectEntry const* effectEntry = spellInfo->GetSpellEffect(SpellEffectIndex(j));
+            if(!effectEntry)
+                continue;
+
+            if (effectEntry->EffectApplyAuraName == SPELL_AURA_MOD_STEALTH ||
+                effectEntry->Effect == SPELL_EFFECT_APPLY_AREA_AURA_OWNER ||
+                effectEntry->Effect == SPELL_EFFECT_APPLY_AREA_AURA_PET )
             {
                 save = false;
                 break;
@@ -1537,7 +1541,7 @@ void Pet::InitLevelupSpellsForLevel()
                 continue;
 
             // will called first if level down
-            if(spellEntry->spellLevel > level)
+            if(spellEntry->GetSpellLevel() > level)
                 unlearnSpell(spellEntry->Id,true);
             // will called if level up
             else

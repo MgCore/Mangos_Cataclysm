@@ -819,6 +819,9 @@ enum TransferAbortReason
     TRANSFER_ABORT_NOT_FOUND4                   = 0x0E,     // 3.2
     TRANSFER_ABORT_REALM_ONLY                   = 0x0F,     // All players on party must be from the same realm.
     TRANSFER_ABORT_MAP_NOT_ALLOWED              = 0x10,     // Map can't be entered at this time.
+    // 0x11 not found
+    TRANSFER_ABORT_LOCKED_TO_DIFFERENT_INSTANCE = 0x12,     // 4.0.1
+    TRANSFER_ABORT_ALREADY_COMPLETED_ENCOUNTER  = 0x13,     // 4.0.1
 };
 
 enum InstanceResetWarningType
@@ -1648,8 +1651,8 @@ class MANGOS_DLL_SPEC Player : public Unit
         void learnQuestRewardedSpells(Quest const* quest);
         void learnSpellHighRank(uint32 spellid);
 
-        uint32 GetFreeTalentPoints() const { return GetUInt32Value(PLAYER_CHARACTER_POINTS1); }
-        void SetFreeTalentPoints(uint32 points) { SetUInt32Value(PLAYER_CHARACTER_POINTS1,points); }
+        uint32 GetFreeTalentPoints() const { return 0/*GetUInt32Value(PLAYER_CHARACTER_POINTS1)*/; }
+        void SetFreeTalentPoints(uint32 points) { 0/*SetUInt32Value(PLAYER_CHARACTER_POINTS1,points)*/; }
         void UpdateFreeTalentPoints(bool resetIfNeed = true);
         bool resetTalents(bool no_cost = false, bool all_specs = false);
         uint32 resetTalentsCost() const;
@@ -1678,8 +1681,8 @@ class MANGOS_DLL_SPEC Player : public Unit
         void ApplyGlyph(uint8 slot, bool apply);
         void ApplyGlyphs(bool apply);
 
-        uint32 GetFreePrimaryProfessionPoints() const { return GetUInt32Value(PLAYER_CHARACTER_POINTS2); }
-        void SetFreePrimaryProfessions(uint16 profs) { SetUInt32Value(PLAYER_CHARACTER_POINTS2, profs); }
+        uint32 GetFreePrimaryProfessionPoints() const { return GetUInt32Value(PLAYER_CHARACTER_POINTS); }
+        void SetFreePrimaryProfessions(uint16 profs) { SetUInt32Value(PLAYER_CHARACTER_POINTS, profs); }
         void InitPrimaryProfessions();
 
         PlayerSpellMap const& GetSpellMap() const { return m_spells; }
@@ -1793,10 +1796,10 @@ class MANGOS_DLL_SPEC Player : public Unit
         void RemoveFromGroup() { RemoveFromGroup(GetGroup(), GetObjectGuid()); }
         void SendUpdateToOutOfRangeGroupMembers();
 
-        void SetInGuild(uint32 GuildId) { SetUInt32Value(PLAYER_GUILDID, GuildId); }
+        void SetInGuild(uint32 GuildId) { m_guildId = GuildId; }
         void SetRank(uint32 rankId){ SetUInt32Value(PLAYER_GUILDRANK, rankId); }
         void SetGuildIdInvited(uint32 GuildId) { m_GuildIdInvited = GuildId; }
-        uint32 GetGuildId() { return GetUInt32Value(PLAYER_GUILDID);  }
+        uint32 GetGuildId() { return m_guildId; }
         static uint32 GetGuildIdFromDB(ObjectGuid guid);
         uint32 GetRank(){ return GetUInt32Value(PLAYER_GUILDRANK); }
         static uint32 GetRankFromDB(ObjectGuid guid);
@@ -2010,8 +2013,10 @@ class MANGOS_DLL_SPEC Player : public Unit
         void UpdateArenaFields();
         void UpdateHonorFields();
         bool RewardHonor(Unit *pVictim, uint32 groupsize, float honor = -1);
-        uint32 GetHonorPoints() { return GetUInt32Value(PLAYER_FIELD_HONOR_CURRENCY); }
-        uint32 GetArenaPoints() { return GetUInt32Value(PLAYER_FIELD_ARENA_CURRENCY); }
+        uint32 GetHonorPoints() { return m_honorPoints; }
+        uint32 GetArenaPoints() { return m_arenaPoints; }
+        void SetHonorPoints(uint32 honor) { m_honorPoints = honor; }
+        void SetArenaPoints(uint32 arena) { m_arenaPoints = arena; }
         void ModifyHonorPoints( int32 value );
         void ModifyArenaPoints( int32 value );
         uint32 GetMaxPersonalArenaRatingRequirement(uint32 minarenaslot);
@@ -2491,6 +2496,8 @@ class MANGOS_DLL_SPEC Player : public Unit
         /***                  HONOR SYSTEM                     ***/
         /*********************************************************/
         time_t m_lastHonorUpdateTime;
+        uint32 m_honorPoints;
+        uint32 m_arenaPoints;
 
         void outDebugStatsValues() const;
         ObjectGuid m_lootGuid;
@@ -2608,6 +2615,7 @@ class MANGOS_DLL_SPEC Player : public Unit
 
         // Social
         PlayerSocial *m_social;
+        uint32 m_guildId;
 
         // Groups
         GroupReference m_group;
