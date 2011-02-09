@@ -34,7 +34,7 @@
 /// List of Opcodes
 enum Opcodes
 {
-#error You need to add opcode ids.
+#error You should add opcodes here, and then uncomment all "Fix opcodes here" blocks.
 };
 
 /// Player state
@@ -57,12 +57,18 @@ enum PacketProcessing
 
 class WorldPacket;
 
+typedef void(WorldSession::*pOpcodeHandler)(WorldPacket& recvPacket);
+
 struct OpcodeHandler
 {
+    OpcodeHandler() {}
+    OpcodeHandler(const char* _name, SessionStatus _status, PacketProcessing _processing, pOpcodeHandler _handler)
+        : name(_name), status(_status), packetProcessing(_processing), handler(_handler) {}
+
     char const* name;
     SessionStatus status;
     PacketProcessing packetProcessing;
-    void (WorldSession::*handler)(WorldPacket& recvPacket);
+    pOpcodeHandler handler;
 };
 
 #define MAX_OPCODE_HANDLER_INDEX    2048
@@ -77,7 +83,7 @@ struct OpcodeHandler
             sLog.outError("Condensed opcode out of range " #opcode " %u -> %u",                 \
                 opcode, condensed);                                                             \
         }                                                                                       \
-        else opcodeTable[CONDENSE_OPCODE(opcode)] = new OpcodeHandler(#opcode, status, processing, handler);\
+        else opcodeTable[condensed] = new OpcodeHandler(#opcode, status, processing, handler);  \
     }
 
 extern OpcodeHandler* opcodeTable[MAX_OPCODE_HANDLER_INDEX];

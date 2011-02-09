@@ -821,7 +821,7 @@ class MANGOS_DLL_SPEC WorldSession
         bool VerifyMovementInfo(MovementInfo const& movementInfo, ObjectGuid const& guid) const;
         void HandleMoverRelocation(MovementInfo& movementInfo);
 
-        void ExecuteOpcode( OpcodeHandler const& opHandle, WorldPacket* packet );
+        void ExecuteOpcode(const OpcodeHandler* opHandle, WorldPacket* packet );
 
         // logging helper
         void LogUnexpectedOpcode(WorldPacket *packet, const char * reason);

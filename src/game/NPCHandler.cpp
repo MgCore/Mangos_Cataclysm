@@ -118,15 +118,16 @@ static void SendTrainerSpellHelper(WorldPacket& data, TrainerSpell const* tSpell
     SpellChainNode const* chain_node = sSpellMgr.GetSpellChainNode(tSpell->learnedSpell);
 
     data << uint32(tSpell->spell);                      // learned spell (or cast-spell in profession case)
-    data << uint8(state==TRAINER_SPELL_GREEN_DISABLED ? TRAINER_SPELL_GREEN : state);
+    data << uint8(state);
     data << uint32(floor(tSpell->spellCost * fDiscountMod));
 
-    data << uint32(primary_prof_first_rank && can_learn_primary_prof ? 1 : 0);
+    //data << uint32(primary_prof_first_rank && can_learn_primary_prof ? 1 : 0);
     // primary prof. learn confirmation dialog
-    data << uint32(primary_prof_first_rank ? 1 : 0);    // must be equal prev. field to have learn button in enabled state
+    //data << uint32(primary_prof_first_rank ? 1 : 0);    // must be equal prev. field to have learn button in enabled state
     data << uint8(tSpell->reqLevel);
     data << uint32(tSpell->reqSkill);
     data << uint32(tSpell->reqSkillValue);
+    data << uint32(0); // unk 4.0.1
     data << uint32(!tSpell->IsCastable() && chain_node ? (chain_node->prev ? chain_node->prev : chain_node->req) : 0);
     data << uint32(!tSpell->IsCastable() && chain_node && chain_node->prev ? chain_node->req : 0);
     data << uint32(0);
@@ -170,6 +171,7 @@ void WorldSession::SendTrainerList(ObjectGuid guid, const std::string& strTitle)
     WorldPacket data( SMSG_TRAINER_LIST, 8+4+4+maxcount*38 + strTitle.size()+1);
     data << ObjectGuid(guid);
     data << uint32(trainer_type);
+    data << uint32(0x0F); // unknown 4.0.1 (mask ?)
 
     size_t count_pos = data.wpos();
     data << uint32(maxcount);

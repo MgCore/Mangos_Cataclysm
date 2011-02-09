@@ -178,7 +178,6 @@ void InitializeOpcodes()
     /*0x092*/ DEFINE_OPCODE_HANDLER( SMSG_GUILD_EVENT,                             STATUS_NEVER,    PROCESS_INPLACE,      &WorldSession::Handle_ServerSide               );
     /*0x093*/ DEFINE_OPCODE_HANDLER( SMSG_GUILD_COMMAND_RESULT,                    STATUS_NEVER,    PROCESS_INPLACE,      &WorldSession::Handle_ServerSide               );
     /*0x094*/ DEFINE_OPCODE_HANDLER( UMSG_UPDATE_GUILD,                            STATUS_NEVER,    PROCESS_INPLACE,      &WorldSession::Handle_NULL                     );
-    /*0x095*/ DEFINE_OPCODE_HANDLER( CMSG_MESSAGECHAT,                             STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleMessagechatOpcode         );
     /*0x096*/ DEFINE_OPCODE_HANDLER( SMSG_MESSAGECHAT,                             STATUS_NEVER,    PROCESS_INPLACE,      &WorldSession::Handle_ServerSide               );
     /*0x097*/ DEFINE_OPCODE_HANDLER( CMSG_JOIN_CHANNEL,                            STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleJoinChannelOpcode         );
     /*0x098*/ DEFINE_OPCODE_HANDLER( CMSG_LEAVE_CHANNEL,                           STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleLeaveChannelOpcode        );
@@ -1340,4 +1339,4 @@ void InitializeOpcodes()
     /*0x51C*/ DEFINE_OPCODE_HANDLER( SMSG_UNKNOWN_1308,                            STATUS_NEVER,    PROCESS_INPLACE,      &WorldSession::Handle_ServerSide               );
     /*0x51D*/ DEFINE_OPCODE_HANDLER( SMSG_UNKNOWN_1309,                            STATUS_NEVER,    PROCESS_INPLACE,      &WorldSession::Handle_ServerSide               );
     /*0x51E*/ DEFINE_OPCODE_HANDLER( SMSG_UNKNOWN_1310,                            STATUS_NEVER,    PROCESS_INPLACE,      &WorldSession::Handle_ServerSide               );
-    );
+}

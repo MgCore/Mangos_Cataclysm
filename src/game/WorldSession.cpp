@@ -40,10 +40,10 @@
 #include "zlib/zlib.h"
 
 // select opcodes appropriate for processing in Map::Update context for current session state
-static bool MapSessionFilterHelper(WorldSession* session, OpcodeHandler const& opHandle)
+static bool MapSessionFilterHelper(WorldSession* session, const OpcodeHandler* opHandle)
 {
     // we do not process thread-unsafe packets
-    if (opHandle.packetProcessing == PROCESS_THREADUNSAFE)
+    if (opHandle->packetProcessing == PROCESS_THREADUNSAFE)
         return false;
 
     // we do not process not loggined player packets
@@ -58,8 +58,8 @@ static bool MapSessionFilterHelper(WorldSession* session, OpcodeHandler const& o
 
 bool MapSessionFilter::Process(WorldPacket * packet)
 {
-    OpcodeHandler const& opHandle = opcodeTable[packet->GetOpcode()];
-    if (opHandle.packetProcessing == PROCESS_INPLACE)
+    const OpcodeHandler* opHandle = opcodeTable[CONDENSE_OPCODE(packet->GetOpcode())];
+    if (opHandle->packetProcessing == PROCESS_INPLACE)
         return true;
 
     // let's check if our opcode can be really processed in Map::Update()
@@ -70,9 +70,9 @@ bool MapSessionFilter::Process(WorldPacket * packet)
 // OR packet handler is not thread-safe!
 bool WorldSessionFilter::Process(WorldPacket* packet)
 {
-    OpcodeHandler const& opHandle = opcodeTable[packet->GetOpcode()];
+    const OpcodeHandler* opHandle = opcodeTable[CONDENSE_OPCODE(packet->GetOpcode())];
     // check if packet handler is supposed to be safe
-    if (opHandle.packetProcessing == PROCESS_INPLACE)
+    if (opHandle->packetProcessing == PROCESS_INPLACE)
         return true;
 
     // let's check if our opcode can't be processed in Map::Update()
@@ -132,6 +132,14 @@ void WorldSession::SendPacket(WorldPacket const* packet)
 {
     if (!m_Socket)
         return;
+
+    if (packet->GetOpcode() == UNKNOWN_OPCODE)
+    {
+        sLog.outError("Sending unknown opcode - prevented. Trace:");
+        ACE_Stack_Trace trace;
+        sLog.outError("%s", trace.c_str());
+        return;
+    }
 
     #ifdef MANGOS_DEBUG
 
@@ -211,88 +219,91 @@ bool WorldSession::Update(uint32 diff, PacketFilter& updater)
                         packet->GetOpcode());
         #endif*/
 
-        OpcodeHandler const& opHandle = opcodeTable[packet->GetOpcode()];
-        try
+        const OpcodeHandler* opHandle = opcodeTable[CONDENSE_OPCODE(packet->GetOpcode())];
+        if (opHandle)
         {
-            switch (opHandle.status)
+            try
             {
-                case STATUS_LOGGEDIN:
-                    if(!_player)
-                    {
-                        // skip STATUS_LOGGEDIN opcode unexpected errors if player logout sometime ago - this can be network lag delayed packets
-                        if(!m_playerRecentlyLogout)
-                            LogUnexpectedOpcode(packet, "the player has not logged in yet");
-                    }
-                    else if(_player->IsInWorld())
-                        ExecuteOpcode(opHandle, packet);
+                switch (opHandle->status)
+                {
+                    case STATUS_LOGGEDIN:
+                        if(!_player)
+                        {
+                            // skip STATUS_LOGGEDIN opcode unexpected errors if player logout sometime ago - this can be network lag delayed packets
+                            if(!m_playerRecentlyLogout)
+                                LogUnexpectedOpcode(packet, "the player has not logged in yet");
+                        }
+                        else if(_player->IsInWorld())
+                            ExecuteOpcode(opHandle, packet);
 
-                    // lag can cause STATUS_LOGGEDIN opcodes to arrive after the player started a transfer
-                    break;
-                case STATUS_LOGGEDIN_OR_RECENTLY_LOGGEDOUT:
-                    if(!_player && !m_playerRecentlyLogout)
-                    {
-                        LogUnexpectedOpcode(packet, "the player has not logged in yet and not recently logout");
-                    }
-                    else
-                        // not expected _player or must checked in packet hanlder
-                        ExecuteOpcode(opHandle, packet);
-                    break;
-                case STATUS_TRANSFER:
-                    if(!_player)
-                        LogUnexpectedOpcode(packet, "the player has not logged in yet");
-                    else if(_player->IsInWorld())
-                        LogUnexpectedOpcode(packet, "the player is still in world");
-                    else
-                        ExecuteOpcode(opHandle, packet);
-                    break;
-                case STATUS_AUTHED:
-                    // prevent cheating with skip queue wait
-                    if(m_inQueue)
-                    {
-                        LogUnexpectedOpcode(packet, "the player not pass queue yet");
+                        // lag can cause STATUS_LOGGEDIN opcodes to arrive after the player started a transfer
                         break;
-                    }
+                    case STATUS_LOGGEDIN_OR_RECENTLY_LOGGEDOUT:
+                        if(!_player && !m_playerRecentlyLogout)
+                        {
+                            LogUnexpectedOpcode(packet, "the player has not logged in yet and not recently logout");
+                        }
+                        else
+                            // not expected _player or must checked in packet hanlder
+                            ExecuteOpcode(opHandle, packet);
+                        break;
+                    case STATUS_TRANSFER:
+                        if(!_player)
+                            LogUnexpectedOpcode(packet, "the player has not logged in yet");
+                        else if(_player->IsInWorld())
+                            LogUnexpectedOpcode(packet, "the player is still in world");
+                        else
+                            ExecuteOpcode(opHandle, packet);
+                        break;
+                    case STATUS_AUTHED:
+                        // prevent cheating with skip queue wait
+                        if(m_inQueue)
+                        {
+                            LogUnexpectedOpcode(packet, "the player not pass queue yet");
+                            break;
+                        }
 
-                    // single from authed time opcodes send in to after logout time
-                    // and before other STATUS_LOGGEDIN_OR_RECENTLY_LOGGOUT opcodes.
-                    if (packet->GetOpcode() != CMSG_SET_ACTIVE_VOICE_CHANNEL)
-                        m_playerRecentlyLogout = false;
+                        // single from authed time opcodes send in to after logout time
+                        // and before other STATUS_LOGGEDIN_OR_RECENTLY_LOGGOUT opcodes.
+                        if (packet->GetOpcode() != CMSG_SET_ACTIVE_VOICE_CHANNEL)
+                            m_playerRecentlyLogout = false;
 
-                    ExecuteOpcode(opHandle, packet);
-                    break;
-                case STATUS_NEVER:
-                    sLog.outError( "SESSION: received not allowed opcode %s (0x%.4X)",
-                        LookupOpcodeName(packet->GetOpcode()),
-                        packet->GetOpcode());
-                    break;
-                case STATUS_UNHANDLED:
-                    DEBUG_LOG("SESSION: received not handled opcode %s (0x%.4X)",
-                        LookupOpcodeName(packet->GetOpcode()),
-                        packet->GetOpcode());
-                    break;
-                default:
-                    sLog.outError("SESSION: received wrong-status-req opcode %s (0x%.4X)",
-                        LookupOpcodeName(packet->GetOpcode()),
-                        packet->GetOpcode());
-                    break;
+                        ExecuteOpcode(opHandle, packet);
+                        break;
+                    case STATUS_NEVER:
+                        sLog.outError( "SESSION: received not allowed opcode %s (0x%.4X)",
+                            LookupOpcodeName(packet->GetOpcode()),
+                            packet->GetOpcode());
+                        break;
+                    case STATUS_UNHANDLED:
+                        DEBUG_LOG("SESSION: received not handled opcode %s (0x%.4X)",
+                            LookupOpcodeName(packet->GetOpcode()),
+                            packet->GetOpcode());
+                        break;
+                    default:
+                        sLog.outError("SESSION: received wrong-status-req opcode %s (0x%.4X)",
+                            LookupOpcodeName(packet->GetOpcode()),
+                            packet->GetOpcode());
+                        break;
+                }
             }
-        }
-        catch (ByteBufferException &)
-        {
-            sLog.outError("WorldSession::Update ByteBufferException occured while parsing a packet (opcode: %u) from client %s, accountid=%i.",
-                    packet->GetOpcode(), GetRemoteAddress().c_str(), GetAccountId());
-            if (sLog.HasLogLevelOrHigher(LOG_LVL_DEBUG))
+            catch (ByteBufferException &)
             {
-                sLog.outDebug("Dumping error causing packet:");
-                packet->hexlike();
-            }
+                sLog.outError("WorldSession::Update ByteBufferException occured while parsing a packet (opcode: %u) from client %s, accountid=%i.",
+                        packet->GetOpcode(), GetRemoteAddress().c_str(), GetAccountId());
+                if (sLog.HasLogLevelOrHigher(LOG_LVL_DEBUG))
+                {
+                    sLog.outDebug("Dumping error causing packet:");
+                    packet->hexlike();
+                }
 
-            if (sWorld.getConfig(CONFIG_BOOL_KICK_PLAYER_ON_BAD_PACKET))
-            {
-                DETAIL_LOG("Disconnecting session [account id %u / address %s] for badly formatted packet.",
-                    GetAccountId(), GetRemoteAddress().c_str());
+                if (sWorld.getConfig(CONFIG_BOOL_KICK_PLAYER_ON_BAD_PACKET))
+                {
+                    DETAIL_LOG("Disconnecting session [account id %u / address %s] for badly formatted packet.",
+                        GetAccountId(), GetRemoteAddress().c_str());
 
-                KickPlayer();
+                    KickPlayer();
+                }
             }
         }
 
@@ -918,14 +929,14 @@ void WorldSession::SendRedirectClient(std::string& ip, uint16 port)
     SendPacket(&pkt);
 }
 
-void WorldSession::ExecuteOpcode( OpcodeHandler const& opHandle, WorldPacket* packet )
+void WorldSession::ExecuteOpcode(const OpcodeHandler* opHandle, WorldPacket* packet )
 {
     // need prevent do internal far teleports in handlers because some handlers do lot steps
     // or call code that can do far teleports in some conditions unexpectedly for generic way work code
     if (_player)
         _player->SetCanDelayTeleport(true);
 
-    (this->*opHandle.handler)(*packet);
+    (this->*opHandle->handler)(*packet);
 
     if (_player)
     {

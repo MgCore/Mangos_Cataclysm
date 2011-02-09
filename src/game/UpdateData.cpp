@@ -26,7 +26,7 @@
 #include "ObjectGuid.h"
 #include <zlib/zlib.h>
 
-UpdateData::UpdateData() : m_blockCount(0)
+UpdateData::UpdateData(uint16 map) : m_map(map), m_blockCount(0)
 {
 }
 
@@ -106,8 +106,9 @@ bool UpdateData::BuildPacket(WorldPacket *packet)
 {
     MANGOS_ASSERT(packet->empty());                         // shouldn't happen
 
-    ByteBuffer buf(4 + (m_outOfRangeGUIDs.empty() ? 0 : 1 + 4 + 9 * m_outOfRangeGUIDs.size()) + m_data.wpos());
+    ByteBuffer buf(2 + 4 + (m_outOfRangeGUIDs.empty() ? 0 : 1 + 4 + 9 * m_outOfRangeGUIDs.size()) + m_data.wpos());
 
+    buf << (uint16) m_map;
     buf << (uint32) (!m_outOfRangeGUIDs.empty() ? m_blockCount + 1 : m_blockCount);
 
     if(!m_outOfRangeGUIDs.empty())
@@ -123,7 +124,7 @@ bool UpdateData::BuildPacket(WorldPacket *packet)
 
     size_t pSize = buf.wpos();                              // use real used data size
 
-    if (pSize > 100 )                                       // compress large packets
+    if (pSize > 100)                                        // compress large packets
     {
         uint32 destsize = compressBound(pSize);
         packet->resize( destsize + sizeof(uint32) );

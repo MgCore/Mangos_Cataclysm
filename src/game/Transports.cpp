@@ -31,6 +31,9 @@
 
 void MapManager::LoadTransports()
 {
+    // disable transports
+    return;
+
     QueryResult *result = WorldDatabase.Query("SELECT entry, name, period FROM transports");
 
     uint32 count = 0;
@@ -143,7 +146,7 @@ void MapManager::LoadTransports()
 
 Transport::Transport() : GameObject()
 {
-    m_updateFlag = (UPDATEFLAG_TRANSPORT | UPDATEFLAG_HIGHGUID | UPDATEFLAG_HAS_POSITION | UPDATEFLAG_ROTATION);
+    m_updateFlag = (UPDATEFLAG_TRANSPORT | UPDATEFLAG_HAS_POSITION | UPDATEFLAG_ROTATION);
 }
 
 bool Transport::Create(uint32 guidlow, uint32 mapid, float x, float y, float z, float ang, uint8 animprogress, uint16 dynamicHighValue)
@@ -551,7 +554,7 @@ void Transport::UpdateForMap(Map const* targetMap)
         {
             if(this != itr->getSource()->GetTransport())
             {
-                UpdateData transData;
+                UpdateData transData(itr->getSource()->GetMapId());
                 BuildCreateUpdateBlockForPlayer(&transData, itr->getSource());
                 WorldPacket packet;
                 transData.BuildPacket(&packet);
@@ -561,7 +564,7 @@ void Transport::UpdateForMap(Map const* targetMap)
     }
     else
     {
-        UpdateData transData;
+        UpdateData transData(this->GetMapId());
         BuildOutOfRangeUpdateBlock(&transData);
         WorldPacket out_packet;
         transData.BuildPacket(&out_packet);

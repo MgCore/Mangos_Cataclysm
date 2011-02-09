@@ -716,6 +716,8 @@ bool Player::Create( uint32 guidlow, const std::string& name, uint8 race, uint8 
     SetInGuild( 0 );
     SetUInt32Value( PLAYER_GUILDRANK, 0 );
     SetUInt32Value( PLAYER_GUILD_TIMESTAMP, 0 );
+    SetUInt32Value( PLAYER_GUILDDELETE_DATE, 0 );
+    SetUInt32Value( PLAYER_GUILDLEVEL, 1 );
 
     for(int i = 0; i < KNOWN_TITLES_SIZE; ++i)
         SetUInt64Value(PLAYER__FIELD_KNOWN_TITLES + i, 0);  // 0=disabled
@@ -1588,7 +1590,10 @@ bool Player::BuildEnumData( QueryResult * result, WorldPacket * p_data )
     *p_data << fields[11].GetFloat();                       // y
     *p_data << fields[12].GetFloat();                       // z
 
-    *p_data << uint32(fields[13].GetUInt32());              // guild id
+    if (uint32 guild_id = fields[13].GetUInt32())
+        *p_data << ObjectGuid(HIGHGUID_GUILD, fields[13].GetUInt32());              // guild id
+    else
+        *p_data << uint64(0);
 
     uint32 char_flags = 0;
     uint32 playerFlags = fields[14].GetUInt32();
@@ -3933,7 +3938,7 @@ void Player::_SetCreateBits(UpdateMask *updateMask, Player *target) const
     }
     else
     {
-        for(uint16 index = 0; index < m_valuesCount; index++)
+        for(uint16 index = 0; index < PLAYER_END_NOT_SELF; index++)
         {
             if(GetUInt32Value(index) != 0 && updateVisualBits.GetBit(index))
                 updateMask->SetBit(index);
@@ -3961,6 +3966,8 @@ void Player::InitVisibleBits()
     updateVisualBits.SetBit(OBJECT_FIELD_GUID);
     updateVisualBits.SetBit(OBJECT_FIELD_TYPE);
     updateVisualBits.SetBit(OBJECT_FIELD_ENTRY);
+    updateVisualBits.SetBit(OBJECT_FIELD_DATA + 0);
+    updateVisualBits.SetBit(OBJECT_FIELD_DATA + 1);
     updateVisualBits.SetBit(OBJECT_FIELD_SCALE_X);
     updateVisualBits.SetBit(UNIT_FIELD_CHARM + 0);
     updateVisualBits.SetBit(UNIT_FIELD_CHARM + 1);
@@ -4049,6 +4056,8 @@ void Player::InitVisibleBits()
 
 void Player::BuildCreateUpdateBlockForPlayer( UpdateData *data, Player *target ) const
 {
+    Unit::BuildCreateUpdateBlockForPlayer( data, target );
+
     if(target == this)
     {
         for(int i = 0; i < EQUIPMENT_SLOT_END; ++i)
@@ -4073,8 +4082,6 @@ void Player::BuildCreateUpdateBlockForPlayer( UpdateData *data, Player *target )
             m_items[i]->BuildCreateUpdateBlockForPlayer( data, target );
         }
     }
-
-    Unit::BuildCreateUpdateBlockForPlayer( data, target );
 }
 
 void Player::DestroyForPlayer( Player *target, bool anim ) const
@@ -4169,7 +4176,7 @@ TrainerSpellState Player::GetTrainerSpellState(TrainerSpell const* trainer_spell
 
     // check primary prof. limit
     if(sSpellMgr.IsPrimaryProfessionFirstRankSpell(spell->Id) && GetFreePrimaryProfessionPoints() == 0)
-        return TRAINER_SPELL_GREEN_DISABLED;
+        return TRAINER_SPELL_RED;
 
     return TRAINER_SPELL_GREEN;
 }
@@ -20295,7 +20302,7 @@ void Player::UpdateForQuestWorldObjects()
     if(m_clientGUIDs.empty())
         return;
 
-    UpdateData udata;
+    UpdateData udata(GetMapId());
     WorldPacket packet;
     for(ObjectGuidSet::const_iterator itr=m_clientGUIDs.begin(); itr!=m_clientGUIDs.end(); ++itr)
     {
@@ -21368,7 +21375,10 @@ void Player::AutoStoreLoot(Loot& loot, bool broadcast, uint8 bag, uint8 slot)
 
 uint32 Player::CalculateTalentsPoints() const
 {
-    uint32 base_talent = getLevel() < 10 ? 0 : getLevel()-9;
+    uint32 base_talent = 0;
+
+    if (getLevel() >= 10)
+        base_talent = (((getLevel() - 10 + 1) - ( ((getLevel() - 10 + 1) % 2) == 1 ? 1 : 0))/2)+1;
 
     if(getClass() != CLASS_DEATH_KNIGHT)
         return uint32(base_talent * sWorld.getConfig(CONFIG_FLOAT_RATE_TALENT));
