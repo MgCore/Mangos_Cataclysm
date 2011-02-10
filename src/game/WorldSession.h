@@ -642,7 +642,23 @@ class MANGOS_DLL_SPEC WorldSession
         void SendPlayerAmbiguousNotice(std::string name);
         void SendWrongFactionNotice();
         void SendChatRestrictedNotice(ChatRestrictionType restriction);
-        void HandleMessagechatOpcode(WorldPacket& recvPacket);
+        void HandleMessagechatOpcode(WorldPacket& recvPacket, uint32 type);
+        void HandleMessagechatSayOpcode(WorldPacket& recvPacket);
+        void HandleMessagechatYellOpcode(WorldPacket& recvPacket);
+        void HandleMessagechatChannelOpcode(WorldPacket& recvPacket);
+        void HandleMessagechatWhisperOpcode(WorldPacket& recvPacket);
+        void HandleMessagechatGuildOpcode(WorldPacket& recvPacket);
+        void HandleMessagechatOfficerOpcode(WorldPacket& recvPacket);
+        void HandleMessagechatAfkOpcode(WorldPacket& recvPacket);
+        void HandleMessagechatDndOpcode(WorldPacket& recvPacket);
+        void HandleMessagechatEmoteOpcode(WorldPacket& recvPacket);
+        void HandleMessagechatPartyOpcode(WorldPacket& recvPacket);
+        void HandleMessagechatPartyGuideOpcode(WorldPacket& recvPacket);
+        void HandleMessagechatRaidOpcode(WorldPacket& recvPacket);
+        void HandleMessagechatRaidLeaderOpcode(WorldPacket& recvPacket);
+        void HandleMessagechatRaidWarningOpcode(WorldPacket& recvPacket);
+        void HandleMessagechatBattlegroundOpcode(WorldPacket& recvPacket);
+        void HandleMessagechatBattlegroundLeaderOpcode(WorldPacket& recvPacket);
         void HandleTextEmoteOpcode(WorldPacket& recvPacket);
         void HandleChatIgnoredOpcode(WorldPacket& recvPacket);
 

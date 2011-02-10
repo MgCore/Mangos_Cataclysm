@@ -426,4 +426,21 @@ void InitializeOpcodes()
     /*0x4F6*/ DEFINE_OPCODE_HANDLER( CMSG_WORLD_STATE_UI_TIMER_UPDATE,             STATUS_LOGGEDIN, PROCESS_INPLACE,      &WorldSession::HandleWorldStateUITimerUpdateOpcode);
     /*0x4FF*/ DEFINE_OPCODE_HANDLER( CMSG_READY_FOR_ACCOUNT_DATA_TIMES,            STATUS_AUTHED,   PROCESS_THREADUNSAFE, &WorldSession::HandleReadyForAccountDataTimesOpcode);
     /*0x500*/ DEFINE_OPCODE_HANDLER( CMSG_QUERY_QUESTS_COMPLETED,                  STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleQueryQuestsCompletedOpcode);
+
+    DEFINE_OPCODE_HANDLER( CMSG_MESSAGECHAT_SAY,                    STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleMessagechatSayOpcode                );
+    DEFINE_OPCODE_HANDLER( CMSG_MESSAGECHAT_YELL,                   STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleMessagechatYellOpcode               );
+    DEFINE_OPCODE_HANDLER( CMSG_MESSAGECHAT_CHANNEL,                STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleMessagechatChannelOpcode            );
+    DEFINE_OPCODE_HANDLER( CMSG_MESSAGECHAT_WHISPER,                STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleMessagechatWhisperOpcode            );
+    DEFINE_OPCODE_HANDLER( CMSG_MESSAGECHAT_GUILD,                  STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleMessagechatGuildOpcode              );
+    DEFINE_OPCODE_HANDLER( CMSG_MESSAGECHAT_OFFICER,                STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleMessagechatOfficerOpcode            );
+    DEFINE_OPCODE_HANDLER( CMSG_MESSAGECHAT_AFK,                    STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleMessagechatAfkOpcode                );
+    DEFINE_OPCODE_HANDLER( CMSG_MESSAGECHAT_DND,                    STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleMessagechatDndOpcode                );
+    DEFINE_OPCODE_HANDLER( CMSG_MESSAGECHAT_EMOTE,                  STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleMessagechatEmoteOpcode              );
+    DEFINE_OPCODE_HANDLER( CMSG_MESSAGECHAT_PARTY,                  STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleMessagechatPartyOpcode              );
+    DEFINE_OPCODE_HANDLER( CMSG_MESSAGECHAT_PARTY_GUIDE,            STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleMessagechatPartyGuideOpcode         );
+    DEFINE_OPCODE_HANDLER( CMSG_MESSAGECHAT_RAID,                   STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleMessagechatRaidOpcode               );
+    DEFINE_OPCODE_HANDLER( CMSG_MESSAGECHAT_RAID_LEADER,            STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleMessagechatRaidLeaderOpcode         );
+    DEFINE_OPCODE_HANDLER( CMSG_MESSAGECHAT_RAID_WARNING,           STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleMessagechatRaidWarningOpcode        );
+    DEFINE_OPCODE_HANDLER( CMSG_MESSAGECHAT_BATTLEGROUND,           STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleMessagechatBattlegroundOpcode       );
+    DEFINE_OPCODE_HANDLER( CMSG_MESSAGECHAT_BATTLEGROUND_LEADER,    STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleMessagechatBattlegroundLeaderOpcode );
 }
