@@ -34,6 +34,7 @@
 /// List of Opcodes
 enum Opcodes
 {
+    UNKNOWN_OPCODE = 0xFFFF,
 #error You should add opcodes here, and then uncomment all "Fix opcodes here" blocks.
 };
 
@@ -73,15 +74,18 @@ struct OpcodeHandler
 
 #define MAX_OPCODE_HANDLER_INDEX    2048
 
-#define CONDENSE_OPCODE(a1) (a1 & 3 | ((a1 & 8 | ((a1 & 0x20 | ((a1 & 0x300 | (a1 >> 1) & 0x7C00) >> 2)) >> 1)) >> 1))
-
 #define DEFINE_OPCODE_HANDLER(opcode, status, processing, handler)                              \
     if (opcode != UNKNOWN_OPCODE) {                                                             \
-        uint32 condensed = CONDENSE_OPCODE(opcode);                                             \
+        uint32 condensed = CondenseOpcode(opcode);                                             \
         if (condensed >= MAX_OPCODE_HANDLER_INDEX)                                              \
         {                                                                                       \
             sLog.outError("Condensed opcode out of range " #opcode " %u -> %u",                 \
                 opcode, condensed);                                                             \
+        }                                                                                       \
+        else if (opcodeTable[condensed] != NULL)                                                \
+        {                                                                                       \
+            sLog.outError("Tried to override handler of %s with %s (cond %u)",                  \
+                opcodeTable[condensed]->name, #opcode, condensed);                              \
         }                                                                                       \
         else opcodeTable[condensed] = new OpcodeHandler(#opcode, status, processing, handler);  \
     }
@@ -89,10 +93,19 @@ struct OpcodeHandler
 extern OpcodeHandler* opcodeTable[MAX_OPCODE_HANDLER_INDEX];
 void InitializeOpcodes();
 
+/// Condense an opcode to a value that can be used as an index
+inline int CondenseOpcode(uint16 id)
+{
+    uint32 i = uint32(id);
+    return ((i & 0xC | ((i & 0x60 | ((i & 0x1F00 | (i >> 1) & 0x6000) >> 1)) >> 1)) >> 2);
+}
+
 /// Lookup opcode name for human understandable logging
 inline const char* LookupOpcodeName(uint16 id)
 {
-    return "Unknown opcode";
+    OpcodeHandler* handler = opcodeTable[CondenseOpcode(id)];
+    return handler ? handler->name : "UNKNOWN OPCODE";
 }
+
 #endif
 /// @}

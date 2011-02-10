@@ -58,7 +58,7 @@ static bool MapSessionFilterHelper(WorldSession* session, const OpcodeHandler* o
 
 bool MapSessionFilter::Process(WorldPacket * packet)
 {
-    const OpcodeHandler* opHandle = opcodeTable[CONDENSE_OPCODE(packet->GetOpcode())];
+    const OpcodeHandler* opHandle = opcodeTable[CondenseOpcode(packet->GetOpcode())];
     if (opHandle->packetProcessing == PROCESS_INPLACE)
         return true;
 
@@ -70,7 +70,7 @@ bool MapSessionFilter::Process(WorldPacket * packet)
 // OR packet handler is not thread-safe!
 bool WorldSessionFilter::Process(WorldPacket* packet)
 {
-    const OpcodeHandler* opHandle = opcodeTable[CONDENSE_OPCODE(packet->GetOpcode())];
+    const OpcodeHandler* opHandle = opcodeTable[CondenseOpcode(packet->GetOpcode())];
     // check if packet handler is supposed to be safe
     if (opHandle->packetProcessing == PROCESS_INPLACE)
         return true;
@@ -219,7 +219,7 @@ bool WorldSession::Update(uint32 diff, PacketFilter& updater)
                         packet->GetOpcode());
         #endif*/
 
-        const OpcodeHandler* opHandle = opcodeTable[CONDENSE_OPCODE(packet->GetOpcode())];
+        const OpcodeHandler* opHandle = opcodeTable[CondenseOpcode(packet->GetOpcode())];
         if (opHandle)
         {
             try
@@ -306,6 +306,8 @@ bool WorldSession::Update(uint32 diff, PacketFilter& updater)
                 }
             }
         }
+        else
+            sLog.outError("Opcode with no defined handler received from client: %u", packet->GetOpcode());
 
         delete packet;
     }
