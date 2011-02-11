@@ -87,10 +87,15 @@ extern OpcodeHandler* opcodeTable[NUM_OPCODE_HANDLERS];
 void InitializeOpcodes();
 
 /// Lookup opcode name for human understandable logging
-inline const char* LookupOpcodeName(uint16 id)
+inline const char* LookupOpcodeName(Opcodes id)
 {
-    OpcodeHandler* handler = opcodeTable[id];
-    return handler ? handler->name : "UNKNOWN OPCODE";
+    if (id < NUM_OPCODE_HANDLERS)
+    {
+        OpcodeHandler* handler = opcodeTable[uint32(id)];
+        return handler ? handler->name : "UNKNOWN OPCODE";
+    }
+    else
+        return "UNKNOWN OPCODE";
 }
 
 #endif
