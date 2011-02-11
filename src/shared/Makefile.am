@@ -46,7 +46,6 @@ libmangosshared_a_SOURCES = \
 	Threading.h \
 	Util.cpp \
 	Util.h \
-	WorldPacket.h \
 	revision_nr.h \
 	revision_sql.h \
 	revision.h

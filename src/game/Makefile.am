@@ -291,6 +291,8 @@ libmangosgame_a_SOURCES = \
 	Weather.h \
 	World.cpp \
 	World.h \
+	WorldPacket.h \
+	WorldPacket.cpp \
 	WorldSession.cpp \
 	WorldSession.h \
 	WorldSocket.cpp \
