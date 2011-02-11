@@ -365,6 +365,7 @@ bool AchievementCriteriaRequirementSet::Meets(Player const* source, Unit const* 
 AchievementMgr::AchievementMgr(Player *player)
 {
     m_player = player;
+    m_achievementPoints = 0;
 }
 
 AchievementMgr::~AchievementMgr()
@@ -558,6 +559,8 @@ void AchievementMgr::SaveToDB()
 
 void AchievementMgr::LoadFromDB(QueryResult *achievementResult, QueryResult *criteriaResult)
 {
+    m_achievementPoints = 0;
+
     if(achievementResult)
     {
         do
@@ -566,9 +569,13 @@ void AchievementMgr::LoadFromDB(QueryResult *achievementResult, QueryResult *cri
 
             uint32 achievement_id = fields[0].GetUInt32();
 
+            const AchievementEntry* achievement = sAchievementStore.LookupEntry(achievement_id);
+
             // don't must happen: cleanup at server startup in sAchievementMgr.LoadCompletedAchievements()
-            if(!sAchievementStore.LookupEntry(achievement_id))
+            if (!achievement)
                 continue;
+
+            m_achievementPoints += achievement->points;
 
             CompletedAchievementData& ca = m_completedAchievements[achievement_id];
             ca.date = time_t(fields[1].GetUInt64());
@@ -2067,6 +2074,7 @@ void AchievementMgr::CompletedAchievement(AchievementEntry const* achievement)
     if(achievement->flags & ACHIEVEMENT_FLAG_COUNTER || m_completedAchievements.find(achievement->ID)!=m_completedAchievements.end())
         return;
 
+    m_achievementPoints += achievement->points;
     SendAchievementEarned(achievement);
     CompletedAchievementData& ca =  m_completedAchievements[achievement->ID];
     ca.date = time(NULL);

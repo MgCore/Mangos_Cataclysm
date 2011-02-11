@@ -283,6 +283,8 @@ class AchievementMgr
         enum ProgressType { PROGRESS_SET, PROGRESS_ACCUMULATE, PROGRESS_HIGHEST };
         void SetCriteriaProgress(AchievementCriteriaEntry const* criteria, AchievementEntry const* achievement, uint32 changeValue, ProgressType ptype);
 
+        uint32 GetAchievementPoints() const { return m_achievementPoints; }
+
     private:
         void SendAchievementEarned(AchievementEntry const* achievement);
         void SendCriteriaUpdate(uint32 id, CriteriaProgress const* progress);
@@ -294,6 +296,7 @@ class AchievementMgr
         void BuildAllDataPacket(WorldPacket *data);
 
         Player* m_player;
+        uint32 m_achievementPoints;
         CriteriaProgressMap m_criteriaProgress;
         CompletedAchievementMap m_completedAchievements;
         AchievementCriteriaFailTimeMap m_criteriaFailTimes;
