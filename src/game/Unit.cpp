@@ -97,14 +97,17 @@ void MovementInfo::Read(ByteBuffer &data)
         data >> s_pitch;
     }
 
-    data >> fallTime;
-
-    if(HasMovementFlag(MOVEFLAG_FALLING))
+    if (moveFlags2 & MOVEFLAG2_INTERP_TURNING)
     {
+        data >> fallTime;
         data >> jump.velocity;
-        data >> jump.sinAngle;
-        data >> jump.cosAngle;
-        data >> jump.xyspeed;
+
+        if(HasMovementFlag(MOVEFLAG_FALLING))
+        {
+            data >> jump.sinAngle;
+            data >> jump.cosAngle;
+            data >> jump.xyspeed;
+        }
     }
 
     if(HasMovementFlag(MOVEFLAG_SPLINE_ELEVATION))
@@ -142,14 +145,17 @@ void MovementInfo::Write(ByteBuffer &data) const
         data << s_pitch;
     }
 
-    data << fallTime;
-
-    if(HasMovementFlag(MOVEFLAG_FALLING))
+    if (moveFlags2 & MOVEFLAG2_INTERP_TURNING)
     {
+        data << fallTime;
         data << jump.velocity;
-        data << jump.sinAngle;
-        data << jump.cosAngle;
-        data << jump.xyspeed;
+
+        if(HasMovementFlag(MOVEFLAG_FALLING))
+        {
+            data << jump.sinAngle;
+            data << jump.cosAngle;
+            data << jump.xyspeed;
+        }
     }
 
     if(HasMovementFlag(MOVEFLAG_SPLINE_ELEVATION))
