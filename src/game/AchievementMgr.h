@@ -293,7 +293,6 @@ class AchievementMgr
         void IncompletedAchievement(AchievementEntry const* entry);
         bool IsCompletedAchievement(AchievementEntry const* entry);
         void CompleteAchievementsWithRefs(AchievementEntry const* entry);
-        void BuildAllDataPacket(WorldPacket *data);
 
         Player* m_player;
         uint32 m_achievementPoints;
