@@ -617,7 +617,7 @@ void ScriptMgr::LoadEventScripts()
         {
             for(int j = 0; j < MAX_EFFECT_INDEX; ++j)
             {
-                const SpellEffectEntry* effect = spell->GetSpellEffect(SpellEffectIndex(i));
+                const SpellEffectEntry* effect = spell->GetSpellEffect(SpellEffectIndex(j));
                 // skip empty effects
                 if (!effect)
                     continue;

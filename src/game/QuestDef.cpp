@@ -275,7 +275,7 @@ bool Quest::IsAllowedInRaid() const
 
 uint32 Quest::CalculateRewardHonor(uint32 level) const
 {
-    if (level > GT_MAX_LEVEL)
+    /*if (level > GT_MAX_LEVEL)
         level = GT_MAX_LEVEL;
 
     uint32 honor = 0;
@@ -288,7 +288,7 @@ uint32 Quest::CalculateRewardHonor(uint32 level) const
             return 0;
         uint32 i_honor = uint32(tc->Value * GetRewHonorMultiplier() * 0.1000000014901161);
         honor = i_honor + GetRewHonorAddition();
-    }
+    }*/
 
-    return honor;
+    return GetRewHonorAddition();
 }

@@ -600,8 +600,9 @@ struct BattlemasterListEntry
     uint32 minLevel;                                        // 14, min level (sync with PvPDifficulty.dbc content)
     uint32 maxLevel;                                        // 15, max level (sync with PvPDifficulty.dbc content)
     //uint32 maxGroupSizeRated;                             // 16 4.0.1
-    //uint32 maxPlayers;                                    // 17 4.0.1
-    //uint32 unk1;                                          // 18 4.0.3, value 2 for Rated Battlegrounds
+    //uint32 minPlayers;                                    // 17
+    //uint32 maxPlayers;                                    // 18 4.0.1
+    //uint32 unk1;                                          // 19 4.0.3, value 2 for Rated Battlegrounds
 };
 
 /*struct Cfg_CategoriesEntry
@@ -1272,6 +1273,7 @@ struct OverrideSpellDataEntry
     uint32      Id;                                         // 0 index
     uint32      Spells[MAX_OVERRIDE_SPELLS];                // 1-10 spells
     //uint32      unk2;                                     // 11 possibly flag
+    //uint32      unk3;                                     // 12
 };
 
 struct PvPDifficultyEntry
@@ -1851,6 +1853,8 @@ struct SpellShapeshiftFormEntry
     //uint32 unk3;                                          // 9 unused always 0
     //uint32 unk4;                                          // 10 unused always 0
     uint32 spellId[8];                                      // 11-18 spells which appear in the bar after shapeshifting
+    //uint32 unk5;                                          // 19
+    //uint32 unk6;                                          // 20
 };
 
 struct SpellDifficultyEntry
@@ -1980,11 +1984,11 @@ struct TaxiPathNodeEntry
     uint32    departureEventID;                             // 10       m_departureEventID
 };
 
-struct TeamContributionPoints
-{
-    //uint32    Entry;                                      // 0
-    float     Value;                                        // 1 (???)
-};
+//struct TeamContributionPoints
+//{
+//    //uint32    Entry;                                      // 0
+//    float     Value;                                        // 1 (???)
+//};
 
 struct TotemCategoryEntry
 {
