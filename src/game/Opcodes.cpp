@@ -23,7 +23,7 @@
 #include "Opcodes.h"
 #include "WorldSession.h"
 
-OpcodeHandler* opcodeTable[MAX_OPCODE_HANDLER_INDEX] = { };
+OpcodeHandler* opcodeTable[NUM_OPCODE_HANDLERS] = { };
 
 /// Correspondence between opcodes and their names
 void InitializeOpcodes()

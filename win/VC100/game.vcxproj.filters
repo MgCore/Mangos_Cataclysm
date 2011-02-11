@@ -904,5 +904,8 @@
     <ClInclude Include="..\..\src\game\vmap\WorldModel.h">
       <Filter>vmaps</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\game\WorldPacket.h">
+      <Filter>Server</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

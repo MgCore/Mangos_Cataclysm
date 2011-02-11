@@ -34,7 +34,8 @@
 /// List of Opcodes
 enum Opcodes
 {
-    UNKNOWN_OPCODE = 0xFFFF,
+    NUM_OPCODE_HANDLERS = (0xFFFF+1),
+    UNKNOWN_OPCODE = NUM_OPCODE_HANDLERS, // must be >= NUM_OPCODE_HANDLERS
 #error You should add opcodes here, and then uncomment all "Fix opcodes here" blocks.
 };
 
@@ -72,38 +73,23 @@ struct OpcodeHandler
     pOpcodeHandler handler;
 };
 
-#define MAX_OPCODE_HANDLER_INDEX    2048
-
 #define DEFINE_OPCODE_HANDLER(opcode, status, processing, handler)                              \
-    if (opcode != UNKNOWN_OPCODE) {                                                             \
-        uint32 condensed = CondenseOpcode(opcode);                                             \
-        if (condensed >= MAX_OPCODE_HANDLER_INDEX)                                              \
+    if (opcode < NUM_OPCODE_HANDLERS) {                                                         \
+        if (opcodeTable[opcode] != NULL)                                                        \
         {                                                                                       \
-            sLog.outError("Condensed opcode out of range " #opcode " %u -> %u",                 \
-                opcode, condensed);                                                             \
+            sLog.outError("Tried to override handler of %s with %s (opcode %u)",                \
+                opcodeTable[opcode]->name, #opcode, opcode);                                    \
         }                                                                                       \
-        else if (opcodeTable[condensed] != NULL)                                                \
-        {                                                                                       \
-            sLog.outError("Tried to override handler of %s with %s (cond %u)",                  \
-                opcodeTable[condensed]->name, #opcode, condensed);                              \
-        }                                                                                       \
-        else opcodeTable[condensed] = new OpcodeHandler(#opcode, status, processing, handler);  \
+        else opcodeTable[opcode] = new OpcodeHandler(#opcode, status, processing, handler);     \
     }
 
-extern OpcodeHandler* opcodeTable[MAX_OPCODE_HANDLER_INDEX];
+extern OpcodeHandler* opcodeTable[NUM_OPCODE_HANDLERS];
 void InitializeOpcodes();
-
-/// Condense an opcode to a value that can be used as an index
-inline int CondenseOpcode(uint16 id)
-{
-    uint32 i = uint32(id);
-    return ((i & 0xC | ((i & 0x60 | ((i & 0x1F00 | (i >> 1) & 0x6000) >> 1)) >> 1)) >> 2);
-}
 
 /// Lookup opcode name for human understandable logging
 inline const char* LookupOpcodeName(uint16 id)
 {
-    OpcodeHandler* handler = opcodeTable[CondenseOpcode(id)];
+    OpcodeHandler* handler = opcodeTable[id];
     return handler ? handler->name : "UNKNOWN OPCODE";
 }
 

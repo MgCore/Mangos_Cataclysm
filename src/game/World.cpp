@@ -1347,6 +1347,9 @@ void World::SetInitialWorldSettings()
     // Delete all characters which have been deleted X days before
     Player::DeleteOldCharacters();
 
+    sLog.outString("Initializing Opcodes...");
+    InitializeOpcodes();
+
     sLog.outString( "WORLD: World initialized" );
 
     uint32 uStartInterval = WorldTimer::getMSTimeDiff(uStartTime, WorldTimer::getMSTime());

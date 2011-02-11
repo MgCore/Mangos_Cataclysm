@@ -490,7 +490,7 @@ int WorldSocket::handle_input_header (void)
 
     header.size -= 4;
 
-    ACE_NEW_RETURN (m_RecvWPct, WorldPacket ((uint16) header.cmd, header.size), -1);
+    ACE_NEW_RETURN (m_RecvWPct, WorldPacket ((Opcodes) header.cmd, header.size), -1);
 
     if(header.size > 0)
     {
@@ -692,6 +692,12 @@ int WorldSocket::ProcessIncoming (WorldPacket* new_pct)
             default:
             {
                 ACE_GUARD_RETURN (LockType, Guard, m_SessionLock, -1);
+
+                if (!opcodeTable[new_pct->GetOpcode()])
+                {
+                    sLog.outError("Opcode with no defined handler received from client: %u", new_pct->GetOpcode());
+                    return 0;
+                }
 
                 if (m_Session != NULL)
                 {

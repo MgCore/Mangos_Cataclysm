@@ -146,9 +146,6 @@
     <ClInclude Include="..\..\src\shared\Util.h">
       <Filter>Util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\shared\WorldPacket.h">
-      <Filter>Util</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\shared\Config\Config.h">
       <Filter>Config</Filter>
     </ClInclude>
