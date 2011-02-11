@@ -2689,7 +2689,7 @@ void Player::InitTalentForLevel()
 {
     UpdateFreeTalentPoints();
 
-    if (!GetSession()->PlayerLoading())
+    if (!GetSession()->PlayerLoading() && IsInWorld())
         SendTalentsInfoData(false);                         // update at client
 }
 
@@ -3385,7 +3385,7 @@ bool Player::IsNeedCastPassiveLikeSpellAtLearn(SpellEntry const* spellInfo) cons
 
     // Check CasterAuraStates
     SpellAuraRestrictionsEntry const* restrictions = spellInfo->GetSpellAuraRestrictions();
-    return !restrictions->CasterAuraState || HasAuraState(AuraState(restrictions->CasterAuraState));
+    return !restrictions || !restrictions->CasterAuraState || HasAuraState(AuraState(restrictions->CasterAuraState));
 }
 
 void Player::learnSpell(uint32 spell_id, bool dependent)
