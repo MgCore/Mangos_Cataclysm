@@ -244,20 +244,18 @@ int WorldSocket::open (void *a)
     m_Address = remote_addr.get_host_addr ();
 
     // Send startup packet.
-    WorldPacket packet (SMSG_AUTH_CHALLENGE, 40);
-    packet << uint32(1);                                    // 1...31
-    packet << m_Seed;
+    WorldPacket packet (SMSG_AUTH_CHALLENGE, 4+1+4*8);
 
-    BigNumber seed1;
-    seed1.SetRand(16 * 8);
-    packet.append(seed1.AsByteArray(16), 16);               // new encryption seeds
-
-    BigNumber seed2;
-    seed2.SetRand(16 * 8);
-    packet.append(seed2.AsByteArray(16), 16);               // new encryption seeds
-
+    packet << uint32(0);
+    packet << uint32(5);
+    packet << uint32(7);
+    packet << uint32(3);
     packet << uint8(1);                                     // 1...31
     packet << uint32(m_Seed);
+    packet << uint32(2);
+    packet << uint32(1);
+    packet << uint32(6);
+    packet << uint32(4);
 
     if (SendPacket (packet) == -1)
         return -1;
@@ -746,11 +744,46 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     LocaleConstant locale;
     std::string account;
     Sha1Hash sha1;
-    BigNumber v, s, g, N, K;
+    BigNumber g, N, K;
     WorldPacket packet;
 
     // Read the content of the packet
-    //TODO read
+    recvPacket >> digest[14];
+    recvPacket >> digest[7];
+    recvPacket >> digest[16];
+    recvPacket >> digest[9];
+    recvPacket >> digest[4];
+    recvPacket >> digest[5];
+    recvPacket >> digest[15];
+    recvPacket.read_skip<uint32>();
+    recvPacket >> digest[18];
+    recvPacket.read_skip<uint64>();
+    recvPacket.read_skip<uint32>();
+    recvPacket >> digest[13];
+    recvPacket.read_skip<uint8>();
+    recvPacket >> digest[10];
+    recvPacket >> digest[6];
+    recvPacket >> clientSeed;
+    recvPacket.read_skip<uint32>();
+    recvPacket >> digest[19];
+    recvPacket >> digest[11];
+    recvPacket >> digest[17];
+    recvPacket >> digest[8];
+    recvPacket >> digest[12];
+    recvPacket >> digest[0];
+    recvPacket >> ClientBuild;
+    recvPacket >> digest[3];
+    recvPacket.read_skip<uint8>();
+    recvPacket.read_skip<uint32>();
+    recvPacket >> digest[1];
+    recvPacket >> digest[2];
+
+    uint32 addonDataSize;
+    recvPacket >> addonDataSize;                            // addon data size
+    size_t addonInfoPos = recvPacket.rpos();
+    recvPacket.rpos(recvPacket.rpos() + addonDataSize);     // skip it
+
+    recvPacket >> account;
 
     DEBUG_LOG ("WorldSocket::HandleAuthSession: client build %u, account %s, clientseed %X",
                 ClientBuild,
@@ -808,20 +841,6 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
 
     N.SetHexStr ("894B645E89E1535BBDAD5B8B290650530801B18EBFBF5E8FAB3C82872A3E9BB7");
     g.SetDword (7);
-
-    v.SetHexStr(fields[5].GetString());
-    s.SetHexStr (fields[6].GetString());
-    m_s = s;
-
-    const char* sStr = s.AsHexStr ();                       //Must be freed by OPENSSL_free()
-    const char* vStr = v.AsHexStr ();                       //Must be freed by OPENSSL_free()
-
-    DEBUG_LOG ("WorldSocket::HandleAuthSession: (s,v) check s: %s v: %s",
-                sStr,
-                vStr);
-
-    OPENSSL_free ((void*) sStr);
-    OPENSSL_free ((void*) vStr);
 
     ///- Re-check ip locking (same check as in realmd).
     if (fields[4].GetUInt8 () == 1) // if ip is locked
@@ -933,6 +952,7 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
 
     m_Session->LoadGlobalAccountData();
     m_Session->LoadTutorialsData();
+    recvPacket.rpos(addonInfoPos);
     m_Session->ReadAddonsInfo(recvPacket);
 
     // In case needed sometime the second arg is in microseconds 1 000 000 = 1 sec
