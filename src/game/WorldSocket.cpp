@@ -696,6 +696,7 @@ int WorldSocket::ProcessIncoming (WorldPacket* new_pct)
                 if (!opcodeTable[new_pct->GetOpcode()])
                 {
                     sLog.outError("Opcode with no defined handler received from client: %u", new_pct->GetOpcode());
+                    new_pct->hexlike();
                     return 0;
                 }
 

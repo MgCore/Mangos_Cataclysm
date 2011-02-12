@@ -7,7 +7,6 @@
 #include "ObjectAccessor.h"
 #include "ObjectGuid.h"
 #include "SQLStorages.h"
-#include "Opcodes.h"
 #include "SharedDefines.h"
 #include "ObjectMgr.h"
 #include "ScriptMgr.h"

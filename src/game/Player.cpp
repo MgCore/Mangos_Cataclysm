@@ -1906,18 +1906,18 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
                 if (m_transport)
                 {
                     data << uint32(mapid);
+                    data << float(m_movementInfo.GetTransportPos()->o);
                     data << float(m_movementInfo.GetTransportPos()->x);
                     data << float(m_movementInfo.GetTransportPos()->y);
                     data << float(m_movementInfo.GetTransportPos()->z);
-                    data << float(m_movementInfo.GetTransportPos()->o);
                 }
                 else
                 {
                     data << uint32(mapid);
+                    data << float(orientation);
                     data << float(x);
                     data << float(y);
                     data << float(z);
-                    data << float(orientation);
                 }
                 GetSession()->SendPacket( &data );
                 SendSavedInstances();
