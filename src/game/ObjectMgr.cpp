@@ -143,6 +143,9 @@ template uint32 IdGenerator<uint32>::Generate();
 template uint64 IdGenerator<uint64>::Generate();
 
 ObjectMgr::ObjectMgr() :
+    m_CreatureFirstGuid(1),
+    m_GameObjectFirstGuid(1),
+
     m_ArenaTeamIds("Arena team ids"),
     m_AuctionIds("Auction ids"),
     m_EquipmentSetIds("Equipment set ids"),
@@ -5618,7 +5621,7 @@ void ObjectMgr::SetHighestGuids()
     result = WorldDatabase.Query( "SELECT MAX(guid) FROM creature" );
     if( result )
     {
-        m_CreatureGuids.Set((*result)[0].GetUInt32()+1);
+        m_CreatureFirstGuid = (*result)[0].GetUInt32()+1;
         delete result;
     }
 
@@ -5647,7 +5650,7 @@ void ObjectMgr::SetHighestGuids()
     result = WorldDatabase.Query("SELECT MAX(guid) FROM gameobject" );
     if( result )
     {
-        m_GameobjectGuids.Set((*result)[0].GetUInt32()+1);
+        m_CreatureFirstGuid = (*result)[0].GetUInt32()+1;
         delete result;
     }
 
@@ -5699,30 +5702,6 @@ void ObjectMgr::SetHighestGuids()
         m_GroupIds.Set((*result)[0].GetUInt32()+1);
         delete result;
     }
-}
-
-uint32 ObjectMgr::GenerateLowGuid(HighGuid guidhigh)
-{
-    switch(guidhigh)
-    {
-        case HIGHGUID_ITEM:
-            return m_ItemGuids.Generate();
-        case HIGHGUID_UNIT:
-            return m_CreatureGuids.Generate();
-        case HIGHGUID_PLAYER:
-            return m_CharGuids.Generate();
-        case HIGHGUID_GAMEOBJECT:
-            return m_GameobjectGuids.Generate();
-        case HIGHGUID_CORPSE:
-            return m_CorpseGuids.Generate();
-        case HIGHGUID_INSTANCE:
-            return m_InstanceGuids.Generate();
-        default:
-            MANGOS_ASSERT(0);
-    }
-
-    MANGOS_ASSERT(0);
-    return 0;
 }
 
 void ObjectMgr::LoadGameObjectLocales()
