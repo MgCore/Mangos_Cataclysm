@@ -918,6 +918,7 @@ enum PlayerLoginQueryIndex
     PLAYER_LOGIN_QUERY_LOADMAILS,
     PLAYER_LOGIN_QUERY_LOADMAILEDITEMS,
     PLAYER_LOGIN_QUERY_LOADTALENTS,
+    PLAYER_LOGIN_QUERY_LOADTALENTBRANCHSPECS,
     PLAYER_LOGIN_QUERY_LOADWEEKLYQUESTSTATUS,
     PLAYER_LOGIN_QUERY_LOADMONTHLYQUESTSTATUS,
 
@@ -1650,8 +1651,8 @@ class MANGOS_DLL_SPEC Player : public Unit
         void learnQuestRewardedSpells(Quest const* quest);
         void learnSpellHighRank(uint32 spellid);
 
-        uint32 GetFreeTalentPoints() const { return 0/*GetUInt32Value(PLAYER_CHARACTER_POINTS1)*/; }
-        void SetFreeTalentPoints(uint32 points) { 0/*SetUInt32Value(PLAYER_CHARACTER_POINTS1,points)*/; }
+        uint32 GetFreeTalentPoints() const { return m_freeTalentPoints; }
+        void SetFreeTalentPoints(uint32 points) { m_freeTalentPoints = points; }
         void UpdateFreeTalentPoints(bool resetIfNeed = true);
         bool resetTalents(bool no_cost = false, bool all_specs = false);
         uint32 resetTalentsCost() const;
@@ -1659,8 +1660,11 @@ class MANGOS_DLL_SPEC Player : public Unit
         void BuildPlayerTalentsInfoData(WorldPacket *data);
         void BuildPetTalentsInfoData(WorldPacket *data);
         void SendTalentsInfoData(bool pet);
-        void LearnTalent(uint32 talentId, uint32 talentRank);
+        void LearnTalent(uint32 talentId, uint32 talentRank, bool one = true);
         void LearnPetTalent(ObjectGuid petGuid, uint32 talentId, uint32 talentRank);
+
+        void SetTalentBranchSpec(uint32 branchSpec, uint8 spec) { m_branchSpec[spec] = branchSpec; }
+        uint32 GetTalentBranchSpec(uint8 spec) const { return m_branchSpec[spec]; }
 
         uint32 CalculateTalentsPoints() const;
 
@@ -1795,7 +1799,7 @@ class MANGOS_DLL_SPEC Player : public Unit
         void RemoveFromGroup() { RemoveFromGroup(GetGroup(), GetObjectGuid()); }
         void SendUpdateToOutOfRangeGroupMembers();
 
-        void SetInGuild(uint32 GuildId) { m_guildId = GuildId; }
+        void SetInGuild(uint32 GuildId);
         void SetRank(uint32 rankId){ SetUInt32Value(PLAYER_GUILDRANK, rankId); }
         void SetGuildIdInvited(uint32 GuildId) { m_GuildIdInvited = GuildId; }
         uint32 GetGuildId() { return m_guildId; }
@@ -2458,6 +2462,7 @@ class MANGOS_DLL_SPEC Player : public Unit
         void _LoadEquipmentSets(QueryResult *result);
         void _LoadBGData(QueryResult* result);
         void _LoadGlyphs(QueryResult *result);
+        void _LoadTalentBranchSpecs(QueryResult* result);
         void _LoadIntoDataField(const char* data, uint32 startOffset, uint32 count);
 
         /*********************************************************/
@@ -2478,6 +2483,7 @@ class MANGOS_DLL_SPEC Player : public Unit
         void _SaveBGData();
         void _SaveGlyphs();
         void _SaveTalents();
+        void _SaveTalentBranchSpecs();
         void _SaveStats();
 
         void _SetCreateBits(UpdateMask *updateMask, Player *target) const;
@@ -2540,6 +2546,8 @@ class MANGOS_DLL_SPEC Player : public Unit
 
         uint8 m_activeSpec;
         uint8 m_specsCount;
+        uint32 m_branchSpec[MAX_TALENT_SPEC_COUNT];
+        uint32 m_freeTalentPoints;
 
         ActionButtonList m_actionButtons[MAX_TALENT_SPEC_COUNT];
 

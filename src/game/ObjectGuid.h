@@ -48,6 +48,7 @@ enum TypeMask
     TYPEMASK_GAMEOBJECT     = 0x0020,
     TYPEMASK_DYNAMICOBJECT  = 0x0040,
     TYPEMASK_CORPSE         = 0x0080,
+    TYPEMASK_IN_GUILD       = 0x00010000,
 
     // used combinations in Player::GetObjectByTypeMask (TYPEMASK_UNIT case ignore players in call)
     TYPEMASK_CREATURE_OR_GAMEOBJECT = TYPEMASK_UNIT | TYPEMASK_GAMEOBJECT,
@@ -59,22 +60,22 @@ enum TypeMask
 
 enum HighGuid
 {
-    HIGHGUID_ITEM           = 0x4700,                       // blizz 4700
-    HIGHGUID_CONTAINER      = 0x4700,                       // blizz 4700
-    HIGHGUID_PLAYER         = 0x0000,                       // blizz 0700 (temporary reverted back to 0 high guid
+    HIGHGUID_ITEM           = 0x470,                        // blizz 4700
+    HIGHGUID_CONTAINER      = 0x470,                        // blizz 4700
+    HIGHGUID_PLAYER         = 0x000,                        // blizz 0700 (temporary reverted back to 0 high guid
                                                             // in result unknown source visibility player with
                                                             // player problems. please reapply only after its resolve)
-    HIGHGUID_GAMEOBJECT     = 0xF110,                       // blizz F110/F510
-    HIGHGUID_TRANSPORT      = 0xF120,                       // blizz F120/F520 (for GAMEOBJECT_TYPE_TRANSPORT)
-    HIGHGUID_UNIT           = 0xF130,                       // blizz F130/F530
-    HIGHGUID_PET            = 0xF140,                       // blizz F140/F540
-    HIGHGUID_VEHICLE        = 0xF150,                       // blizz F150/F550
-    HIGHGUID_DYNAMICOBJECT  = 0xF100,                       // blizz F100/F500
-    HIGHGUID_CORPSE         = 0xF500,                       // blizz F100/F500 used second variant to resolve conflict with HIGHGUID_DYNAMICOBJECT
-    HIGHGUID_MO_TRANSPORT   = 0x1FC0,                       // blizz 1FC0 (for GAMEOBJECT_TYPE_MO_TRANSPORT)
-    HIGHGUID_INSTANCE       = 0x1F42,                       // blizz 1F42/1F44/1F44/1F47
-    HIGHGUID_GROUP          = 0x1F50,                       //
-    HIGHGUID_GUILD          = 0x1FF0,                       //
+    HIGHGUID_GAMEOBJECT     = 0xF11,                        // blizz F110/F510
+    HIGHGUID_TRANSPORT      = 0xF12,                        // blizz F120/F520 (for GAMEOBJECT_TYPE_TRANSPORT)
+    HIGHGUID_UNIT           = 0xF13,                        // blizz F130/F530
+    HIGHGUID_PET            = 0xF14,                        // blizz F140/F540
+    HIGHGUID_VEHICLE        = 0xF15,                        // blizz F150/F550
+    HIGHGUID_DYNAMICOBJECT  = 0xF10,                        // blizz F100/F500
+    HIGHGUID_CORPSE         = 0xF50,                        // blizz F100/F500 used second variant to resolve conflict with HIGHGUID_DYNAMICOBJECT
+    HIGHGUID_MO_TRANSPORT   = 0x1FC,                        // blizz 1FC0 (for GAMEOBJECT_TYPE_MO_TRANSPORT)
+    HIGHGUID_INSTANCE       = 0x1F4,                        // blizz 1F42/1F44/1F44/1F47
+    HIGHGUID_GROUP          = 0x1F5,                        //
+    HIGHGUID_GUILD          = 0x1FF,                        //
 };
 
 class ObjectGuid;
@@ -91,8 +92,8 @@ class MANGOS_DLL_SPEC ObjectGuid
     public:                                                 // constructors
         ObjectGuid() : m_guid(0) {}
         ObjectGuid(uint64 const& guid) : m_guid(guid) {}    // NOTE: must be explicit in future for more strict control type conversions
-        ObjectGuid(HighGuid hi, uint32 entry, uint32 counter) : m_guid(counter ? uint64(counter) | (uint64(entry) << 24) | (uint64(hi) << 48) : 0) {}
-        ObjectGuid(HighGuid hi, uint32 counter) : m_guid(counter ? uint64(counter) | (uint64(hi) << 48) : 0) {}
+        ObjectGuid(HighGuid hi, uint32 entry, uint32 counter) : m_guid(counter ? uint64(counter) | (uint64(entry) << 32) | (uint64(hi) << 52) : 0) {}
+        ObjectGuid(HighGuid hi, uint32 counter) : m_guid(counter ? uint64(counter) | (uint64(hi) << 52) : 0) {}
     private:
         ObjectGuid(uint32 const&);                          // no implementation, used for catch wrong type assign
         ObjectGuid(HighGuid, uint32, uint64 counter);       // no implementation, used for catch wrong type assign
@@ -110,20 +111,16 @@ class MANGOS_DLL_SPEC ObjectGuid
         PackedGuid WriteAsPacked() const;
     public:                                                 // accessors
         uint64 const& GetRawValue() const { return m_guid; }
-        HighGuid GetHigh() const { return HighGuid((m_guid >> 48) & 0x0000FFFF); }
-        uint32   GetEntry() const { return HasEntry() ? uint32((m_guid >> 24) & UI64LIT(0x0000000000FFFFFF)) : 0; }
+        HighGuid GetHigh() const { return HighGuid((m_guid >> 52) & 0x00000FFF); }
+        uint32   GetEntry() const { return HasEntry() ? uint32((m_guid >> 32) & UI64LIT(0x00000000000FFFFF)) : 0; }
         uint32   GetCounter()  const
         {
-            return HasEntry()
-                ? uint32(m_guid & UI64LIT(0x0000000000FFFFFF))
-                : uint32(m_guid & UI64LIT(0x00000000FFFFFFFF));
+            return uint32(m_guid & UI64LIT(0x00000000FFFFFFFF));
         }
 
         static uint32 GetMaxCounter(HighGuid high)
         {
-            return HasEntry(high)
-                ? uint32(0x00FFFFFF)
-                : uint32(0xFFFFFFFF);
+            return uint32(0xFFFFFFFF);
         }
 
         uint32 GetMaxCounter() const { return GetMaxCounter(GetHigh()); }

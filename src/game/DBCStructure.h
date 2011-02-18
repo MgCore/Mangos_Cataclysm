@@ -1021,6 +1021,12 @@ struct GtRegenMPPerSptEntry
     float    ratio;
 };
 
+struct gtSpellScaling
+{
+    uint32 level;
+    float coef;
+};
+
 /*struct HolidayDescriptionsEntry
 {
     uint32 ID;                                              // 0, this is NOT holiday id
@@ -1629,9 +1635,9 @@ struct SpellScalingEntry
     uint32    castTimeMax;                                  // 2
     uint32    castScalingMaxLevel;                          // 3
     uint32    playerClass;                                  // 4        (index * 100) + charLevel => gtSpellScaling.dbc
-    float     coeff1[3];                                    // 5-7
-    float     coeff2[3];                                    // 8-10
-    float     coeff3[3];                                    // 11-13
+    float     coefMultiplier[3];                                    // 5-7
+    float     coefRandomMultiplier[3];                                    // 8-10
+    float     coefUnknow[3];                                    // 11-13
     float     unkMult;                                      // 14        some coefficient, mostly 1.0f
     uint32    unkLevel;                                     // 15        some level
 };
@@ -1948,6 +1954,14 @@ struct TalentTabEntry
     //char* description;                                    // 7
     //uint32 rolesMask;                                     // 8 4.0.0
     //uint32 spellIds[2];                                   // 9-10 passive mastery bonus spells?
+};
+
+struct TalentTreePrimarySpellsEntry
+{
+    uint32 Id;                                              // 0
+    uint32 TalentTabID;                                     // 1
+    uint32 SpellID;                                         // 2
+    //uint32 unk1                                           // 3
 };
 
 struct TaxiNodesEntry

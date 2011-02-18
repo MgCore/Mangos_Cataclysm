@@ -8731,6 +8731,17 @@ int32 Unit::CalculateSpellDamage(Unit const* target, SpellEntry const* spellProt
     int32 randomPoints = int32(spellEffect->EffectDieSides);
     float comboDamage = spellEffect->EffectPointsPerComboPoint;
 
+    float randomPoints_ScalingMultiplicator = 0.0f;
+    if (SpellScalingEntry const* spellScaling = spellProto->GetSpellScaling())
+    {
+        gtSpellScaling const* gtScaling = sGtSpellScalingStore.LookupEntry(spellScaling->playerClass * 100 + getLevel());
+        if (gtScaling)
+        {
+            basePoints += int32(spellScaling->coefMultiplier[effect_index] * gtScaling->coef);
+            randomPoints_ScalingMultiplicator = spellScaling->coefRandomMultiplier[effect_index];
+        }
+    }
+
     switch(randomPoints)
     {
         case 0:                                             // not used
@@ -8740,6 +8751,15 @@ int32 Unit::CalculateSpellDamage(Unit const* target, SpellEntry const* spellProt
             int32 randvalue = (randomPoints >= 1)
                 ? irand(1, randomPoints)
                 : irand(randomPoints, 1);
+
+            if (randomPoints_ScalingMultiplicator >= 0.0f)
+                basePoints += irand(1, int32(float(basePoints) *
+                    (
+                    randomPoints_ScalingMultiplicator >= 1.0f
+                    ? randomPoints_ScalingMultiplicator
+                    : randomPoints_ScalingMultiplicator+1.0f
+                    )
+                ));
 
             basePoints += randvalue;
             break;
@@ -9055,8 +9075,12 @@ bool Unit::HandleStatModifier(UnitMods unitMod, UnitModifierType modifierType, f
         case UNIT_MOD_RESISTANCE_SHADOW:
         case UNIT_MOD_RESISTANCE_ARCANE:   UpdateResistances(GetSpellSchoolByAuraGroup(unitMod));      break;
 
-        case UNIT_MOD_ATTACK_POWER:        UpdateAttackPowerAndDamage();         break;
-        case UNIT_MOD_ATTACK_POWER_RANGED: UpdateAttackPowerAndDamage(true);     break;
+        case UNIT_MOD_ATTACK_POWER_POS:
+        case UNIT_MOD_ATTACK_POWER_NEG:
+			                               UpdateAttackPowerAndDamage();         break;
+        case UNIT_MOD_ATTACK_POWER_RANGED_POS:
+        case UNIT_MOD_ATTACK_POWER_RANGED_NEG:
+			                               UpdateAttackPowerAndDamage(true);     break;
 
         case UNIT_MOD_DAMAGE_MAINHAND:     UpdateDamagePhysical(BASE_ATTACK);    break;
         case UNIT_MOD_DAMAGE_OFFHAND:      UpdateDamagePhysical(OFF_ATTACK);     break;
@@ -9178,14 +9202,14 @@ float Unit::GetTotalAttackPowerValue(WeaponAttackType attType) const
 {
     if (attType == RANGED_ATTACK)
     {
-        int32 ap = GetInt32Value(UNIT_FIELD_RANGED_ATTACK_POWER) + GetInt32Value(UNIT_FIELD_RANGED_ATTACK_POWER_MOD_POS);
+        int32 ap = GetInt32Value(UNIT_FIELD_RANGED_ATTACK_POWER) + GetInt32Value(UNIT_FIELD_RANGED_ATTACK_POWER_MOD_POS) - GetInt32Value(UNIT_FIELD_RANGED_ATTACK_POWER_MOD_NEG);
         if (ap < 0)
             return 0.0f;
         return ap * (1.0f + GetFloatValue(UNIT_FIELD_RANGED_ATTACK_POWER_MULTIPLIER));
     }
     else
     {
-        int32 ap = GetInt32Value(UNIT_FIELD_ATTACK_POWER) + GetInt32Value(UNIT_FIELD_ATTACK_POWER_MOD_POS);
+        int32 ap = GetInt32Value(UNIT_FIELD_ATTACK_POWER) + GetInt32Value(UNIT_FIELD_ATTACK_POWER_MOD_POS) - GetInt32Value(UNIT_FIELD_ATTACK_POWER_MOD_NEG);
         if (ap < 0)
             return 0.0f;
         return ap * (1.0f + GetFloatValue(UNIT_FIELD_ATTACK_POWER_MULTIPLIER));

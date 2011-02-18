@@ -51,7 +51,8 @@ enum ContentLevels
 {
     CONTENT_1_60 = 0,
     CONTENT_61_70,
-    CONTENT_71_80
+    CONTENT_71_80,
+    CONTENT_81_85,
 };
 ContentLevels GetContentLevelsForMapAndZone(uint32 mapid, uint32 zoneId);
 
@@ -118,6 +119,7 @@ extern DBCStorage <GtOCTClassCombatRatingScalarEntry> sGtOCTClassCombatRatingSca
 //extern DBCStorage <GtOCTRegenMPEntry>            sGtOCTRegenMPStore; -- not used currently
 //extern DBCStorage <GtRegenHPPerSptEntry>         sGtRegenHPPerSptStore;
 extern DBCStorage <GtRegenMPPerSptEntry>         sGtRegenMPPerSptStore;
+extern DBCStorage <gtSpellScaling>               sGtSpellScalingStore;
 extern DBCStorage <HolidaysEntry>                sHolidaysStore;
 //extern DBCStorage <ItemEntry>                    sItemStore;
 extern DBCStorage <ItemArmorQualityEntry>        sItemArmorQualityStore;
@@ -188,6 +190,7 @@ extern DBCStorage <SpellTotemsEntry>             sSpellTotemsStore;
 extern DBCStorage <SummonPropertiesEntry>        sSummonPropertiesStore;
 extern DBCStorage <TalentEntry>                  sTalentStore;
 extern DBCStorage <TalentTabEntry>               sTalentTabStore;
+extern DBCStorage <TalentTreePrimarySpellsEntry> sTalentTreePrimarySpellsStore;
 extern DBCStorage <TaxiNodesEntry>               sTaxiNodesStore;
 extern DBCStorage <TaxiPathEntry>                sTaxiPathStore;
 extern TaxiMask                                  sTaxiNodesMask;

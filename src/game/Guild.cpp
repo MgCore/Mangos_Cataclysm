@@ -632,18 +632,42 @@ void Guild::AddRank(const std::string& name_,uint32 rights, uint32 money)
     m_Ranks.push_back(RankInfo(name_,rights,money));
 }
 
-void Guild::DelRank()
+void Guild::DelRank(uint32 id)
 {
     // client won't allow to have less than GUILD_RANKS_MIN_COUNT ranks in guild
     if (m_Ranks.size() <= GUILD_RANKS_MIN_COUNT)
         return;
 
-    // delete lowest guild_rank
-    uint32 rank = GetLowestRank();
-    CharacterDatabase.PExecute("DELETE FROM guild_rank WHERE rid>='%u' AND guildid='%u'", rank, m_Id);
-    CharacterDatabase.PExecute("DELETE FROM guild_bank_right WHERE rid>='%u' AND guildid='%u'", rank, m_Id);
+    if (id == GR_GUILDMASTER)
+        return;
 
-    m_Ranks.pop_back();
+    m_Ranks.erase(m_Ranks.begin()+id);
+    CharacterDatabase.PExecute("DELETE FROM guild_rank WHERE rid >= '%u' AND guildid='%u'", id, m_Id);
+    CharacterDatabase.PExecute("UPDATE guild_rank SET rid = rid - 1 WHERE rid > '%u' AND guildid='%u'", id, m_Id);
+}
+
+void Guild::SwitchRank(uint32 oldID, uint32 newID)
+{
+    if (oldID == GR_GUILDMASTER || newID == GR_GUILDMASTER)
+        return;
+
+    if (oldID == newID)
+        return;
+
+    if (oldID > GUILD_RANKS_MIN_COUNT || newID > GUILD_RANKS_MIN_COUNT)
+        return;
+
+    RankInfo old = m_Ranks[oldID];
+    m_Ranks[oldID] = m_Ranks[newID];
+    m_Ranks[newID] = old;
+
+    CharacterDatabase.PExecute("UPDATE guild_rank SET rid = 11 WHERE rid = '%u' AND guildid='%u'", oldID, m_Id);
+    CharacterDatabase.PExecute("UPDATE guild_rank SET rid = '%u' WHERE rid = '%u' AND guildid='%u'", oldID, newID, m_Id);
+    CharacterDatabase.PExecute("UPDATE guild_rank SET rid = '%u' WHERE rid = 11 AND guildid='%u'", newID, m_Id);
+
+    CharacterDatabase.PExecute("UPDATE guild_bank_right SET rid = 11 WHERE rid = '%u' AND guildid='%u'", oldID, m_Id);
+    CharacterDatabase.PExecute("UPDATE guild_bank_right SET rid = '%u' WHERE rid = '%u' AND guildid='%u'", oldID, newID, m_Id);
+    CharacterDatabase.PExecute("UPDATE guild_bank_right SET rid = '%u' WHERE rid = 11 AND guildid='%u'", newID, m_Id);
 }
 
 std::string Guild::GetRankName(uint32 rankId)

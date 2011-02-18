@@ -3906,6 +3906,16 @@ bool Player::resetTalents(bool no_cost, bool all_specs)
         m_resetTalentsTime = time(NULL);
     }
 
+    for (uint32 i = 0; i < sTalentTreePrimarySpellsStore.GetNumRows(); ++i)
+    {
+        TalentTreePrimarySpellsEntry const *talentInfo = sTalentTreePrimarySpellsStore.LookupEntry(i);
+
+        if (!talentInfo || talentInfo->TalentTabID != GetTalentBranchSpec(m_activeSpec))
+            continue;
+
+        removeSpell(talentInfo->SpellID, true);
+    }
+
     //FIXME: remove pet before or after unlearn spells? for now after unlearn to allow removing of talent related, pet affecting auras
     RemovePet(PET_SAVE_REAGENTS);
     /* when prev line will dropped use next line
@@ -5376,6 +5386,8 @@ void Player::UpdateRating(CombatRating cr)
         case CR_WEAPON_SKILL_MAINHAND:                      // Implemented in Unit::RollMeleeOutcomeAgainst
         case CR_WEAPON_SKILL_OFFHAND:
         case CR_WEAPON_SKILL_RANGED:
+            break;
+        case CR_MASTERY:                                    // NYI
             break;
         case CR_EXPERTISE:
             if(affectStats)
@@ -7233,11 +7245,20 @@ void Player::_ApplyItemBonuses(ItemPrototype const *proto, uint8 slot, bool appl
                 ApplyRatingMod(CR_EXPERTISE, int32(val), apply);
                 break;
             case ITEM_MOD_ATTACK_POWER:
-                HandleStatModifier(UNIT_MOD_ATTACK_POWER, TOTAL_VALUE, float(val), apply);
-                HandleStatModifier(UNIT_MOD_ATTACK_POWER_RANGED, TOTAL_VALUE, float(val), apply);
+                HandleStatModifier(
+                    float(val) > 0 ? UNIT_MOD_ATTACK_POWER_POS : UNIT_MOD_ATTACK_POWER_NEG,
+                    TOTAL_VALUE, float(val), apply
+                    );
+                HandleStatModifier(
+                    float(val) > 0 ? UNIT_MOD_ATTACK_POWER_RANGED_POS : UNIT_MOD_ATTACK_POWER_RANGED_NEG,
+                    TOTAL_VALUE, float(val), apply
+                    );
                 break;
             case ITEM_MOD_RANGED_ATTACK_POWER:
-                HandleStatModifier(UNIT_MOD_ATTACK_POWER_RANGED, TOTAL_VALUE, float(val), apply);
+                HandleStatModifier(
+                    float(val) > 0 ? UNIT_MOD_ATTACK_POWER_RANGED_POS : UNIT_MOD_ATTACK_POWER_RANGED_NEG,
+                    TOTAL_VALUE, float(val), apply
+                    );
                 break;
             case ITEM_MOD_MANA_REGENERATION:
                 ApplyManaRegenBonus(int32(val), apply);
@@ -8172,7 +8193,7 @@ void Player::SendLoot(ObjectGuid guid, LootType loot_type)
 
                         // let reopen skinning loot if will closed.
                         if (!loot->empty())
-                            creature->SetUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+                            creature->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
 
                         permission = OWNER_PERMISSION;
                     }
@@ -12698,12 +12719,21 @@ void Player::ApplyEnchantment(Item *item, EnchantmentSlot slot, bool apply, bool
                             DEBUG_LOG("+ %u EXPERTISE", enchant_amount);
                             break;
                         case ITEM_MOD_ATTACK_POWER:
-                            HandleStatModifier(UNIT_MOD_ATTACK_POWER, TOTAL_VALUE, float(enchant_amount), apply);
-                            HandleStatModifier(UNIT_MOD_ATTACK_POWER_RANGED, TOTAL_VALUE, float(enchant_amount), apply);
+                            HandleStatModifier(
+                                float(enchant_amount) > 0 ? UNIT_MOD_ATTACK_POWER_POS : UNIT_MOD_ATTACK_POWER_NEG,
+                                TOTAL_VALUE, float(enchant_amount), apply
+                                );
+                            HandleStatModifier(
+                                float(enchant_amount) > 0 ? UNIT_MOD_ATTACK_POWER_RANGED_POS : UNIT_MOD_ATTACK_POWER_RANGED_NEG,
+                                TOTAL_VALUE, float(enchant_amount), apply
+                                );
                             DEBUG_LOG("+ %u ATTACK_POWER", enchant_amount);
                             break;
                         case ITEM_MOD_RANGED_ATTACK_POWER:
-                            HandleStatModifier(UNIT_MOD_ATTACK_POWER_RANGED, TOTAL_VALUE, float(enchant_amount), apply);
+                            HandleStatModifier(
+                                float(enchant_amount) > 0 ? UNIT_MOD_ATTACK_POWER_RANGED_POS : UNIT_MOD_ATTACK_POWER_RANGED_NEG,
+                                TOTAL_VALUE, float(enchant_amount), apply
+                                );
                             DEBUG_LOG("+ %u RANGED_ATTACK_POWER", enchant_amount);
                             break;
                         case ITEM_MOD_MANA_REGENERATION:
@@ -14947,7 +14977,8 @@ void Player::SendQuestReward( Quest const *pQuest, uint32 XP, Object * questGive
 {
     uint32 questid = pQuest->GetQuestId();
     DEBUG_LOG( "WORLD: Sent SMSG_QUESTGIVER_QUEST_COMPLETE quest = %u", questid );
-    WorldPacket data( SMSG_QUESTGIVER_QUEST_COMPLETE, (4+4+4+4+4) );
+    WorldPacket data( SMSG_QUESTGIVER_QUEST_COMPLETE, (1+4+4+4+4+4+4) );
+    data << uint8(0x80); // unk 4.0.1 flags
     data << uint32(questid);
 
     if ( getLevel() < sWorld.getConfig(CONFIG_UINT32_MAX_PLAYER_LEVEL) )
@@ -15657,6 +15688,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SqlQueryHolder *holder )
     _LoadMonthlyQuestStatus(holder->GetResult(PLAYER_LOGIN_QUERY_LOADMONTHLYQUESTSTATUS));
 
     _LoadTalents(holder->GetResult(PLAYER_LOGIN_QUERY_LOADTALENTS));
+    _LoadTalentBranchSpecs(holder->GetResult(PLAYER_LOGIN_QUERY_LOADTALENTBRANCHSPECS));
 
     // after spell and quest load
     InitTalentForLevel();
@@ -16656,6 +16688,30 @@ void Player::_LoadTalents(QueryResult *result)
         delete result;
     }
 }
+
+void Player::_SaveTalentBranchSpecs()
+{
+    CharacterDatabase.PExecute("DELETE FROM character_branchspec WHERE guid='%u'", GetGUIDLow());
+    for (uint8 spec = 0; spec < m_specsCount; ++spec)
+        CharacterDatabase.PExecute("INSERT INTO character_branchspec VALUES('%u', '%u', '%u')", GetGUIDLow(), spec, GetTalentBranchSpec(spec));
+}
+
+void Player::_LoadTalentBranchSpecs(QueryResult* result)
+{
+	// SetPQuery(PLAYER_LOGIN_QUERY_LOADTALENTBRANCHSPECS, "SELECT branchSpec, spec FROM character_branchspec WHERE guid = '%u'", GUID_LOPART(m_guid));
+	if (result)
+	{
+		do
+		{
+            Field* f = result->Fetch();
+            uint32 branchSpec = f[0].GetUInt32();
+			uint8 spec = f[1].GetUInt8();
+            SetTalentBranchSpec(branchSpec, spec);
+        }
+		while (result->NextRow());
+	}
+}
+
 void Player::_LoadGroup(QueryResult *result)
 {
     //QueryResult *result = CharacterDatabase.PQuery("SELECT groupId FROM group_member WHERE memberGuid='%u'", GetGUIDLow());
@@ -17201,6 +17257,7 @@ void Player::SaveToDB()
     GetSession()->SaveTutorialsData();                      // changed only while character in game
     _SaveGlyphs();
     _SaveTalents();
+    _SaveTalentBranchSpecs();
 
     CharacterDatabase.CommitTransaction();
 
@@ -18867,6 +18924,9 @@ bool Player::BuyItemFromVendorSlot(ObjectGuid vendorGuid, uint32 vendorslot, uin
             return false;
         }
     }
+
+    if (count == pProto->BuyCount)
+        count = 1;
 
     // check current item amount if it limited
     if (crItem->maxcount != 0)
@@ -21724,7 +21784,7 @@ SpellEntry const* Player::GetKnownTalentRankById(int32 talentId) const
         return NULL;
 }
 
-void Player::LearnTalent(uint32 talentId, uint32 talentRank)
+void Player::LearnTalent(uint32 talentId, uint32 talentRank, bool one /* = true */)
 {
     uint32 CurTalentPoints = GetFreeTalentPoints();
 
@@ -21741,8 +21801,18 @@ void Player::LearnTalent(uint32 talentId, uint32 talentRank)
 
     TalentTabEntry const *talentTabInfo = sTalentTabStore.LookupEntry( talentInfo->TalentTab );
 
-    if(!talentTabInfo)
+    if (!talentTabInfo)
         return;
+
+    // protection
+	if (one && talentTabInfo->TalentTabID != GetTalentBranchSpec(m_activeSpec))
+	{
+        // TODO: fix
+        uint32 pointInBranchSpec = 0;//(m_meta_talentSpec[m_activeSpec] >> (talentTabInfo->tabpage*8)) & 0xFF;
+
+		if(pointInBranchSpec < 31)
+			return;
+	}
 
     // prevent learn talent for different class (cheating)
     if( (getClassMask() & talentTabInfo->ClassMask) == 0 )
@@ -22016,6 +22086,7 @@ void Player::BuildPlayerTalentsInfoData(WorldPacket *data)
         for(uint32 specIdx = 0; specIdx < m_specsCount; ++specIdx)
         {
             uint8 talentIdCount = 0;
+            *data << uint32(GetTalentBranchSpec(specIdx));  //branchSpec
             size_t pos = data->wpos();
             *data << uint8(talentIdCount);                  // [PH], talentIdCount
 
@@ -22339,6 +22410,16 @@ void Player::ActivateSpec(uint8 specNum)
 
     ApplyGlyphs(false);
 
+    for (uint32 i = 0; i < sTalentTreePrimarySpellsStore.GetNumRows(); ++i)
+    {
+        TalentTreePrimarySpellsEntry const *talentInfo = sTalentTreePrimarySpellsStore.LookupEntry(i);
+
+        if (!talentInfo || talentInfo->TalentTabID != GetTalentBranchSpec(m_activeSpec))
+            continue;
+
+        removeSpell(talentInfo->SpellID, true);
+    }
+
     // copy of new talent spec (we will use it as model for converting current tlanet state to new)
     PlayerTalentMap tempSpec = m_talents[specNum];
 
@@ -22440,6 +22521,16 @@ void Player::ActivateSpec(uint8 specNum)
     ResummonPetTemporaryUnSummonedIfAny();
 
     ApplyGlyphs(true);
+
+    for (uint32 i = 0; i < sTalentTreePrimarySpellsStore.GetNumRows(); ++i)
+    {
+        TalentTreePrimarySpellsEntry const *talentInfo = sTalentTreePrimarySpellsStore.LookupEntry(i);
+
+        if (!talentInfo || talentInfo->TalentTabID != GetTalentBranchSpec(m_activeSpec))
+            continue;
+
+        learnSpell(talentInfo->SpellID, true);
+    }
 
     SendInitialActionButtons();
 
@@ -22651,5 +22742,21 @@ void Player::SetRestType( RestType n_r_type, uint32 areaTriggerId /*= 0*/)
 
         if(sWorld.IsFFAPvPRealm())
             SetFFAPvP(false);
+    }
+}
+
+void Player::SetInGuild(uint32 GuildId)
+{
+    m_guildId = GuildId;
+
+    if (GuildId)
+    {
+        SetUInt64Value(OBJECT_FIELD_DATA, ObjectGuid(HIGHGUID_GUILD, GuildId).GetRawValue());
+        SetUInt32Value(OBJECT_FIELD_TYPE, GetUInt32Value(OBJECT_FIELD_TYPE) | TYPEMASK_IN_GUILD);
+    }
+    else
+    {
+        SetUInt64Value(OBJECT_FIELD_DATA, 0);
+        SetUInt32Value(OBJECT_FIELD_TYPE, GetUInt32Value(OBJECT_FIELD_TYPE) & ~TYPEMASK_IN_GUILD);
     }
 }

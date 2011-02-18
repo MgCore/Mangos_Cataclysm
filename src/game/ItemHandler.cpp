@@ -658,9 +658,9 @@ void WorldSession::HandleBuyItemInSlotOpcode( WorldPacket & recv_data )
     ObjectGuid vendorGuid;
     ObjectGuid bagGuid;
     uint32 item, slot, count;
-    uint8 bagslot;
+    uint8 bagslot, unk;
 
-    recv_data >> vendorGuid >> item  >> slot >> bagGuid >> bagslot >> count;
+    recv_data >> vendorGuid >> unk >> item  >> slot >> bagGuid >> bagslot >> count;
 
     // client side expected counting from 1, and we send to client vendorslot+1 already
     if (slot > 0)
@@ -671,7 +671,7 @@ void WorldSession::HandleBuyItemInSlotOpcode( WorldPacket & recv_data )
     uint8 bag = NULL_BAG;                                   // init for case invalid bagGUID
 
     // find bag slot by bag guid
-    if (bagGuid == _player->GetObjectGuid())
+    if (bagGuid == _player->GetObjectGuid() || bagGuid.IsEmpty())
         bag = INVENTORY_SLOT_BAG_0;
     else
     {
@@ -819,6 +819,7 @@ void WorldSession::SendListInventory(ObjectGuid vendorguid)
                 uint32 price = (crItem->ExtendedCost == 0 || pProto->Flags2 & ITEM_FLAG2_EXT_COST_REQUIRES_GOLD) ? uint32(floor(pProto->BuyPrice * discountMod)) : 0;
 
                 data << uint32(vendorslot +1);              // client size expected counting from 1
+                data << uint32(1);                          // unk 4.0.1
                 data << uint32(itemId);
                 data << uint32(pProto->DisplayInfoID);
                 data << uint32(crItem->maxcount <= 0 ? 0xFFFFFFFF : pCreature->GetVendorItemCurrentCount(crItem));
@@ -826,6 +827,7 @@ void WorldSession::SendListInventory(ObjectGuid vendorguid)
                 data << uint32(pProto->MaxDurability);
                 data << uint32(pProto->BuyCount);
                 data << uint32(crItem->ExtendedCost);
+                data << uint8(0);                           // unk 4.0.1
             }
         }
     }
