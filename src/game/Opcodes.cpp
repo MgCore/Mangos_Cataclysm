@@ -443,4 +443,6 @@ void InitializeOpcodes()
     DEFINE_OPCODE_HANDLER( CMSG_MESSAGECHAT_RAID_WARNING,           STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleMessagechatRaidWarningOpcode        );
     DEFINE_OPCODE_HANDLER( CMSG_MESSAGECHAT_BATTLEGROUND,           STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleMessagechatBattlegroundOpcode       );
     DEFINE_OPCODE_HANDLER( CMSG_MESSAGECHAT_BATTLEGROUND_LEADER,    STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleMessagechatBattlegroundLeaderOpcode );
+
+    DEFINE_OPCODE_HANDLER( CMSG_GUILD_UPDATE_PARTY_STATE,           STATUS_LOGGEDIN, PROCESS_INPLACE,      &WorldSession::HandleGuildPartyStateUpdate               );
 }

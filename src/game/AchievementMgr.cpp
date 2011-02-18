@@ -2198,7 +2198,7 @@ void AchievementMgr::SendAllAchievementData()
     time_t now = time(NULL);
     for(CriteriaProgressMap::const_iterator iter = m_criteriaProgress.begin(); iter!=m_criteriaProgress.end(); ++iter)
         data << uint32(now - iter->second.date);
-    for(CompletedAchievementMap::const_iterator iter = m_completedAchievements.begin(); iter!=m_completedAchievements.end(); ++iter)
+    for(CriteriaProgressMap::const_iterator iter = m_criteriaProgress.begin(); iter!=m_criteriaProgress.end(); ++iter)
         data << uint32(secsToTimeBitFields(iter->second.date));
     for(uint32 i = 0; i < criterias; ++i)
         data << GetPlayer()->GetObjectGuid();

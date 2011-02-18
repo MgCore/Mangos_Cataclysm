@@ -424,10 +424,9 @@ void WorldSession::HandleStandStateChangeOpcode( WorldPacket & recv_data )
 void WorldSession::HandleContactListOpcode( WorldPacket & recv_data )
 {
     DEBUG_LOG( "WORLD: Received CMSG_CONTACT_LIST" );
-    uint32 unk;
-    recv_data >> unk;
-    DEBUG_LOG("unk value is %u", unk);
-    _player->GetSocial()->SendSocialList();
+    uint32 mask;
+    recv_data >> mask;
+    _player->GetSocial()->SendSocialList(mask);
 }
 
 void WorldSession::HandleAddFriendOpcode( WorldPacket & recv_data )
@@ -1550,4 +1549,18 @@ void WorldSession::HandleHearthandResurrect(WorldPacket & /*recv_data*/)
     _player->BuildPlayerRepop();
     _player->ResurrectPlayer(100);
     _player->TeleportToHomebind();
+}
+
+void WorldSession::HandleGuildPartyStateUpdate(WorldPacket & /*recv_data*/)
+{
+    DEBUG_LOG("WORLD: CMSG_GUILD_UPDATE_PARTY_STATE");
+
+    // TODO: implement
+
+    WorldPacket packet(SMSG_GUILD_UPDATE_PARTY_STATE, 1+4+4+4);
+    packet << uint8(0);         // IsInGuildParty
+    packet << uint32(0);        // numGuildRequired
+    packet << uint32(0);        // numGuildPresent
+    packet << float(0);         // guildXpMultiplier
+    SendPacket(&packet);
 }

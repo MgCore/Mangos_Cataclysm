@@ -49,30 +49,24 @@ bool UpdateData::BuildPacket(WorldPacket *packet)
 {
     MANGOS_ASSERT(packet->empty());                         // shouldn't happen
 
-    ByteBuffer buf(2 + 4 + (m_outOfRangeGUIDs.empty() ? 0 : 1 + 4 + 9 * m_outOfRangeGUIDs.size()) + m_data.wpos());
+    packet->Initialize(SMSG_UPDATE_OBJECT, 2 + 4 + (m_outOfRangeGUIDs.empty() ? 0 : 1 + 4 + 9 * m_outOfRangeGUIDs.size()) + m_data.wpos());
 
-    buf << (uint16) m_map;
-    buf << (uint32) (!m_outOfRangeGUIDs.empty() ? m_blockCount + 1 : m_blockCount);
+    *packet << (uint16) m_map;
+    *packet << (uint32) (!m_outOfRangeGUIDs.empty() ? m_blockCount + 1 : m_blockCount);
 
     if(!m_outOfRangeGUIDs.empty())
     {
-        buf << (uint8) UPDATETYPE_OUT_OF_RANGE_OBJECTS;
-        buf << (uint32) m_outOfRangeGUIDs.size();
+        *packet << (uint8) UPDATETYPE_OUT_OF_RANGE_OBJECTS;
+        *packet << (uint32) m_outOfRangeGUIDs.size();
 
         for(ObjectGuidSet::const_iterator i = m_outOfRangeGUIDs.begin(); i != m_outOfRangeGUIDs.end(); ++i)
-            buf << i->WriteAsPacked();
+            *packet << i->WriteAsPacked();
     }
 
-    buf.append(m_data);
+    packet->append(m_data);
 
-    size_t pSize = buf.wpos();                              // use real used data size
-
-    packet->SetOpcode( SMSG_UPDATE_OBJECT );
-
-    if (pSize > 100)                                        // compress large packets
+    if (packet->wpos() > 100)
         packet->compress( SMSG_COMPRESSED_UPDATE_OBJECT );
-    else                                                    // send small packets without compression
-        packet->append( buf );
 
     return true;
 }

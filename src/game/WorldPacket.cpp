@@ -36,13 +36,13 @@ void WorldPacket::compress(Opcodes opcode)
         return;
 
     clear();
-    resize(destsize + sizeof(uint32));
+    reserve(destsize + sizeof(uint32));
     *this << uint32(size);
     append(&storage[0], destsize);
     SetOpcode(opcode);
 
-    DEBUG_LOG("Successfully compressed opcode %s (len %u) to %s (len %u)",
-        LookupOpcodeName(uncompressedOpcode), size, LookupOpcodeName(opcode), destsize);
+    DEBUG_LOG("Successfully compressed opcode %u (len %u) to %u (len %u)",
+        uncompressedOpcode, size, opcode, destsize);
 }
 
 void WorldPacket::_compress(void* dst, uint32 *dst_size, const void* src, int src_size)

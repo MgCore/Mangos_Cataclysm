@@ -2819,7 +2819,7 @@ enum TradeStatus
 // others will not and opposite
 // will only support WoW, WoW:TBC, WoW:WotLK and WoW:Cataclysm 4.0.3 client build 13287...
 
-#define EXPECTED_MANGOSD_CLIENT_BUILD        {13596, 0}
+#define EXPECTED_MANGOSD_CLIENT_BUILD        {13623, 0}
 
 // max supported expansion level in mangosd
 // NOTE: not set it more that supported by targeted client version with all expansions installed
