@@ -2479,14 +2479,18 @@ void ObjectMgr::LoadItemRequiredTarget()
         }
 
         bool bIsItemSpellValid = false;
+        bool bSpellExists = true;
 
         for(int i = 0; i < MAX_ITEM_PROTO_SPELLS; ++i)
         {
-            if (SpellEntry const* pSpellInfo = sSpellStore.LookupEntry(pItemProto->Spells[i].SpellId))
+            if (pItemProto->Spells[i].SpellId &&
+                (pItemProto->Spells[i].SpellTrigger == ITEM_SPELLTRIGGER_ON_USE ||
+                pItemProto->Spells[i].SpellTrigger == ITEM_SPELLTRIGGER_ON_NO_DELAY_USE))
             {
-                if (pItemProto->Spells[i].SpellTrigger == ITEM_SPELLTRIGGER_ON_USE ||
-                    pItemProto->Spells[i].SpellTrigger == ITEM_SPELLTRIGGER_ON_NO_DELAY_USE)
+                if (SpellEntry const* pSpellInfo = sSpellStore.LookupEntry(pItemProto->Spells[i].SpellId))
                 {
+                    if(!pSpellInfo)
+                        continue;
                     SpellScriptTargetBounds bounds = sSpellMgr.GetSpellScriptTargetBounds(pSpellInfo->Id);
                     if (bounds.first != bounds.second)
                         break;
@@ -2494,7 +2498,7 @@ void ObjectMgr::LoadItemRequiredTarget()
                     for (int j = 0; j < MAX_EFFECT_INDEX; ++j)
                     {
                         SpellEffectEntry const* spellEffect = pSpellInfo->GetSpellEffect(SpellEffectIndex(j));
-                        if(!pSpellInfo)
+                        if(!spellEffect)
                             continue;
                         if (spellEffect->EffectImplicitTargetA == TARGET_CHAIN_DAMAGE ||
                             spellEffect->EffectImplicitTargetB == TARGET_CHAIN_DAMAGE ||
@@ -2508,7 +2512,15 @@ void ObjectMgr::LoadItemRequiredTarget()
                     if (bIsItemSpellValid)
                         break;
                 }
+                else
+                    bSpellExists = false;
             }
+        }
+
+        if (!bSpellExists)
+        {
+            sLog.outErrorDb("Table `item_required_target`: Spell used by item %u does not exist.",uiItemId);
+            continue;
         }
 
         if (!bIsItemSpellValid)
@@ -5650,7 +5662,7 @@ void ObjectMgr::SetHighestGuids()
     result = WorldDatabase.Query("SELECT MAX(guid) FROM gameobject" );
     if( result )
     {
-        m_CreatureFirstGuid = (*result)[0].GetUInt32()+1;
+        m_GameObjectFirstGuid = (*result)[0].GetUInt32()+1;
         delete result;
     }
 
@@ -8847,7 +8859,7 @@ bool FindCreatureData::operator()( CreatureDataPair const& dataPair )
 
     // skip not spawned (in any state),
     uint16 pool_id = sPoolMgr.IsPartOfAPool<Creature>(dataPair.first);
-    if (pool_id && !sPoolMgr.IsSpawnedObject<Creature>(dataPair.first))
+    if (pool_id && !i_player->GetMap()->GetPersistentState()->IsSpawnedPoolObject<Creature>(dataPair.first))
         return false;
 
     if (!i_spawnedData || new_dist < i_spawnedDist)
@@ -8897,7 +8909,7 @@ bool FindGOData::operator()( GameObjectDataPair const& dataPair )
 
     // skip not spawned (in any state)
     uint16 pool_id = sPoolMgr.IsPartOfAPool<GameObject>(dataPair.first);
-    if (pool_id && !sPoolMgr.IsSpawnedObject<GameObject>(dataPair.first))
+    if (pool_id && !i_player->GetMap()->GetPersistentState()->IsSpawnedPoolObject<GameObject>(dataPair.first))
         return false;
 
     if (!i_spawnedData || new_dist < i_spawnedDist)

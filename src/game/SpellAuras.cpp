@@ -8225,6 +8225,12 @@ bool Aura::IsLastAuraOnHolder()
     return true;
 }
 
+bool Aura::HasMechanic(uint32 mechanic) const
+{
+    return GetSpellProto()->GetMechanic() == mechanic ||
+        GetSpellProto()->GetSpellEffect(GetEffIndex())->EffectMechanic == mechanic;
+}
+
 SpellAuraHolder::SpellAuraHolder(SpellEntry const* spellproto, Unit *target, WorldObject *caster, Item *castItem) :
 m_target(target), m_castItemGuid(castItem ? castItem->GetObjectGuid() : ObjectGuid()),
 m_auraSlot(MAX_AURAS), m_auraFlags(AFLAG_NONE), m_auraLevel(1), m_procCharges(0),

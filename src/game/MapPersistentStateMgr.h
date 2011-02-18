@@ -30,13 +30,27 @@
 #include "DBCEnums.h"
 #include "DBCStores.h"
 #include "ObjectGuid.h"
+#include "PoolManager.h"
 
 struct InstanceTemplate;
 struct MapEntry;
 struct MapDifficulty;
+struct GameObjectData;
+struct CreatureData;
+
 class Player;
 class Group;
 class Map;
+
+typedef std::set<uint32> CellGuidSet;
+
+struct MapCellObjectGuids
+{
+    CellGuidSet creatures;
+    CellGuidSet gameobjects;
+};
+
+typedef UNORDERED_MAP<uint32/*cell_id*/,MapCellObjectGuids> MapCellObjectGuidsMap;
 
 class MapPersistentStateManager;
 
@@ -87,6 +101,18 @@ class MapPersistentState
         }
         void SaveGORespawnTime(uint32 loguid, time_t t);
 
+        // pool system
+        virtual SpawnedPoolData& GetSpawnedPoolData() =0;
+
+        template<typename T>
+        bool IsSpawnedPoolObject(uint32 db_guid_or_pool_id) { return GetSpawnedPoolData().IsSpawnedObject<T>(db_guid_or_pool_id); }
+
+        // grid objects (Dynamic map/instance specific added/removed grid spawns from pool system/etc)
+        MapCellObjectGuids const& GetCellObjectGuids(uint32 cell_id) { return m_gridObjectGuids[cell_id]; }
+        void AddCreatureToGrid(uint32 guid, CreatureData const* data);
+        void RemoveCreatureFromGrid(uint32 guid, CreatureData const* data);
+        void AddGameobjectToGrid(uint32 guid, GameObjectData const* data);
+        void RemoveGameobjectFromGrid(uint32 guid, GameObjectData const* data);
     protected:
         virtual bool CanBeUnload() const =0;                // body provided for subclasses
 
@@ -109,6 +135,7 @@ class MapPersistentState
         // persistent data
         RespawnTimes m_creatureRespawnTimes;                // lock MapPersistentState from unload, for example for temporary bound dungeon unload delay
         RespawnTimes m_goRespawnTimes;                      // lock MapPersistentState from unload, for example for temporary bound dungeon unload delay
+        MapCellObjectGuidsMap m_gridObjectGuids;            // Single map copy specific grid spawn data, like pool spawns
 };
 
 inline bool MapPersistentState::CanBeUnload() const
@@ -128,8 +155,12 @@ class WorldPersistentState : public MapPersistentState
 
         ~WorldPersistentState() {}
 
+        SpawnedPoolData& GetSpawnedPoolData() { return m_sharedSpawnedPoolData; }
     protected:
         bool CanBeUnload() const;                           // overwrite MapPersistentState::CanBeUnload
+
+    private:
+        static SpawnedPoolData m_sharedSpawnedPoolData;     // Pools spawns state for map, shared by all non-instanced maps
 };
 
 /*
@@ -151,6 +182,8 @@ class DungeonPersistentState : public MapPersistentState
         DungeonPersistentState(uint16 MapId, uint32 InstanceId, Difficulty difficulty, time_t resetTime, bool canReset);
 
         ~DungeonPersistentState();
+
+        SpawnedPoolData& GetSpawnedPoolData() { return m_spawnedPoolData; }
 
         InstanceTemplate const* GetTemplate() const;
 
@@ -200,6 +233,8 @@ class DungeonPersistentState : public MapPersistentState
            TODO: maybe it's enough to just store the number of players/groups */
         PlayerListType m_playerList;                        // lock MapPersistentState from unload
         GroupListType m_groupList;                          // lock MapPersistentState from unload
+
+        SpawnedPoolData m_spawnedPoolData;                  // Pools spawns state for map copy
 };
 
 class BattleGroundPersistentState : public MapPersistentState
@@ -213,8 +248,12 @@ class BattleGroundPersistentState : public MapPersistentState
 
         ~BattleGroundPersistentState() {}
 
+        SpawnedPoolData& GetSpawnedPoolData() { return m_spawnedPoolData; }
     protected:
         bool CanBeUnload() const;                           // overwrite MapPersistentState::CanBeUnload
+
+    private:
+        SpawnedPoolData m_spawnedPoolData;                  // Pools spawns state for map copy
 };
 
 enum ResetEventType
