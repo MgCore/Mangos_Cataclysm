@@ -121,7 +121,6 @@ extern DBCStorage <GtOCTClassCombatRatingScalarEntry> sGtOCTClassCombatRatingSca
 extern DBCStorage <GtRegenMPPerSptEntry>         sGtRegenMPPerSptStore;
 extern DBCStorage <gtSpellScaling>               sGtSpellScalingStore;
 extern DBCStorage <HolidaysEntry>                sHolidaysStore;
-//extern DBCStorage <ItemEntry>                    sItemStore;
 extern DBCStorage <ItemArmorQualityEntry>        sItemArmorQualityStore;
 extern DBCStorage <ItemArmorShieldEntry>         sItemArmorShieldStore;
 extern DBCStorage <ItemArmorTotalEntry>          sItemArmorTotalStore;
@@ -213,7 +212,6 @@ MANGOS_DLL_SPEC DBCStorage <SoundEntriesEntry>          const* GetSoundEntriesSt
 MANGOS_DLL_SPEC DBCStorage <SpellEntry>                 const* GetSpellStore();
 MANGOS_DLL_SPEC DBCStorage <SpellRangeEntry>            const* GetSpellRangeStore();
 MANGOS_DLL_SPEC DBCStorage <FactionEntry>               const* GetFactionStore();
-MANGOS_DLL_SPEC DBCStorage <ItemEntry>                  const* GetItemDisplayStore();
 MANGOS_DLL_SPEC DBCStorage <CreatureDisplayInfoEntry>   const* GetCreatureDisplayStore();
 MANGOS_DLL_SPEC DBCStorage <EmotesEntry>                const* GetEmotesStore();
 MANGOS_DLL_SPEC DBCStorage <EmotesTextEntry>            const* GetEmotesTextStore();
