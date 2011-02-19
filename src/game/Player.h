@@ -2546,7 +2546,8 @@ class MANGOS_DLL_SPEC Player : public Unit
 
         uint8 m_activeSpec;
         uint8 m_specsCount;
-        uint32 m_branchSpec[MAX_TALENT_SPEC_COUNT];
+        uint32 m_branchSpec[MAX_TALENT_SPEC_COUNT];         // tabId of the main talent branch
+        uint32 m_talentSpec[MAX_TALENT_SPEC_COUNT];         // S[1,MAX_TALENT_TABS] { (numTalentsInTab << (tabPageIndex*8) }
         uint32 m_freeTalentPoints;
 
         ActionButtonList m_actionButtons[MAX_TALENT_SPEC_COUNT];

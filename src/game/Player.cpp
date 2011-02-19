@@ -558,6 +558,14 @@ Player::Player (WorldSession *session): Unit(), m_mover(this), m_camera(this), m
     m_activeSpec = 0;
     m_specsCount = 1;
 
+    for (int i = 0; i < MAX_TALENT_SPEC_COUNT; ++i)
+    {
+        m_branchSpec[i] = 0;
+        m_talentSpec[i] = 0;
+    }
+
+    m_freeTalentPoints = 0;
+
     for (int i = 0; i < BASEMOD_END; ++i)
     {
         m_auraBaseMod[i][FLAT_MOD] = 0.0f;
@@ -17109,7 +17117,7 @@ void Player::SaveToDB()
         "death_expire_time, taxi_path, arenaPoints, totalHonorPoints, todayHonorPoints, yesterdayHonorPoints, totalKills, "
         "todayKills, yesterdayKills, chosenTitle, knownCurrencies, watchedFaction, drunk, health, power1, power2, power3, "
         "power4, power5, power6, power7, power8, power9, specCount, activeSpec, exploredZones, equipmentCache, ammoId, "
-        "knownTitles, achievementPoints, actionBars) VALUES ("
+        "knownTitles, achievementPoints, talentSpec, actionBars) VALUES ("
         << GetGUIDLow() << ", "
         << GetSession()->GetAccountId() << ", '"
         << sql_name << "', "
@@ -17229,9 +17237,11 @@ void Player::SaveToDB()
     {
         ss << GetUInt32Value(PLAYER__FIELD_KNOWN_TITLES + i) << " ";
     }
-    ss << "',";
+    ss << "', ";
     ss << uint32(m_achievementMgr.GetAchievementPoints());
-    ss << ",";
+    ss << ", ";
+    ss << uint32(m_talentSpec);
+    ss << ", ";
     ss << uint32(GetByteValue(PLAYER_FIELD_BYTES, 2));
     ss << ")";
 
@@ -21807,8 +21817,7 @@ void Player::LearnTalent(uint32 talentId, uint32 talentRank, bool one /* = true 
     // protection
 	if (one && talentTabInfo->TalentTabID != GetTalentBranchSpec(m_activeSpec))
 	{
-        // TODO: fix
-        uint32 pointInBranchSpec = 0;//(m_meta_talentSpec[m_activeSpec] >> (talentTabInfo->tabpage*8)) & 0xFF;
+        uint32 pointInBranchSpec = (m_talentSpec[m_activeSpec] >> (talentTabInfo->tabpage*8)) & 0xFF;
 
 		if(pointInBranchSpec < 31)
 			return;
@@ -21879,6 +21888,9 @@ void Player::LearnTalent(uint32 talentId, uint32 talentRank, bool one /* = true 
 
     // learn! (other talent ranks will unlearned at learning)
     learnSpell(spellid, false);
+
+    m_talentSpec[m_activeSpec] += 1 << (talentTabInfo->tabpage*8);
+
     DETAIL_LOG("TalentID: %u Rank: %u Spell: %u\n", talentId, talentRank, spellid);
 }
 
@@ -22076,6 +22088,9 @@ bool Player::canSeeSpellClickOn(Creature const *c) const
 
 void Player::BuildPlayerTalentsInfoData(WorldPacket *data)
 {
+    for(uint8 i = 0; i < MAX_TALENT_SPEC_COUNT; ++i)
+        m_talentSpec[i] = 0;
+
     *data << uint32(GetFreeTalentPoints());                 // unspentTalentPoints
     *data << uint8(m_specsCount);                           // talent group count (0, 1 or 2)
     *data << uint8(m_activeSpec);                           // talent group index (0 or 1)
@@ -22106,6 +22121,8 @@ void Player::BuildPlayerTalentsInfoData(WorldPacket *data)
                     // skip another tab talents
                     if(talent.m_talentEntry->TalentTab != talentTabId)
                         continue;
+
+                    m_talentSpec[specIdx] += ((talent.currentRank+1) << i*8); // 8 bits per tab, higher 8 bits are free
 
                     *data << uint32(talent.m_talentEntry->TalentID);  // Talent.dbc
                     *data << uint8(talent.currentRank);      // talentMaxRank (0-4)
