@@ -85,6 +85,25 @@ void LoadDB2Stores(const std::string& dataPath)
     uint32 availableDb2Locales = 0xFFFFFFFF;
 
     LoadDB2(availableDb2Locales, bar, bad_db2_files, sItemStore, db2Path, "Item.db2");
+
+    for (uint32 i = 0; i < sItemStore.GetNumRows(); ++i)
+    {
+        const ItemEntry* itemEntry = sItemStore.LookupEntry(i);
+        if (!itemEntry)
+            continue;
+
+        if (itemEntry->Class >= MAX_ITEM_CLASS)
+        {
+            DEBUG_LOG("Item (Entry: %u) in Item.db2 has too high class value %u", itemEntry->ID, itemEntry->Class);
+            const_cast<ItemEntry*>(itemEntry)->Class = 0;
+        }
+        if (itemEntry->SubClass >= MaxItemSubclassValues[itemEntry->Class])
+        {
+            DEBUG_LOG("Item (Entry: %u) in Item.db2 has too high subclass value %u for class %u", itemEntry->ID, itemEntry->SubClass, itemEntry->Class);
+            const_cast<ItemEntry*>(itemEntry)->SubClass = 0;
+        }
+    }
+
     //LoadDB2(availableDb2Locales, bar, bad_db2_files, sItemSparseStore, db2Path, "Item-sparse.db2");
 
     // error checks
