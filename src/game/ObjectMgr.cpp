@@ -2030,12 +2030,6 @@ void ObjectMgr::LoadItemPrototypes()
             }
         }
 
-        if(proto->StatsCount > MAX_ITEM_PROTO_STATS)
-        {
-            sLog.outErrorDb("Item (Entry: %u) has too large value in statscount (%u), replace by hardcoded limit (%u).",i,proto->StatsCount,MAX_ITEM_PROTO_STATS);
-            const_cast<ItemPrototype*>(proto)->StatsCount = MAX_ITEM_PROTO_STATS;
-        }
-
         for (int j = 0; j < MAX_ITEM_PROTO_STATS; ++j)
         {
             // for ItemStatValue != 0
@@ -2056,13 +2050,10 @@ void ObjectMgr::LoadItemPrototypes()
             }
         }
 
-        for (int j = 0; j < MAX_ITEM_PROTO_DAMAGES; ++j)
+        if(proto->DamageType >= MAX_SPELL_SCHOOL)
         {
-            if(proto->Damage[j].DamageType >= MAX_SPELL_SCHOOL)
-            {
-                sLog.outErrorDb("Item (Entry: %u) has wrong dmg_type%d (%u)",i,j+1,proto->Damage[j].DamageType);
-                const_cast<ItemPrototype*>(proto)->Damage[j].DamageType = 0;
-            }
+            sLog.outErrorDb("Item (Entry: %u) has wrong DamageType (%u)",i,proto->DamageType);
+            const_cast<ItemPrototype*>(proto)->DamageType = 0;
         }
 
         // special format

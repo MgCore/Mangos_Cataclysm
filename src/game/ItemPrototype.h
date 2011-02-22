@@ -521,18 +521,12 @@ enum ItemExtraFlags
 #pragma pack(push,1)
 #endif
 
-struct _Damage
-{
-    float   DamageMin;
-    float   DamageMax;
-    uint32  DamageType;                                     // id from Resistances.dbc
-};
-
 struct _ItemStat
 {
     uint32  ItemStatType;
     int32   ItemStatValue;
 };
+
 struct _Spell
 {
     uint32 SpellId;                                         // id from Spell.dbc
@@ -550,7 +544,6 @@ struct _Socket
     uint32 Content;
 };
 
-#define MAX_ITEM_PROTO_DAMAGES 2                            // changed in 3.1.0
 #define MAX_ITEM_PROTO_SOCKETS 3
 #define MAX_ITEM_PROTO_SPELLS  5
 #define MAX_ITEM_PROTO_STATS  10
@@ -584,20 +577,11 @@ struct ItemPrototype
     int32  MaxCount;                                        // <=0: no limit
     int32  Stackable;                                       // 0: not allowed, -1: put in player coin info tab and don't limit stacking (so 1 slot)
     uint32 ContainerSlots;
-    uint32 StatsCount;
     _ItemStat ItemStat[MAX_ITEM_PROTO_STATS];
     uint32 ScalingStatDistribution;                         // id from ScalingStatDistribution.dbc
     uint32 ScalingStatValue;                                // mask for selecting column in ScalingStatValues.dbc
-    _Damage Damage[MAX_ITEM_PROTO_DAMAGES];                 // TODO: remove it
-    uint32 Armor;                                           // TODO: remove it
-    uint32 HolyRes;                                         // TODO: remove it
-    uint32 FireRes;                                         // TODO: remove it
-    uint32 NatureRes;                                       // TODO: remove it
-    uint32 FrostRes;                                        // TODO: remove it
-    uint32 ShadowRes;                                       // TODO: remove it
-    uint32 ArcaneRes;                                       // TODO: remove it
+    uint32 DamageType;
     uint32 Delay;
-    uint32 AmmoType;                                        // TODO: remove it
     float  RangedModRange;
     _Spell Spells[MAX_ITEM_PROTO_SPELLS];
     uint32 Bonding;
@@ -611,7 +595,6 @@ struct ItemPrototype
     uint32 Sheath;
     uint32 RandomProperty;                                  // id from ItemRandomProperties.dbc
     uint32 RandomSuffix;                                    // id from ItemRandomSuffix.dbc
-    uint32 Block;
     uint32 ItemSet;                                         // id from ItemSet.dbc
     uint32 MaxDurability;
     uint32 Area;                                            // id from AreaTable.dbc
