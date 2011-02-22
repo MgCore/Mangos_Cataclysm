@@ -1316,7 +1316,7 @@ void ObjectMgr::LoadCreatures()
             continue;
         }
 
-        if (data.spawnMask & ~spawnMasks[data.mapid])
+        if (!mapEntry->IsBattleGround() && (data.spawnMask & ~spawnMasks[data.mapid]))
             sLog.outErrorDb("Table `creature` have creature (GUID: %u) that have wrong spawn mask %u including not supported difficulty modes for map (Id: %u).",guid, data.spawnMask, data.mapid );
 
         bool ok = true;
