@@ -1083,6 +1083,15 @@ struct ItemBagFamilyEntry
     //char*     name;                                       // 1     m_name_lang
 };
 
+struct ItemClassEntry
+{
+    //uint32 id;                                            // 0
+    uint32 Class;                                           // 1 equal to id
+    //uint32 unk2;                                          // 2 looks like second class
+    //uint32 unk3;                                          // 3 1 for weapons
+    //DBCString name;                                       // 4
+};
+
 struct ItemDisplayInfoEntry
 {
     uint32      ID;                                         // 0        m_ID
@@ -1172,6 +1181,23 @@ struct ItemSetEntry
     uint32    items_to_triggerspell[8];                     // 27-34    m_setThreshold
     uint32    required_skill_id;                            // 35       m_requiredSkill
     uint32    required_skill_value;                         // 36       m_requiredSkillRank
+};
+
+struct ItemSubClassEntry
+{
+    //uint32 id;
+    uint32 Class;
+    uint32 SubClass;
+    //int32 unk3;
+    //int32 unk4;
+    //uint32 unk5;
+    //uint32 unk6;
+    //uint32 unk7;
+    //uint32 unk8;
+    //uint32 unk9;
+    //uint32 unk10;
+    //DBCString name1;
+    //DBCString name2;
 };
 
 #define MAX_LOCK_CASE 8

@@ -112,6 +112,7 @@ DBCStorage <ItemArmorQualityEntry>        sItemArmorQualityStore(ItemArmorQualit
 DBCStorage <ItemArmorShieldEntry>         sItemArmorShieldStore(ItemArmorShieldfmt);
 DBCStorage <ItemArmorTotalEntry>          sItemArmorTotalStore(ItemArmorTotalfmt);
 DBCStorage <ItemBagFamilyEntry>           sItemBagFamilyStore(ItemBagFamilyfmt);
+DBCStorage <ItemClassEntry>               sItemClassStore(ItemClassfmt);
 //DBCStorage <ItemCondExtCostsEntry> sItemCondExtCostsStore(ItemCondExtCostsEntryfmt);
 DBCStorage <ItemDamageEntry>              sItemDamageAmmoStore(ItemDamagefmt);
 DBCStorage <ItemDamageEntry>              sItemDamageOneHandStore(ItemDamagefmt);
@@ -127,6 +128,7 @@ DBCStorage <ItemLimitCategoryEntry> sItemLimitCategoryStore(ItemLimitCategoryEnt
 DBCStorage <ItemRandomPropertiesEntry> sItemRandomPropertiesStore(ItemRandomPropertiesfmt);
 DBCStorage <ItemRandomSuffixEntry> sItemRandomSuffixStore(ItemRandomSuffixfmt);
 DBCStorage <ItemSetEntry> sItemSetStore(ItemSetEntryfmt);
+DBCStorage <ItemSubClassEntry> sItemSubClassStore(ItemSubClassfmt);
 
 DBCStorage <LockEntry> sLockStore(LockEntryfmt);
 
@@ -395,7 +397,7 @@ void LoadDBCStores(const std::string& dataPath)
         exit(1);
     }
 
-    const uint32 DBCFilesCount = 91;
+    const uint32 DBCFilesCount = 105;
 
     barGoLink bar( (int)DBCFilesCount );
 
@@ -478,6 +480,15 @@ void LoadDBCStores(const std::string& dataPath)
     LoadDBC(availableDbcLocales,bar,bad_dbc_files,sHolidaysStore,            dbcPath,"Holidays.dbc");
     //LoadDBC(availableDbcLocales,bar,bad_dbc_files,sItemStore,                dbcPath,"Item.dbc");
     LoadDBC(availableDbcLocales,bar,bad_dbc_files,sItemBagFamilyStore,       dbcPath,"ItemBagFamily.dbc");
+    LoadDBC(availableDbcLocales,bar,bad_dbc_files,sItemClassStore,           dbcPath,"ItemClass.dbc");
+
+    for (uint32 i = 0; i < sItemClassStore.GetNumRows(); ++i)
+    {
+        const ItemClassEntry* itemClass = sItemClassStore.LookupEntry(i);
+        if (itemClass)
+            MANGOS_ASSERT(itemClass->Class < MAX_ITEM_CLASS && "Need update MAX_ITEM_CLASS definition.");
+    }
+
     //LoadDBC(availableDbcLocales,bar,bad_dbc_files,sItemDisplayInfoStore,     dbcPath,"ItemDisplayInfo.dbc");     -- not used currently
     //LoadDBC(availableDbcLocales,bar,bad_dbc_files,sItemCondExtCostsStore,    dbcPath,"ItemCondExtCosts.dbc");
     LoadDBC(availableDbcLocales,bar,bad_dbc_files,sItemExtendedCostStore,    dbcPath,"ItemExtendedCost.dbc");
@@ -485,6 +496,23 @@ void LoadDBCStores(const std::string& dataPath)
     LoadDBC(availableDbcLocales,bar,bad_dbc_files,sItemRandomPropertiesStore,dbcPath,"ItemRandomProperties.dbc");
     LoadDBC(availableDbcLocales,bar,bad_dbc_files,sItemRandomSuffixStore,    dbcPath,"ItemRandomSuffix.dbc");
     LoadDBC(availableDbcLocales,bar,bad_dbc_files,sItemSetStore,             dbcPath,"ItemSet.dbc");
+    LoadDBC(availableDbcLocales,bar,bad_dbc_files,sItemSubClassStore,        dbcPath,"ItemSubClass.dbc");
+
+    for (uint32 i = 0; i < sItemSubClassStore.GetNumRows(); ++i)
+    {
+        const ItemSubClassEntry* itemSubClass = sItemSubClassStore.LookupEntry(i);
+        if (itemSubClass)
+        {
+            MANGOS_ASSERT(itemSubClass->Class < MAX_ITEM_CLASS && "Error in ItemSubClass.dbc");
+            if (!(itemSubClass->SubClass < MaxItemSubclassValues[itemSubClass->Class]))
+            {
+                sLog.outError("You need to update item subclass enum for class %u. New subclass %u found.",
+                    itemSubClass->Class, itemSubClass->SubClass);
+                MANGOS_ASSERT(false && "Need update item subclass enums, see error log for details.");
+            }
+        }
+    }
+
     LoadDBC(availableDbcLocales,bar,bad_dbc_files,sLockStore,                dbcPath,"Lock.dbc");
     LoadDBC(availableDbcLocales,bar,bad_dbc_files,sMailTemplateStore,        dbcPath,"MailTemplate.dbc");
     LoadDBC(availableDbcLocales,bar,bad_dbc_files,sMapStore,                 dbcPath,"Map.dbc");
