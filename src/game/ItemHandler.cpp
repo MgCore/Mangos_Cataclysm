@@ -637,6 +637,9 @@ void WorldSession::SendListInventory(ObjectGuid vendorguid)
 
     for(uint8 vendorslot = 0; vendorslot < numitems; ++vendorslot )
     {
+        if (count == MAX_VENDOR_ITEMS)
+            break;
+
         VendorItem const* crItem = vendorslot < customitems ? vItems->GetItem(vendorslot) : tItems->GetItem(vendorslot - customitems);
 
         if (crItem)
