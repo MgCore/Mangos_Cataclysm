@@ -44,7 +44,6 @@ enum Opcodes
     CMSG_MESSAGECHAT_PARTY_GUIDE                     = 0x276,
     CMSG_GUILD_UPDATE_PARTY_STATE                    = 0x277,
     SMSG_GUILD_UPDATE_PARTY_STATE                    = 0x278,
-    SMSG_CORPSE_IS_NOT_IN_INSTANCE                   = 0x279,
     SMSG_COMPRESSED_ACHIEVEMENT_DATA                 = 0x280,
     SMSG_COMPRESSED_RESPOND_INSPECT_ACHIEVEMENTS     = 0x281,
     CMSG_WORLD_TELEPORT                              = 0x08581, // 4.0.6a 13623
@@ -1251,7 +1250,7 @@ enum Opcodes
     CMSG_QUERY_QUESTS_COMPLETED                      = 0x0FE5E, //
     SMSG_QUERY_QUESTS_COMPLETED_RESPONSE             = 0x1023D, //
     CMSG_GM_REPORT_LAG                               = 0x03FA0, // 4.0.6a 13623
-    SMSG_CORPSE_NOT_IN_INSTANCE                      = 0x10242, //
+    SMSG_CORPSE_IS_NOT_IN_INSTANCE                   = 0x10242, //
     CMSG_SET_ALLOW_LOW_LEVEL_RAID1                   = 0x035EC, // 4.0.6a 13623
     CMSG_SET_ALLOW_LOW_LEVEL_RAID2                   = 0x029C4, // 4.0.6a 13623
     SMSG_CAMERA_SHAKE                                = 0x10246, //
