@@ -1022,6 +1022,14 @@
 				RelativePath="..\..\src\game\World.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\src\game\WorldPacket.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\WorldPacket.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Motion generators"
