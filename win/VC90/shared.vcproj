@@ -532,7 +532,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\shared\Database\DB2FileLoader.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\shared\Database\DatabaseMysql.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\shared\Database\DB2FileLoader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\shared\Database\DB2Store.h"
 				>
 			</File>
 			<File
