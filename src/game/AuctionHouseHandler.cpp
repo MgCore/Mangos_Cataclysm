@@ -195,6 +195,7 @@ void WorldSession::HandleAuctionSellItem( WorldPacket & recv_data )
     ObjectGuid auctioneerGuid;
     ObjectGuid itemGuid;
     uint32 etime, bid, buyout;
+    uint32 unk1, unk2;                                      // 4.0.6a SkyFire
     recv_data >> auctioneerGuid;
     recv_data.read_skip<uint32>();                          // const 1?
     recv_data >> itemGuid;
@@ -202,6 +203,7 @@ void WorldSession::HandleAuctionSellItem( WorldPacket & recv_data )
     recv_data >> bid;
     recv_data >> buyout;
     recv_data >> etime;
+    recv_data >> unk1 >>  unk2;                             // 4.0.6a SkyFire
 
     if (itemGuid.IsEmpty() || !bid || !etime)
         return;                                             // check for cheaters

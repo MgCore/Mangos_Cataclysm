@@ -32,7 +32,9 @@ void WorldSession::HandleGuildQueryOpcode(WorldPacket& recvPacket)
     DEBUG_LOG("WORLD: Received CMSG_GUILD_QUERY");
 
     ObjectGuid guid;
+    uint64 unk; //4.0.6a  SkyFire
     recvPacket >> guid;
+    recvPacket >> unk; //4.0.6a  SkyFire
 
     if(Guild *guild = sObjectMgr.GetGuildById(guid.GetCounter()))
     {
