@@ -126,7 +126,10 @@ static void SendTrainerSpellHelper(WorldPacket& data, TrainerSpell const* tSpell
     data << uint8(tSpell->reqLevel);
     data << uint32(tSpell->reqSkill);
     data << uint32(tSpell->reqSkillValue);
-    data << uint32(0); // unk 4.0.1
+    data << uint32(0); //SkyFire 4.0.6
+    data << uint32(0); //SkyFire 4.0.6
+    data << uint32(0); //SkyFire 4.0.6
+    data << uint32(0); //SkyFire 4.0.6
     data << uint32(!tSpell->IsCastable() && chain_node ? (chain_node->prev ? chain_node->prev : chain_node->req) : 0);
     data << uint32(!tSpell->IsCastable() && chain_node && chain_node->prev ? chain_node->req : 0);
     data << uint32(0);
@@ -170,7 +173,9 @@ void WorldSession::SendTrainerList(ObjectGuid guid, const std::string& strTitle)
     WorldPacket data( SMSG_TRAINER_LIST, 8+4+4+maxcount*38 + strTitle.size()+1);
     data << ObjectGuid(guid);
     data << uint32(trainer_type);
-    data << uint32(0x0F); // unknown 4.0.1 (mask ?)
+    data << uint32(0);   //SkyFire 4.0.6
+    data << uint32(1);   //SkyFire 4.0.6
+
 
     size_t count_pos = data.wpos();
     data << uint32(maxcount);
