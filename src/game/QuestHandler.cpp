@@ -418,12 +418,14 @@ void WorldSession::HandleQuestgiverCompleteQuest(WorldPacket& recv_data)
 {
     uint32 quest;
     ObjectGuid guid;
+    uint8 unk;        //4.0.6 SkyFire
     recv_data >> guid >> quest;
+    recv_data >> unk; //4.0.6 SkyFire
 
     if (!GetPlayer()->isAlive())
         return;
 
-    DEBUG_LOG("WORLD: Received CMSG_QUESTGIVER_COMPLETE_QUEST npc = %s, quest = %u", guid.GetString().c_str(), quest);
+    DEBUG_LOG("WORLD: Received CMSG_QUESTGIVER_COMPLETE_QUEST npc = %s, quest = %u, unk = %u", guid.GetString().c_str(), quest, unk);
 
     if (Quest const *pQuest = sObjectMgr.GetQuestTemplate(quest))
     {
