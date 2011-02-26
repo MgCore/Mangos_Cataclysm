@@ -583,8 +583,6 @@ Player::Player (WorldSession *session): Unit(), m_mover(this), m_camera(this), m
 
     // Honor System
     m_lastHonorUpdateTime = time(NULL);
-    m_honorPoints = 0;
-    m_arenaPoints = 0;
 
     // Player summoning
     m_summon_expire = 0;
@@ -733,8 +731,6 @@ bool Player::Create( uint32 guidlow, const std::string& name, uint8 race, uint8 
 
     SetUInt32Value( PLAYER_FIELD_KILLS, 0 );
     SetUInt32Value( PLAYER_FIELD_LIFETIME_HONORBALE_KILLS, 0 );
-    //SetUInt32Value( PLAYER_FIELD_TODAY_CONTRIBUTION, 0 );
-    //SetUInt32Value( PLAYER_FIELD_YESTERDAY_CONTRIBUTION, 0 );
 
     // set starting level
     uint32 start_level = getClass() != CLASS_DEATH_KNIGHT
@@ -753,8 +749,8 @@ bool Player::Create( uint32 guidlow, const std::string& name, uint8 race, uint8 
     InitRunes();
 
     SetUInt32Value(PLAYER_FIELD_COINAGE, sWorld.getConfig(CONFIG_UINT32_START_PLAYER_MONEY));
-    SetHonorPoints(sWorld.getConfig(CONFIG_UINT32_START_HONOR_POINTS));
-    SetArenaPoints(sWorld.getConfig(CONFIG_UINT32_START_ARENA_POINTS));
+    SetCurrency(CURRENCY_TYPE_HONOR_POINTS, sWorld.getConfig(CONFIG_UINT32_START_HONOR_POINTS));
+    SetCurrency(CURRENCY_TYPE_JUSTICE_POINTS, sWorld.getConfig(CONFIG_UINT32_START_JUSTICE_POINTS));
 
     // Played time
     m_Last_tick = time(NULL);
@@ -6546,16 +6542,12 @@ void Player::UpdateHonorFields()
         // update yesterday's contribution
         if(m_lastHonorUpdateTime >= yesterday )
         {
-            //SetUInt32Value(PLAYER_FIELD_YESTERDAY_CONTRIBUTION, GetUInt32Value(PLAYER_FIELD_TODAY_CONTRIBUTION));
-
             // this is the first update today, reset today's contribution
-            //SetUInt32Value(PLAYER_FIELD_TODAY_CONTRIBUTION, 0);
             SetUInt32Value(PLAYER_FIELD_KILLS, MAKE_PAIR32(0,kills_today));
         }
         else
         {
             // no honor/kills yesterday or today, reset
-            //SetUInt32Value(PLAYER_FIELD_YESTERDAY_CONTRIBUTION, 0);
             SetUInt32Value(PLAYER_FIELD_KILLS, 0);
         }
     }
@@ -6584,7 +6576,7 @@ bool Player::RewardHonor(Unit *uVictim, uint32 groupsize, float honor)
     if(GetDummyAura(SPELL_AURA_PLAYER_INACTIVE))
         return false;
 
-    uint64 victim_guid = 0;
+    ObjectGuid victim_guid;
     uint32 victim_rank = 0;
 
     // need call before fields update to have chance move yesterday data to appropriate fields before today data change.
@@ -6595,7 +6587,7 @@ bool Player::RewardHonor(Unit *uVictim, uint32 groupsize, float honor)
         if(!uVictim || uVictim == this || uVictim->HasAuraType(SPELL_AURA_NO_PVP_CREDIT))
             return false;
 
-        victim_guid = uVictim->GetGUID();
+        victim_guid = uVictim->GetObjectGuid();
 
         if( uVictim->GetTypeId() == TYPEID_PLAYER )
         {
@@ -6682,52 +6674,16 @@ bool Player::RewardHonor(Unit *uVictim, uint32 groupsize, float honor)
     // victim_rank [0,20+] HK: <>
     WorldPacket data(SMSG_PVP_CREDIT,4+8+4);
     data << (uint32) honor;
-    data << (uint64) victim_guid;
+    data << victim_guid;
     data << (uint32) victim_rank;
 
     GetSession()->SendPacket(&data);
 
     // add honor points
-    ModifyHonorPoints(int32(honor));
+    ModifyCurrency(CURRENCY_TYPE_HONOR_POINTS, int32(honor));
 
     //ApplyModUInt32Value(PLAYER_FIELD_TODAY_CONTRIBUTION, uint32(honor), true);
     return true;
-}
-
-void Player::SetHonorPoints(uint32 value)
-{
-    if (value > sWorld.getConfig(CONFIG_UINT32_MAX_HONOR_POINTS))
-        value = sWorld.getConfig(CONFIG_UINT32_MAX_HONOR_POINTS);
-
-    m_honorPoints = value;
-}
-
-void Player::SetArenaPoints(uint32 value)
-{
-    if (value > sWorld.getConfig(CONFIG_UINT32_MAX_ARENA_POINTS))
-        value = sWorld.getConfig(CONFIG_UINT32_MAX_ARENA_POINTS);
-
-    m_arenaPoints = value;
-}
-
-void Player::ModifyHonorPoints(int32 value)
-{
-    int32 newValue = (int32)GetHonorPoints() + value;
-
-    if (newValue < 0)
-        newValue = 0;
-
-    SetHonorPoints(newValue);
-}
-
-void Player::ModifyArenaPoints(int32 value)
-{
-    int32 newValue = (int32)GetArenaPoints() + value;
-
-    if (newValue < 0)
-        newValue = 0;
-
-    SetArenaPoints(newValue);
 }
 
 uint32 Player::GetGuildIdFromDB(ObjectGuid guid)
@@ -10195,6 +10151,12 @@ void Player::SendCurrencies() const
     GetSession()->SendPacket(&packet);
 }
 
+uint32 Player::GetCurrency(uint32 id) const
+{
+    PlayerCurrenciesMap::const_iterator itr = m_currencies.find(id);
+    return itr != m_currencies.end() ? itr->second.totalCount : 0;
+}
+
 bool Player::HasCurrency(uint32 id, uint32 count) const
 {
     PlayerCurrenciesMap::const_iterator itr = m_currencies.find(id);
@@ -10203,6 +10165,9 @@ bool Player::HasCurrency(uint32 id, uint32 count) const
 
 void Player::ModifyCurrency(uint32 id, int32 count)
 {
+    if (!count)
+        return;
+
     const CurrencyTypesEntry* currency = sCurrencyTypesStore.LookupEntry(id);
     MANGOS_ASSERT(currency);
 
@@ -10271,26 +10236,47 @@ void Player::ModifyCurrency(uint32 id, int32 count)
     }
 }
 
+void Player::SetCurrency(uint32 id, uint32 count)
+{
+    ModifyCurrency(id, int32(count) - GetCurrency(id));
+}
+
 uint32 Player::_GetCurrencyWeekCap(const CurrencyTypesEntry* currency) const
 {
-    if (currency->ID == CURRENCY_TYPE_CONQUEST_POINTS)
+    uint32 cap = currency->WeekCap;
+    switch (currency->ID)
     {
-        // TODO: implement
-        uint32 cap = 0;
-
-        // probably excessive checks
-        if (cap && IsInWorld() && !GetSession()->PlayerLoading())
+        case CURRENCY_TYPE_CONQUEST_POINTS:
         {
-            WorldPacket packet(SMSG_UPDATE_CURRENCY_WEEK_LIMIT, 8);
-            packet << uint32(cap / PLAYER_CURRENCY_PRECISION);
-            packet << uint32(currency->ID);
-            GetSession()->SendPacket(&packet);
+            // TODO: implement
+            cap = 0;
+            break;
         }
-
-        return cap;
+        case CURRENCY_TYPE_HONOR_POINTS:
+        {
+            uint32 honorcap = sWorld.getConfig(CONFIG_UINT32_MAX_HONOR_POINTS);
+            if (honorcap > 0)
+                cap = honorcap;
+            break;
+        }
+        case CURRENCY_TYPE_JUSTICE_POINTS:
+        {
+            uint32 justicecap = sWorld.getConfig(CONFIG_UINT32_MAX_JUSTICE_POINTS);
+            if (justicecap > 0)
+                cap = justicecap;
+            break;
+        }
     }
-    else
-        return currency->WeekCap;
+
+    if (cap != currency->WeekCap && IsInWorld() && !GetSession()->PlayerLoading())
+    {
+        WorldPacket packet(SMSG_UPDATE_CURRENCY_WEEK_LIMIT, 8);
+        packet << uint32(cap / PLAYER_CURRENCY_PRECISION);
+        packet << uint32(currency->ID);
+        GetSession()->SendPacket(&packet);
+    }
+
+    return cap;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -15433,10 +15419,6 @@ bool Player::LoadFromDB(ObjectGuid guid, SqlQueryHolder *holder )
     SetUInt32Value(PLAYER_FLAGS, fields[11].GetUInt32());
     SetInt32Value(PLAYER_FIELD_WATCHED_FACTION_INDEX, fields[48].GetInt32());
 
-    //SetUInt64Value(PLAYER_FIELD_KNOWN_CURRENCIES, fields[47].GetUInt64());
-
-    //SetUInt32Value(PLAYER_AMMO_ID, fields[64].GetUInt32());
-
     // Action bars state
     SetByteValue(PLAYER_FIELD_BYTES, 2, fields[66].GetUInt8());
 
@@ -15484,8 +15466,6 @@ bool Player::LoadFromDB(ObjectGuid guid, SqlQueryHolder *holder )
 
     _LoadArenaTeamInfo(holder->GetResult(PLAYER_LOGIN_QUERY_LOADARENAINFO));
 
-    SetArenaPoints(fields[39].GetUInt32());
-
     // check arena teams integrity
     for(uint32 arena_slot = 0; arena_slot < MAX_ARENA_SLOT; ++arena_slot)
     {
@@ -15502,10 +15482,6 @@ bool Player::LoadFromDB(ObjectGuid guid, SqlQueryHolder *holder )
             SetArenaTeamInfoField(arena_slot, ArenaTeamInfoType(j), 0);
     }
 
-    SetHonorPoints(fields[40].GetUInt32());
-
-    //SetUInt32Value(PLAYER_FIELD_TODAY_CONTRIBUTION, fields[41].GetUInt32());
-    //SetUInt32Value(PLAYER_FIELD_YESTERDAY_CONTRIBUTION, fields[42].GetUInt32());
     SetUInt32Value(PLAYER_FIELD_LIFETIME_HONORBALE_KILLS, fields[43].GetUInt32());
     SetUInt16Value(PLAYER_FIELD_KILLS, 0, fields[44].GetUInt16());
     SetUInt16Value(PLAYER_FIELD_KILLS, 1, fields[45].GetUInt16());
@@ -17250,8 +17226,8 @@ void Player::SaveToDB()
         "taximask, online, cinematic, "
         "totaltime, leveltime, rest_bonus, logout_time, is_logout_resting, resettalents_cost, resettalents_time, "
         "trans_x, trans_y, trans_z, trans_o, transguid, extra_flags, stable_slots, at_login, zone, "
-        "death_expire_time, taxi_path, arenaPoints, totalHonorPoints, todayHonorPoints, yesterdayHonorPoints, totalKills, "
-        "todayKills, yesterdayKills, chosenTitle, knownCurrencies, watchedFaction, drunk, health, power1, power2, power3, "
+        "death_expire_time, taxi_path, totalKills, "
+        "todayKills, yesterdayKills, chosenTitle, watchedFaction, drunk, health, power1, power2, power3, "
         "power4, power5, power6, power7, power8, power9, specCount, activeSpec, exploredZones, equipmentCache, ammoId, "
         "knownTitles, achievementPoints, talentSpec, actionBars) VALUES ("
         << GetGUIDLow() << ", "
@@ -17325,14 +17301,6 @@ void Player::SaveToDB()
 
     ss << m_taxi.SaveTaxiDestinationsToString() << "', ";
 
-    ss << GetArenaPoints() << ", ";
-
-    ss << GetHonorPoints() << ", ";
-
-    ss << uint32(0)/*GetUInt32Value(PLAYER_FIELD_TODAY_CONTRIBUTION)*/  << ", ";
-
-    ss << uint32(0)/*GetUInt32Value(PLAYER_FIELD_YESTERDAY_CONTRIBUTION)*/ << ", ";
-
     ss << GetUInt32Value(PLAYER_FIELD_LIFETIME_HONORBALE_KILLS) << ", ";
 
     ss << GetUInt16Value(PLAYER_FIELD_KILLS, 0) << ", ";
@@ -17340,8 +17308,6 @@ void Player::SaveToDB()
     ss << GetUInt16Value(PLAYER_FIELD_KILLS, 1) << ", ";
 
     ss << GetUInt32Value(PLAYER_CHOSEN_TITLE) << ", ";
-
-    ss << uint64(0)/*GetUInt64Value(PLAYER_FIELD_KNOWN_CURRENCIES)*/ << ", ";
 
     // FIXME: at this moment send to DB as unsigned, including unit32(-1)
     ss << GetUInt32Value(PLAYER_FIELD_WATCHED_FACTION_INDEX) << ", ";

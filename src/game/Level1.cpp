@@ -1549,7 +1549,7 @@ bool ChatHandler::HandleModifyMoneyCommand(char* args)
     return true;
 }
 
-bool ChatHandler::HandleModifyHonorCommand (char* args)
+bool ChatHandler::HandleModifyCurrencyCommand (char* args)
 {
     if (!*args)
         return false;
@@ -1566,11 +1566,23 @@ bool ChatHandler::HandleModifyHonorCommand (char* args)
     if (HasLowerSecurity(target))
         return false;
 
-    int32 amount = (int32)atoi(args);
+    char* currencyid_s = strtok(args, " ");
+    char* amount_s = strtok(NULL, "");
+    if (!currencyid_s || !amount_s)
+        return false;
 
-    target->ModifyHonorPoints(amount);
+    int32 currencyid = (int32)atoi(currencyid_s);
+    int32 amount = (int32)atoi(amount_s);
+    if (!sCurrencyTypesStore.LookupEntry(uint32(currencyid)))
+    {
+        PSendSysMessage("Currency %u does not exist.", currencyid);
+        SetSentErrorMessage(true);
+        return false;
+    }
 
-    PSendSysMessage(LANG_COMMAND_MODIFY_HONOR, GetNameLink(target).c_str(), target->GetHonorPoints());
+    target->ModifyCurrency(uint32(currencyid), amount);
+
+    PSendSysMessage(LANG_COMMAND_MODIFY_HONOR, GetNameLink(target).c_str(), target->GetCurrency(uint32(currencyid)));
 
     return true;
 }

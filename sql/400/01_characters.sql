@@ -16,3 +16,6 @@ CREATE TABLE `character_currency` (
   `thisweek` SMALLINT(5) UNSIGNED NOT NULL,
   PRIMARY KEY (`guid`,`currency`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+SET @CURRENCY_TYPE_HONOR_POINTS = 392;
+INSERT INTO character_currency SELECT guid, @CURRENCY_TYPE_HONOR_POINTS, totalHonorPoints, 0 FROM characters WHERE totalHonorPoints > 0;
