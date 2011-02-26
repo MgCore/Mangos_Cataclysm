@@ -305,7 +305,7 @@ void InitializeOpcodes()
     /*0x2D1*/ DEFINE_OPCODE_HANDLER( CMSG_MOVE_NOT_ACTIVE_MOVER,                   STATUS_LOGGEDIN, PROCESS_THREADSAFE,   &WorldSession::HandleMoveNotActiveMoverOpcode  );
     /*0x2D3*/ DEFINE_OPCODE_HANDLER( CMSG_BATTLEFIELD_STATUS,                      STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleBattlefieldStatusOpcode   );
     /*0x2D5*/ DEFINE_OPCODE_HANDLER( CMSG_BATTLEFIELD_PORT,                        STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleBattleFieldPortOpcode     );
-    /*0x2D6*/ DEFINE_OPCODE_HANDLER( MSG_INSPECT_HONOR_STATS,                      STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleInspectHonorStatsOpcode   );
+    /*0x2D6*/ DEFINE_OPCODE_HANDLER( CMSG_INSPECT_HONOR_STATS,                     STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleInspectHonorStatsOpcode   );
     /*0x2D7*/ DEFINE_OPCODE_HANDLER( CMSG_BATTLEMASTER_HELLO,                      STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleBattlemasterHelloOpcode   );
     /*0x2DB*/ DEFINE_OPCODE_HANDLER( CMSG_FORCE_WALK_SPEED_CHANGE_ACK,             STATUS_LOGGEDIN, PROCESS_THREADSAFE,   &WorldSession::HandleForceSpeedChangeAckOpcodes);
     /*0x2DD*/ DEFINE_OPCODE_HANDLER( CMSG_FORCE_SWIM_BACK_SPEED_CHANGE_ACK,        STATUS_LOGGEDIN, PROCESS_THREADSAFE,   &WorldSession::HandleForceSpeedChangeAckOpcodes);

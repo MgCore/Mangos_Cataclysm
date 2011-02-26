@@ -310,6 +310,9 @@ class Guild
         std::string const& GetMOTD() const { return MOTD; }
         std::string const& GetGINFO() const { return GINFO; }
 
+        // TODO: implement
+        uint32 GetLevel() const { return 1; }
+
         time_t GetCreatedDate() const { return m_CreatedDate; }
 
         uint32 GetEmblemStyle() const { return m_EmblemStyle; }
