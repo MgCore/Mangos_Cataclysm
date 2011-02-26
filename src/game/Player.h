@@ -112,8 +112,25 @@ struct PlayerTalent
     uint32 currentRank;
 };
 
+enum PlayerCurrencyState
+{
+    PLAYERCURRENCY_UNCHANGED = 0,
+    PLAYERCURRENCY_CHANGED   = 1,
+    PLAYERCURRENCY_NEW       = 2,
+    PLAYERCURRENCY_REMOVED   = 3
+};
+
+struct PlayerCurrency
+{
+    PlayerCurrencyState state;
+    uint32 totalCount;
+    uint32 weekCount;
+};
+
 typedef UNORDERED_MAP<uint32, PlayerSpell> PlayerSpellMap;
 typedef UNORDERED_MAP<uint32, PlayerTalent> PlayerTalentMap;
+
+typedef UNORDERED_MAP<uint32, PlayerCurrency> PlayerCurrenciesMap;
 
 // Spell modifier (used for modify other spells)
 struct SpellModifier
@@ -921,6 +938,7 @@ enum PlayerLoginQueryIndex
     PLAYER_LOGIN_QUERY_LOADTALENTBRANCHSPECS,
     PLAYER_LOGIN_QUERY_LOADWEEKLYQUESTSTATUS,
     PLAYER_LOGIN_QUERY_LOADMONTHLYQUESTSTATUS,
+    PLAYER_LOGIN_QUERY_LOADCURRENCY,
 
     MAX_PLAYER_LOGIN_QUERY
 };
@@ -1303,6 +1321,10 @@ class MANGOS_DLL_SPEC Player : public Unit
 
         uint8 _CanTakeMoreSimilarItems(uint32 entry, uint32 count, Item* pItem, uint32* no_space_count = NULL) const;
         uint8 _CanStoreItem( uint8 bag, uint8 slot, ItemPosCountVec& dest, uint32 entry, uint32 count, Item *pItem = NULL, bool swap = false, uint32* no_space_count = NULL ) const;
+
+        void SendCurrencies() const;
+        bool HasCurrency(uint32 id, uint32 count) const;
+        void AddCurrency(uint32 id, int32 count);
 
         void ApplyEquipCooldown( Item * pItem );
         void SetAmmo( uint32 item );
@@ -2463,6 +2485,7 @@ class MANGOS_DLL_SPEC Player : public Unit
         void _LoadBGData(QueryResult* result);
         void _LoadGlyphs(QueryResult *result);
         void _LoadTalentBranchSpecs(QueryResult* result);
+        void _LoadCurrency(QueryResult *result);
         void _LoadIntoDataField(const char* data, uint32 startOffset, uint32 count);
 
         /*********************************************************/
@@ -2484,6 +2507,7 @@ class MANGOS_DLL_SPEC Player : public Unit
         void _SaveGlyphs();
         void _SaveTalents();
         void _SaveTalentBranchSpecs();
+        void _SaveCurrency();
         void _SaveStats();
 
         void _SetCreateBits(UpdateMask *updateMask, Player *target) const;
@@ -2519,6 +2543,8 @@ class MANGOS_DLL_SPEC Player : public Unit
 
         Item* m_items[PLAYER_SLOTS_COUNT];
         uint32 m_currentBuybackSlot;
+        PlayerCurrenciesMap m_currencies;
+        uint32 _GetCurrencyWeekCap(const CurrencyTypesEntry* currency) const;
 
         std::vector<Item*> m_itemUpdateQueue;
         bool m_itemUpdateQueueBlocked;
