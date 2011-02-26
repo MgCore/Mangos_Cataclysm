@@ -1157,27 +1157,22 @@ void LoadLootTemplates_Creature()
 
 void LoadLootTemplates_Disenchant()
 {
-    LootIdSet ids_set, ids_setUsed;
-    LootTemplates_Disenchant.LoadAndCollectLootIds(ids_set);
+    LootIdSet ids_setInDB;
+    LootTemplates_Disenchant.LoadAndCollectLootIds(ids_setInDB);
 
     // remove real entries and check existence loot
-    for(uint32 i = 1; i < sItemStorage.MaxEntry; ++i )
+    for (uint32 i = 1; i < sItemDisenchantLootStore.GetNumRows(); ++i)
     {
-        if(ItemPrototype const* proto = sItemStorage.LookupEntry<ItemPrototype>(i))
+        if (sItemDisenchantLootStore.LookupEntry(i))
         {
-            if(uint32 lootid = proto->DisenchantID)
-            {
-                if (ids_set.find(lootid) == ids_set.end())
-                    LootTemplates_Disenchant.ReportNotExistedId(lootid);
-                else
-                    ids_setUsed.insert(lootid);
-            }
+            if (ids_setInDB.find(i) == ids_setInDB.end())
+                sLog.outErrorDb("Table '%s' hasn't got entry %d that exists in ItemDisenchantLoot.dbc",
+                    LootTemplates_Disenchant.GetName(), i);
         }
+        else if (ids_setInDB.find(i) != ids_setInDB.end())
+            sLog.outErrorDb("Table '%s' has entry %d that doesn't exist in ItemDisenchantLoot.dbc.",
+                LootTemplates_Disenchant.GetName(), i);
     }
-    for(LootIdSet::const_iterator itr = ids_setUsed.begin(); itr != ids_setUsed.end(); ++itr)
-        ids_set.erase(*itr);
-    // output error for any still listed (not referenced from appropriate table) ids
-    LootTemplates_Disenchant.ReportUnusedIds(ids_set);
 }
 
 void LoadLootTemplates_Fishing()

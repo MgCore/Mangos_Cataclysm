@@ -8033,7 +8033,7 @@ void Player::SendLoot(ObjectGuid guid, LootType loot_type)
                 switch(loot_type)
                 {
                     case LOOT_DISENCHANTING:
-                        loot->FillLoot(item->GetProto()->DisenchantID, LootTemplates_Disenchant, this, true);
+                        loot->FillLoot(item->GetProto()->GetDisenchantID(), LootTemplates_Disenchant, this, true);
                         item->SetLootState(ITEM_LOOT_TEMPORARY);
                         break;
                     case LOOT_PROSPECTING:

@@ -20,6 +20,7 @@
 #define _ITEMPROTOTYPE_H
 
 #include "Common.h"
+#include "DBCStores.h"
 
 enum ItemModType
 {
@@ -127,7 +128,7 @@ enum ItemPrototypeFlags
     ITEM_FLAG_REFUNDABLE                      = 0x00001000, // item cost can be refunded within 2 hours after purchase
     ITEM_FLAG_CHARTER                         = 0x00002000, // arena/guild charter
     ITEM_FLAG_UNK14                           = 0x00004000,
-    ITEM_FLAG_UNK15                           = 0x00008000, // a lot of items have this
+    ITEM_FLAG_CANNOT_BE_DISENCHANTED          = 0x00008000, // a lot of items have this
     ITEM_FLAG_UNK16                           = 0x00010000, // a lot of items have this
     ITEM_FLAG_UNK17                           = 0x00020000,
     ITEM_FLAG_PROSPECTABLE                    = 0x00040000, // item can have prospecting loot (in fact some items expected have empty loot)
@@ -508,10 +509,12 @@ inline uint8 ItemSubClassToDurabilityMultiplierId(uint32 ItemClass, uint32 ItemS
 
 enum ItemExtraFlags
 {
-    ITEM_EXTRA_NON_CONSUMABLE     = 0x01,                   // use as additional flag to spellcharges_N negative values, item not expire at no chanrges
-    ITEM_EXTRA_REAL_TIME_DURATION = 0x02,                   // if set and have Duration time, then offline time included in counting, if not set then counted only in game time
+    ITEM_EXTRA_NON_CONSUMABLE           = 0x00000001,       // use as additional flag to spellcharges_N negative values, item not expire at no chanrges
+    ITEM_EXTRA_REAL_TIME_DURATION       = 0x00000002,       // if set and have Duration time, then offline time included in counting, if not set then counted only in game time
+                                                            // all used flags DB flags, used for check DB data
+    ITEM_EXTRA_ALL_DATABASE       = ITEM_EXTRA_NON_CONSUMABLE|ITEM_EXTRA_REAL_TIME_DURATION,
 
-    ITEM_EXTRA_ALL                = 0x03                    // all used flags, used for check DB data (mask all above flags)
+    ITEM_EXTRA_BOUGHT_WITH_CURRENCY     = 0x80000000,       // item exists in ItemCurrencyCost.dbc
 };
 
 // GCC have alternative #pragma pack(N) syntax and old gcc version not support pack(push,N), also any gcc version not support it at some platform
@@ -604,13 +607,11 @@ struct ItemPrototype
     _Socket Socket[MAX_ITEM_PROTO_SOCKETS];
     uint32 socketBonus;                                     // id from SpellItemEnchantment.dbc
     uint32 GemProperties;                                   // id from GemProperties.dbc
-    int32 RequiredDisenchantSkill;
     float  ArmorDamageModifier;
     uint32 Duration;                                        // negative = realtime, positive = ingame time
     uint32 ItemLimitCategory;                               // id from ItemLimitCategory.dbc
     uint32 HolidayId;                                       // id from Holidays.dbc
     uint32 ScriptId;
-    uint32 DisenchantID;
     uint32 FoodType;
     uint32 MinMoneyLoot;
     uint32 MaxMoneyLoot;
@@ -635,6 +636,59 @@ struct ItemPrototype
         }
 
         return false;
+    }
+
+    bool IsDisenchantable() const
+    {
+        return Bonding != BIND_QUEST_ITEM && !Area && !Map && (Class == ITEM_CLASS_ARMOR || Class == ITEM_CLASS_WEAPON)
+            && (Flags & (ITEM_FLAG_CANNOT_BE_DISENCHANTED|ITEM_FLAG_CONJURED)) == 0
+            && GetMaxStackSize() != 1 && (SellPrice || (Flags & ITEM_EXTRA_BOUGHT_WITH_CURRENCY) != 0);
+    }
+
+    uint32 GetDisenchantID() const
+    {
+        for (uint32 i = 1; i < sItemDisenchantLootStore.GetNumRows(); ++i)
+        {
+            const ItemDisenchantLootEntry* loot = sItemDisenchantLootStore.LookupEntry(i);
+            if (loot
+                && loot->Class == Class
+                && loot->quality == Quality
+                && loot->maxItemLevel <= ItemLevel
+                && loot->minItemLevel >= ItemLevel
+                )
+                return loot->id;
+        }
+
+        if (IsDisenchantable())
+        {
+            sLog.outError("[ItemPrototype::GetDisenchantID] Failed to find entry in ItemDisenchantLoot.dbc for disenchantable item %d, crashing.", ItemId);
+            MANGOS_ASSERT(false && "Not found entry in ItemDisenchantLoot.dbc for disenchantable item, see log for details.");
+        }
+
+        return 0;
+    }
+
+    uint32 GetRequiredDisenchantSkill() const
+    {
+        for (uint32 i = 1; i < sItemDisenchantLootStore.GetNumRows(); ++i)
+        {
+            const ItemDisenchantLootEntry* loot = sItemDisenchantLootStore.LookupEntry(i);
+            if (loot
+                && loot->Class == Class
+                && loot->quality == Quality
+                && loot->maxItemLevel <= ItemLevel
+                && loot->minItemLevel >= ItemLevel
+                )
+                return loot->requiredDisenchantSkill;
+        }
+
+        if (IsDisenchantable())
+        {
+            sLog.outError("[ItemPrototype::GetRequiredDisenchantSkill] Failed to find entry in ItemDisenchantLoot.dbc for disenchantable item %d, crashing.", ItemId);
+            MANGOS_ASSERT(false && "Not found entry in ItemDisenchantLoot.dbc for disenchantable item, see log for details.");
+        }
+
+        return uint32(-1);
     }
 
     uint32 GetMaxStackSize() const { return Stackable > 0 ? uint32(Stackable) : uint32(0x7FFFFFFF-1); }

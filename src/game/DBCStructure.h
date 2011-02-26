@@ -1086,10 +1086,27 @@ struct ItemBagFamilyEntry
 struct ItemClassEntry
 {
     //uint32 id;                                            // 0
-    uint32 Class;                                           // 1 equal to id
+    uint32 Class;                                           // 1
     //uint32 unk2;                                          // 2 looks like second class
     //uint32 unk3;                                          // 3 1 for weapons
     //DBCString name;                                       // 4
+};
+
+struct ItemCurrencyCostEntry
+{
+    //uint32 id;                                            // 0
+    uint32 itemid;                                          // 1
+};
+
+struct ItemDisenchantLootEntry
+{
+    uint32 id;                                              // 0
+    uint32 Class;                                           // 1
+    //uint32 unk0;                                          // 2
+    uint32 quality;                                         // 3
+    uint32 minItemLevel;                                    // 4
+    uint32 maxItemLevel;                                    // 5
+    uint32 requiredDisenchantSkill;                         // 6
 };
 
 struct ItemDisplayInfoEntry

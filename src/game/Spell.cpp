@@ -6369,12 +6369,12 @@ SpellCastResult Spell::CheckItems()
                     return SPELL_FAILED_CANT_BE_DISENCHANTED;
 
                 // must have disenchant loot (other static req. checked at item prototype loading)
-                if (!itemProto->DisenchantID)
+                if (!itemProto->IsDisenchantable())
                     return SPELL_FAILED_CANT_BE_DISENCHANTED;
 
                 // 2.0.x addon: Check player enchanting level against the item disenchanting requirements
-                int32 item_disenchantskilllevel = itemProto->RequiredDisenchantSkill;
-                if (item_disenchantskilllevel > int32(p_caster->GetSkillValue(SKILL_ENCHANTING)))
+                uint32 item_disenchantskilllevel = itemProto->GetRequiredDisenchantSkill();
+                if (item_disenchantskilllevel > p_caster->GetSkillValue(SKILL_ENCHANTING))
                     return SPELL_FAILED_LOW_CASTLEVEL;
                 break;
             }

@@ -126,6 +126,8 @@ extern DBCStorage <ItemArmorShieldEntry>         sItemArmorShieldStore;
 extern DBCStorage <ItemArmorTotalEntry>          sItemArmorTotalStore;
 extern DBCStorage <ItemBagFamilyEntry>           sItemBagFamilyStore;
 extern DBCStorage <ItemClassEntry>               sItemClassStore;
+extern DBCStorage <ItemCurrencyCostEntry>        sItemCurrencyCostStore;
+extern DBCStorage <ItemDisenchantLootEntry>      sItemDisenchantLootStore;
 extern DBCStorage <ItemDamageEntry>              sItemDamageAmmoStore;
 extern DBCStorage <ItemDamageEntry>              sItemDamageOneHandStore;
 extern DBCStorage <ItemDamageEntry>              sItemDamageOneHandCasterStore;
