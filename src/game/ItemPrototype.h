@@ -642,7 +642,7 @@ struct ItemPrototype
     {
         return Bonding != BIND_QUEST_ITEM && !Area && !Map && (Class == ITEM_CLASS_ARMOR || Class == ITEM_CLASS_WEAPON)
             && (Flags & (ITEM_FLAG_CANNOT_BE_DISENCHANTED|ITEM_FLAG_CONJURED)) == 0
-            && GetMaxStackSize() != 1 && (SellPrice || (Flags & ITEM_EXTRA_BOUGHT_WITH_CURRENCY) != 0);
+            && GetMaxStackSize() == 1 && (SellPrice || (Flags & ITEM_EXTRA_BOUGHT_WITH_CURRENCY) != 0);
     }
 
     uint32 GetDisenchantID() const
