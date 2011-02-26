@@ -130,6 +130,7 @@ struct PlayerCurrency
 typedef UNORDERED_MAP<uint32, PlayerSpell> PlayerSpellMap;
 typedef UNORDERED_MAP<uint32, PlayerTalent> PlayerTalentMap;
 
+#define PLAYER_CURRENCY_PRECISION   100
 typedef UNORDERED_MAP<uint32, PlayerCurrency> PlayerCurrenciesMap;
 
 // Spell modifier (used for modify other spells)
@@ -1324,7 +1325,7 @@ class MANGOS_DLL_SPEC Player : public Unit
 
         void SendCurrencies() const;
         bool HasCurrency(uint32 id, uint32 count) const;
-        void AddCurrency(uint32 id, int32 count);
+        void ModifyCurrency(uint32 id, int32 count);
 
         void ApplyEquipCooldown( Item * pItem );
         void SetAmmo( uint32 item );

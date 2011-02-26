@@ -237,10 +237,6 @@ class BattleGroundMgr
 
         void InitAutomaticArenaPointDistribution();
         void DistributeArenaPoints();
-        time_t GetNextAutoDistributionTime() const
-        {
-            return m_NextAutoDistributionTime;
-        }
         void ToggleArenaTesting();
         void ToggleTesting();
 

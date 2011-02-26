@@ -10184,12 +10184,12 @@ void Player::SendCurrencies() const
     for (PlayerCurrenciesMap::const_iterator itr = m_currencies.begin(); itr != m_currencies.end(); ++itr)
     {
         const CurrencyTypesEntry* entry = sCurrencyTypesStore.LookupEntry(itr->first);
-        packet << uint32(itr->second.weekCount);
+        packet << uint32(itr->second.weekCount / PLAYER_CURRENCY_PRECISION);
         packet << uint8(0);                     // unknown
         packet << uint32(entry->ID);
-        packet << uint32(sBattleGroundMgr.GetNextAutoDistributionTime() - 1*WEEK);
-        packet << uint32(_GetCurrencyWeekCap(entry));
-        packet << uint32(itr->second.totalCount);
+        packet << uint32(sWorld.GetNextWeeklyQuestsResetTime() - 1*WEEK);
+        packet << uint32(_GetCurrencyWeekCap(entry) / PLAYER_CURRENCY_PRECISION);
+        packet << uint32(itr->second.totalCount / PLAYER_CURRENCY_PRECISION);
     }
 
     GetSession()->SendPacket(&packet);
@@ -10201,7 +10201,7 @@ bool Player::HasCurrency(uint32 id, uint32 count) const
     return itr != m_currencies.end() && itr->second.totalCount >= count;
 }
 
-void Player::AddCurrency(uint32 id, int32 count)
+void Player::ModifyCurrency(uint32 id, int32 count)
 {
     const CurrencyTypesEntry* currency = sCurrencyTypesStore.LookupEntry(id);
     MANGOS_ASSERT(currency);
@@ -10264,8 +10264,8 @@ void Player::AddCurrency(uint32 id, int32 count)
         {
             WorldPacket packet(SMSG_UPDATE_CURRENCY, 12);
             packet << uint32(id);
-            packet << uint32(weekCap ? newWeekCount : 0);
-            packet << uint32(newTotalCount);
+            packet << uint32(weekCap ? (newWeekCount / PLAYER_CURRENCY_PRECISION) : 0);
+            packet << uint32(newTotalCount / PLAYER_CURRENCY_PRECISION);
             GetSession()->SendPacket(&packet);
         }
     }
@@ -10282,7 +10282,7 @@ uint32 Player::_GetCurrencyWeekCap(const CurrencyTypesEntry* currency) const
         if (cap && IsInWorld() && !GetSession()->PlayerLoading())
         {
             WorldPacket packet(SMSG_UPDATE_CURRENCY_WEEK_LIMIT, 8);
-            packet << uint32(cap);
+            packet << uint32(cap / PLAYER_CURRENCY_PRECISION);
             packet << uint32(currency->ID);
             GetSession()->SendPacket(&packet);
         }
@@ -19187,7 +19187,7 @@ bool Player::BuyItemFromVendorSlot(ObjectGuid vendorGuid, uint32 vendorslot, uin
             for (int i = 0; i < MAX_ITEM_EXT_COST_CURRENCIES; ++i)
             {
                 if (iece->RequiredCurrency[i])
-                    AddCurrency(iece->RequiredCurrency[i], -int32(iece->RequiredCurrencyCount[i] * count));
+                    ModifyCurrency(iece->RequiredCurrency[i], -int32(iece->RequiredCurrencyCount[i] * count));
             }
         }
 
@@ -19235,7 +19235,7 @@ bool Player::BuyItemFromVendorSlot(ObjectGuid vendorGuid, uint32 vendorslot, uin
             for (int i = 0; i < MAX_ITEM_EXT_COST_CURRENCIES; ++i)
             {
                 if (iece->RequiredCurrency[i])
-                    AddCurrency(iece->RequiredCurrency[i], -int32(iece->RequiredCurrencyCount[i]));
+                    ModifyCurrency(iece->RequiredCurrency[i], -int32(iece->RequiredCurrencyCount[i]));
             }
         }
 
@@ -20451,6 +20451,9 @@ void Player::ResetWeeklyQuestStatus()
     m_weeklyquests.clear();
     // DB data deleted in caller
     m_WeeklyQuestChanged = false;
+
+    for (PlayerCurrenciesMap::iterator itr = m_currencies.begin(); itr != m_currencies.end(); ++itr)
+        itr->second.weekCount = 0;                  // no need to change state here as sWorld resets currencies in DB
 }
 
 void Player::ResetMonthlyQuestStatus()
