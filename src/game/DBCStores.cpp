@@ -114,8 +114,6 @@ DBCStorage <ItemArmorTotalEntry>          sItemArmorTotalStore(ItemArmorTotalfmt
 DBCStorage <ItemBagFamilyEntry>           sItemBagFamilyStore(ItemBagFamilyfmt);
 DBCStorage <ItemClassEntry>               sItemClassStore(ItemClassfmt);
 //DBCStorage <ItemCondExtCostsEntry> sItemCondExtCostsStore(ItemCondExtCostsEntryfmt);
-DBCStorage <ItemCurrencyCostEntry>        sItemCurrencyCostStore(ItemCurrencyCostfmt);
-DBCStorage <ItemDisenchantLootEntry>      sItemDisenchantLootStore(ItemDisenchantLootfmt);
 DBCStorage <ItemDamageEntry>              sItemDamageAmmoStore(ItemDamagefmt);
 DBCStorage <ItemDamageEntry>              sItemDamageOneHandStore(ItemDamagefmt);
 DBCStorage <ItemDamageEntry>              sItemDamageOneHandCasterStore(ItemDamagefmt);
@@ -399,7 +397,7 @@ void LoadDBCStores(const std::string& dataPath)
         exit(1);
     }
 
-    const uint32 DBCFilesCount = 108;
+    const uint32 DBCFilesCount = 107;
 
     barGoLink bar( (int)DBCFilesCount );
 
@@ -490,8 +488,7 @@ void LoadDBCStores(const std::string& dataPath)
         if (itemClass)
             MANGOS_ASSERT(itemClass->Class < MAX_ITEM_CLASS && "Need update MAX_ITEM_CLASS definition.");
     }
-    LoadDBC(availableDbcLocales,bar,bad_dbc_files,sItemCurrencyCostStore,    dbcPath,"ItemCurrencyCost.dbc");
-    LoadDBC(availableDbcLocales,bar,bad_dbc_files,sItemDisenchantLootStore,  dbcPath,"ItemDisenchantLoot.dbc");
+
     //LoadDBC(availableDbcLocales,bar,bad_dbc_files,sItemDisplayInfoStore,     dbcPath,"ItemDisplayInfo.dbc");     -- not used currently
     //LoadDBC(availableDbcLocales,bar,bad_dbc_files,sItemCondExtCostsStore,    dbcPath,"ItemCondExtCosts.dbc");
     LoadDBC(availableDbcLocales,bar,bad_dbc_files,sItemExtendedCostStore,    dbcPath,"ItemExtendedCost.dbc");

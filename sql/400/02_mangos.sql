@@ -14,6 +14,4 @@ ALTER TABLE `item_template`
 	DROP COLUMN `ammo_type`,
 	DROP COLUMN `armor`,
 	DROP COLUMN `block`,
-	DROP COLUMN `RequiredDisenchantSkill`,
-	DROP COLUMN `DisenchantID`,
 	CHANGE COLUMN `dmg_type1` `damageType` tinyint(3) UNSIGNED NOT NULL DEFAULT '0';

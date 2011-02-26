@@ -7648,7 +7648,7 @@ void Spell::EffectDisEnchant(SpellEffectEntry const* /*effect*/)
         return;
 
     Player* p_caster = (Player*)m_caster;
-    if(!itemTarget || !itemTarget->GetProto()->IsDisenchantable())
+    if(!itemTarget || !itemTarget->GetProto()->DisenchantID)
         return;
 
     p_caster->UpdateCraftSkill(m_spellInfo->Id);

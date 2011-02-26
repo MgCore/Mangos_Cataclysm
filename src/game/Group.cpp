@@ -54,7 +54,7 @@ void Roll::CalculateCommonVoteMask(uint32 max_enchanting_skill)
     if (itemProto->Flags2 & ITEM_FLAG2_NEED_ROLL_DISABLED)
         m_commonVoteMask = RollVoteMask(m_commonVoteMask & ~ROLL_VOTE_MASK_NEED);
 
-    if (!itemProto->IsDisenchantable() || itemProto->GetRequiredDisenchantSkill() > max_enchanting_skill)
+    if (!itemProto->DisenchantID || uint32(itemProto->RequiredDisenchantSkill) > max_enchanting_skill)
         m_commonVoteMask = RollVoteMask(m_commonVoteMask & ~ROLL_VOTE_MASK_DISENCHANT);
 }
 
@@ -922,7 +922,7 @@ void Group::CountTheRoll(Rolls::iterator& rollI)
                     --roll->getLoot()->unlootedCount;
 
                     ItemPrototype const *pProto = ObjectMgr::GetItemPrototype(roll->itemid);
-                    player->AutoStoreLoot(pProto->GetDisenchantID(), LootTemplates_Disenchant, true);
+                    player->AutoStoreLoot(pProto->DisenchantID, LootTemplates_Disenchant, true);
                 }
             }
         }
