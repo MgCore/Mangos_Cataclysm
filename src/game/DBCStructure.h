@@ -1133,7 +1133,7 @@ struct ItemDamageEntry
 };
 
 #define MAX_EXTENDED_COST_ITEMS         5
-#define MAX_ITEM_EXT_COST_CURRENCIES    5
+#define MAX_EXTENDED_COST_CURRENCIES    5
 
 struct ItemExtendedCostEntry
 {
@@ -1145,8 +1145,8 @@ struct ItemExtendedCostEntry
     uint32      RequiredItemCount[MAX_EXTENDED_COST_ITEMS]; // 9-13 required count of 1st item
     uint32      RequiredPersonalArenaRating;                // 14 required personal arena rating
     //uint32                                                // 15
-    uint32      RequiredCurrency[MAX_ITEM_EXT_COST_CURRENCIES];      // 16-20
-    uint32      RequiredCurrencyCount[MAX_ITEM_EXT_COST_CURRENCIES]; // 21-25
+    uint32      RequiredCurrency[MAX_EXTENDED_COST_CURRENCIES];      // 16-20
+    uint32      RequiredCurrencyCount[MAX_EXTENDED_COST_CURRENCIES]; // 21-25
     //uint32    something[5];                               // 26-30
 };
 

@@ -7531,7 +7531,7 @@ void Player::_HandleDeadlyPoison(Unit* Target, WeaponAttackType attType, SpellEn
             break;
         }
     }
-    if (dPoison && dPoison->GetStackAmount() == spellInfo->StackAmount)
+    if (dPoison && dPoison->GetStackAmount() == spellInfo->GetStackAmount())
     {
         Item *otherWeapon = GetWeaponForAttack(attType == BASE_ATTACK ? OFF_ATTACK : BASE_ATTACK );
         if (!otherWeapon)
@@ -7552,7 +7552,7 @@ void Player::_HandleDeadlyPoison(Unit* Target, WeaponAttackType attType, SpellEn
                 continue;
 
             SpellEntry const* combatEntry = sSpellStore.LookupEntry(pSecondEnchant->spellid[s]);
-            if (combatEntry && combatEntry->Dispel == DISPEL_POISON)
+            if (combatEntry && combatEntry->GetDispel() == DISPEL_POISON)
                 CastSpell(Target, combatEntry, true, otherWeapon);
         }
     }
@@ -7645,8 +7645,9 @@ void Player::CastItemCombatSpell(Unit* Target, WeaponAttackType attType)
                     CastSpell(this, pEnchant->spellid[s], true, item);
                 else
                 {
+                    const SpellClassOptionsEntry* class_opt = spellInfo->GetSpellClassOptions();
                     // Deadly Poison, unique effect needs to be handled before casting triggered spell
-                    if (spellInfo->SpellFamilyName == SPELLFAMILY_ROGUE && spellInfo->SpellFamilyFlags & UI64LIT(0x10000))
+                    if (class_opt && class_opt->SpellFamilyName == SPELLFAMILY_ROGUE && class_opt->SpellFamilyFlags & UI64LIT(0x10000))
                         _HandleDeadlyPoison(Target, attType, spellInfo);
 
                     CastSpell(Target, pEnchant->spellid[s], true, item);
@@ -19045,15 +19046,16 @@ void Player::TakeExtendedCost(uint32 extendedCostId, uint32 count)
 {
     ItemExtendedCostEntry const* extendedCost = sItemExtendedCostStore.LookupEntry(extendedCostId);
 
-    if (extendedCost->reqhonorpoints)
-        ModifyHonorPoints(-int32(extendedCost->reqhonorpoints * count));
-    if (extendedCost->reqarenapoints)
-        ModifyArenaPoints(-int32(extendedCost->reqarenapoints * count));
-
     for (uint8 i = 0; i < MAX_EXTENDED_COST_ITEMS; ++i)
     {
-        if (extendedCost->reqitem[i])
-            DestroyItemCount(extendedCost->reqitem[i], extendedCost->reqitemcount[i] * count, true);
+        if (extendedCost->RequiredItem[i])
+            DestroyItemCount(extendedCost->RequiredItem[i], extendedCost->RequiredItemCount[i] * count, true);
+    }
+
+    for (uint8 i = 0; i < MAX_EXTENDED_COST_CURRENCIES; ++i)
+    {
+        if (extendedCost->RequiredCurrency[i])
+            ModifyCurrency(extendedCost->RequiredCurrency[i], -int32(extendedCost->RequiredCurrencyCount[i] * count));
     }
 }
 
@@ -19150,7 +19152,7 @@ bool Player::BuyItemFromVendorSlot(ObjectGuid vendorGuid, uint32 vendorslot, uin
         }
 
         // item base price
-        for (int i = 0; i < MAX_EXTENDED_COST_ITEMS; ++i)
+        for (uint8 i = 0; i < MAX_EXTENDED_COST_ITEMS; ++i)
         {
             if(iece->RequiredItem[i] && !HasItemCount(iece->RequiredItem[i], (iece->RequiredItemCount[i] * count)))
             {
@@ -19160,9 +19162,9 @@ bool Player::BuyItemFromVendorSlot(ObjectGuid vendorGuid, uint32 vendorslot, uin
         }
 
         // currency price
-        for (int i = 0; i < MAX_ITEM_EXT_COST_CURRENCIES; ++i)
+        for (uint8 i = 0; i < MAX_EXTENDED_COST_CURRENCIES; ++i)
         {
-            if (iece->RequiredCurrency[i] && !HasCurrency(iece->RequiredCurrency[i], iece->RequiredCurrencyCount[i]))
+            if (iece->RequiredCurrency[i] && !HasCurrency(iece->RequiredCurrency[i], iece->RequiredCurrencyCount[i] * count))
             {
                 SendEquipError(EQUIP_ERR_VENDOR_MISSING_TURNINS, NULL, NULL);
                 return false;

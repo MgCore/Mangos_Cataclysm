@@ -6335,10 +6335,10 @@ SpellCastResult Spell::CheckItems()
                 if( targetItem->GetProto()->ItemLevel < m_spellInfo->GetBaseLevel() )
                     return SPELL_FAILED_LOWLEVEL;
                 // Check if we can store a new scroll, enchanting vellum has implicit SPELL_EFFECT_CREATE_ITEM
-                if (isVellumTarget && m_spellInfo->EffectItemType[i])
+                if (isVellumTarget && spellEffect->EffectItemType)
                 {
                     ItemPosCountVec dest;
-                    uint8 msg = p_caster->CanStoreNewItem( NULL_BAG, NULL_SLOT, dest, m_spellInfo->EffectItemType[i], 1 );
+                    uint8 msg = p_caster->CanStoreNewItem( NULL_BAG, NULL_SLOT, dest, spellEffect->EffectItemType, 1 );
                     if (msg != EQUIP_ERR_OK)
                     {
                         p_caster->SendEquipError( msg, NULL, NULL );

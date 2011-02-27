@@ -5074,10 +5074,10 @@ void Spell::EffectEnchantItemPerm(SpellEffectEntry const* effect)
     // Enchanting a vellum requires special handling, as it creates a new item
     // instead of modifying an existing one.
     ItemPrototype const* targetProto = itemTarget->GetProto();
-    if (targetProto->IsVellum() && m_spellInfo->EffectItemType[eff_idx])
+    if (targetProto->IsVellum() && effect->EffectItemType)
     {
         unitTarget = m_caster;
-        DoCreateItem(eff_idx,m_spellInfo->EffectItemType[eff_idx]);
+        DoCreateItem(effect, effect->EffectItemType);
         // Vellum target case: Target becomes additional reagent, new scroll item created instead in Spell::EffectEnchantItemPerm()
         // cannot already delete in TakeReagents() unfortunately
         p_caster->DestroyItemCount(targetProto->ItemId, 1, true);
