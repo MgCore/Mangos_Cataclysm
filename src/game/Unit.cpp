@@ -224,6 +224,7 @@ Unit::Unit()
     m_AuraFlags = 0;
 
     m_Visibility = VISIBILITY_ON;
+    m_AINotifyScheduled = false;
 
     m_detectInvisibilityMask = 0;
     m_invisibilityMask = 0;
@@ -8095,48 +8096,44 @@ bool Unit::isVisibleForOrDetect(Unit const* u, WorldObject const* viewPoint, boo
     return IsWithinLOS(ox,oy,oz);
 }
 
+void Unit::UpdateVisibilityAndView()
+{
+
+    static const AuraType auratypes[] = {SPELL_AURA_BIND_SIGHT, SPELL_AURA_FAR_SIGHT, SPELL_AURA_NONE};
+    for (AuraType const* type = &auratypes[0]; *type != SPELL_AURA_NONE; ++type)
+    {
+        AuraList& alist = m_modAuras[*type];
+        if(alist.empty())
+            continue;
+
+        for (AuraList::iterator it = alist.begin(); it != alist.end();)
+        {
+            Aura* aura = (*it);
+            Unit* owner = aura->GetCaster();
+
+            if (!owner || !isVisibleForOrDetect(owner,this,false))
+            {
+                alist.erase(it);
+                RemoveAura(aura);
+                it = alist.begin();
+            }
+            else
+                ++it;
+        }
+    }
+
+    GetViewPoint().Call_UpdateVisibilityForOwner();
+    UpdateObjectVisibility();
+    ScheduleAINotify(0);
+    GetViewPoint().Event_ViewPointVisibilityChanged();
+}
+
 void Unit::SetVisibility(UnitVisibility x)
 {
     m_Visibility = x;
 
     if(IsInWorld())
-    {
-        // some auras requires visible target
-        if(m_Visibility == VISIBILITY_GROUP_NO_DETECT || m_Visibility == VISIBILITY_OFF)
-        {
-            static const AuraType auratypes[] = {SPELL_AURA_BIND_SIGHT, SPELL_AURA_FAR_SIGHT, SPELL_AURA_NONE};
-            for (AuraType const* type = &auratypes[0]; *type != SPELL_AURA_NONE; ++type)
-            {
-                AuraList& alist = m_modAuras[*type];
-                if(alist.empty())
-                    continue;
-
-                for (AuraList::iterator it = alist.begin(); it != alist.end();)
-                {
-                    Aura* aura = (*it);
-                    Unit* owner = aura->GetCaster();
-
-                    if (!owner || !isVisibleForOrDetect(owner,this,false))
-                    {
-                        alist.erase(it);
-                        RemoveAura(aura);
-                        it = alist.begin();
-                    }
-                    else
-                        ++it;
-                }
-            }
-        }
-
-        Map *m = GetMap();
-
-        if(GetTypeId()==TYPEID_PLAYER)
-            m->PlayerRelocation((Player*)this,GetPositionX(),GetPositionY(),GetPositionZ(),GetOrientation());
-        else
-            m->CreatureRelocation((Creature*)this,GetPositionX(),GetPositionY(),GetPositionZ(),GetOrientation());
-
-        GetViewPoint().Event_ViewPointVisibilityChanged();
-    }
+        UpdateVisibilityAndView();
 }
 
 bool Unit::canDetectInvisibilityOf(Unit const* u) const
@@ -9440,6 +9437,7 @@ uint32 Unit::GetCreatePowers( Powers power ) const
 void Unit::AddToWorld()
 {
     Object::AddToWorld();
+    ScheduleAINotify(0);
 }
 
 void Unit::RemoveFromWorld()
@@ -10463,14 +10461,14 @@ void Unit::SetContestedPvP(Player *attackedPlayer)
         player->addUnitState(UNIT_STAT_ATTACK_PLAYER);
         player->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_CONTESTED_PVP);
         // call MoveInLineOfSight for nearby contested guards
-        SetVisibility(GetVisibility());
+        UpdateVisibilityAndView();
     }
 
     if (!hasUnitState(UNIT_STAT_ATTACK_PLAYER))
     {
         addUnitState(UNIT_STAT_ATTACK_PLAYER);
         // call MoveInLineOfSight for nearby contested guards
-        SetVisibility(GetVisibility());
+        UpdateVisibilityAndView();
     }
 }
 
@@ -10559,19 +10557,30 @@ void Unit::RemoveAurasAtMechanicImmunity(uint32 mechMask, uint32 exceptSpellId, 
     }
 }
 
+struct SetPhaseMaskHelper
+{
+    explicit SetPhaseMaskHelper(uint32 _phaseMask) : phaseMask(_phaseMask) {}
+    void operator()(Unit* unit) const { unit->SetPhaseMask(phaseMask, true); }
+    uint32 phaseMask;
+};
+
 void Unit::SetPhaseMask(uint32 newPhaseMask, bool update)
 {
-    if(newPhaseMask==GetPhaseMask())
+    if (newPhaseMask==GetPhaseMask())
         return;
 
-    if(IsInWorld())
+    // first move to both phase for proper update controlled units
+    WorldObject::SetPhaseMask(GetPhaseMask() | newPhaseMask, false);
+
+    if (IsInWorld())
+    {
         RemoveNotOwnSingleTargetAuras(newPhaseMask);        // we can lost access to caster or target
 
-    WorldObject::SetPhaseMask(newPhaseMask,update);
+        // all controlled except not owned charmed units
+        CallForAllControlledUnits(SetPhaseMaskHelper(newPhaseMask), CONTROLLED_PET|CONTROLLED_GUARDIANS|CONTROLLED_MINIPET|CONTROLLED_TOTEMS);
+    }
 
-    if(IsInWorld())
-        if(Pet* pet = GetPet())
-            pet->SetPhaseMask(newPhaseMask,true);
+    WorldObject::SetPhaseMask(newPhaseMask, update);
 }
 
 void Unit::NearTeleportTo( float x, float y, float z, float orientation, bool casting /*= false*/ )
@@ -10915,4 +10924,63 @@ bool Unit::IsAllowedDamageInArea(Unit* pVictim) const
         return false;
 
     return true;
+}
+
+class RelocationNotifyEvent : public BasicEvent
+{
+public:
+    RelocationNotifyEvent(Unit& owner) : BasicEvent(), m_owner(owner)
+    {
+        m_owner._SetAINotifyScheduled(true);
+    }
+
+    bool Execute(uint64 /*e_time*/, uint32 /*p_time*/)
+    {
+        float radius = MAX_CREATURE_ATTACK_RADIUS * sWorld.getConfig(CONFIG_FLOAT_RATE_CREATURE_AGGRO);
+        if (m_owner.GetTypeId() == TYPEID_PLAYER)
+        {
+            MaNGOS::PlayerRelocationNotifier notify((Player&)m_owner);
+            Cell::VisitAllObjects(&m_owner,notify,radius);
+        } 
+        else //if(m_owner.GetTypeId() == TYPEID_UNIT)
+        {
+            MaNGOS::CreatureRelocationNotifier notify((Creature&)m_owner);
+            Cell::VisitAllObjects(&m_owner,notify,radius);
+        }
+        m_owner._SetAINotifyScheduled(false);
+        return true;
+    }
+
+    void Abort(uint64)
+    {
+        m_owner._SetAINotifyScheduled(false);
+    }
+
+private:
+    Unit& m_owner;
+};
+
+void Unit::ScheduleAINotify(uint32 delay)
+{
+    if (!IsAINotifyScheduled())
+        m_Events.AddEvent(new RelocationNotifyEvent(*this), m_Events.CalculateTime(delay));
+}
+
+void Unit::OnRelocated()
+{
+    // switch to use G3D::Vector3 is good idea, maybe
+    float dx = m_last_notified_position.x - GetPositionX();
+    float dy = m_last_notified_position.y - GetPositionY();
+    float dz = m_last_notified_position.z - GetPositionZ();
+    float distsq = dx*dx+dy*dy+dz*dz;
+    if (distsq > World::GetRelocationLowerLimitSq())
+    {
+        m_last_notified_position.x = GetPositionX();
+        m_last_notified_position.y = GetPositionY();
+        m_last_notified_position.z = GetPositionZ();
+
+        GetViewPoint().Call_UpdateVisibilityForOwner();
+        UpdateObjectVisibility();
+    }
+    ScheduleAINotify(World::GetRelocationAINotifyDelay());
 }
