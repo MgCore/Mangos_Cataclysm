@@ -465,7 +465,7 @@ enum Opcodes
     SMSG_QUESTGIVER_QUEST_FAILED                     = 0x0A084, // 4.0.6a 13623
     CMSG_QUESTLOG_SWAP_QUEST                         = 0x10068, //
     CMSG_QUESTLOG_REMOVE_QUEST                       = 0x0EDA8, // 4.0.6a 13623
-    SMSG_QUESTLOG_FULL                               = 0x061EC, // 4.0.6a 13623
+    SMSG_QUESTLOG_FULL                               = 0x0618C, // 4.0.6a 13623
     SMSG_QUESTUPDATE_FAILED                          = 0x0DC5D, //
     SMSG_QUESTUPDATE_FAILEDTIMER                     = 0x03F5D, //
     SMSG_QUESTUPDATE_COMPLETE                        = 0xE588,  // 58760 - 4.0.6.13623
