@@ -1131,7 +1131,7 @@ void WorldSession::HandleInspectHonorStatsOpcode(WorldPacket& recv_data)
         return;
     }
 
-    WorldPacket data(SMSG_INSPECT_HONOR_STATS, 4+1+4+8);
+    WorldPacket data(CMSG_INSPECT_HONOR_STATS, 4+1+4+8);
     data << uint32(player->GetUInt32Value(PLAYER_FIELD_KILLS));
     data << uint8(0); // rank
     data << uint32(player->GetUInt32Value(PLAYER_FIELD_LIFETIME_HONORBALE_KILLS));
