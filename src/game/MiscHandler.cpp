@@ -24,6 +24,7 @@
 #include "Opcodes.h"
 #include "Log.h"
 #include "Player.h"
+#include "Guild.h"
 #include "World.h"
 #include "ObjectMgr.h"
 #include "WorldSession.h"
@@ -1099,6 +1100,21 @@ void WorldSession::HandleInspectOpcode(WorldPacket& recv_data)
 
     plr->BuildEnchantmentsInfoData(&data);
 
+    if(Guild* guild = sObjectMgr.GetGuildById(plr->GetGuildId()))
+    {
+        data << ObjectGuid(HIGHGUID_GUILD, guild->GetId());
+        data << uint32(guild->GetLevel());
+        data << uint64(0);                                  // xp
+        data << uint32(guild->GetMemberSize());
+    }
+    else
+    {
+        data << uint64(0);
+        data << uint32(0);
+        data << uint64(0);
+        data << uint32(0);
+    }
+
     SendPacket(&data);
 }
 
@@ -1115,13 +1131,11 @@ void WorldSession::HandleInspectHonorStatsOpcode(WorldPacket& recv_data)
         return;
     }
 
-    WorldPacket data(MSG_INSPECT_HONOR_STATS, 8+1+4*4);
-    data << player->GetObjectGuid();
-    data << uint8(player->GetHonorPoints());
+    WorldPacket data(SMSG_INSPECT_HONOR_STATS, 4+1+4+8);
     data << uint32(player->GetUInt32Value(PLAYER_FIELD_KILLS));
-    //data << uint32(player->GetUInt32Value(PLAYER_FIELD_TODAY_CONTRIBUTION));
-    //data << uint32(player->GetUInt32Value(PLAYER_FIELD_YESTERDAY_CONTRIBUTION));
+    data << uint8(0); // rank
     data << uint32(player->GetUInt32Value(PLAYER_FIELD_LIFETIME_HONORBALE_KILLS));
+    data << player->GetObjectGuid();
     SendPacket(&data);
 }
 

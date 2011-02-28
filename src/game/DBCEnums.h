@@ -520,4 +520,12 @@ enum VehicleSeatFlags
     SEAT_FLAG_CAN_CAST              = 0x20000000,           // Lua_UnitHasVehicleUI
 };
 
+enum CurrencyTypes
+{
+    CURRENCY_TYPE_CONQUEST_POINTS   = 390,
+    CURRENCY_TYPE_HONOR_POINTS      = 392,
+    CURRENCY_TYPE_JUSTICE_POINTS    = 395,
+    CURRENCY_TYPE_VALOR_POINTS      = 396,
+};
+
 #endif

@@ -523,19 +523,19 @@ LogColors = ""
 #        Default: 0
 #
 #    MaxHonorPoints
-#        Max honor points that player can have.
-#        Default: 75000
+#        Max honor points that player can have, multiplied by 100.
+#        Default: 400000
 #
 #    StartHonorPoints
 #        Amount of honor that new players will start with
 #        Default: 0
 #
-#    MaxArenaPoints
-#        Max arena points that player can have.
-#        Default: 5000
+#    MaxJusticePoints
+#        Max justice points that player can have, multiplied by 100.
+#        Default: 400000
 #
-#    StartArenaPoints
-#        Amount of arena points that new players will start with
+#    StartJusticePoints
+#        Amount of justice points that new players will start with
 #        Default: 0
 #
 #    InstantLogout
@@ -751,10 +751,10 @@ MaxPlayerLevel = 85
 StartPlayerLevel = 1
 StartHeroicPlayerLevel = 55
 StartPlayerMoney = 0
-MaxHonorPoints = 75000
+MaxHonorPoints = 400000
 StartHonorPoints = 0
-MaxArenaPoints = 5000
-StartArenaPoints = 0
+MaxJusticePoints = 400000
+StartJusticePoints = 0
 InstantLogout = 1
 DisableWaterBreath = 4
 AllFlightPaths = 0
@@ -1138,6 +1138,14 @@ GM.AllowAchievementGain  = 1
 #        Visibility grey distance for dynobjects/gameobjects/corpses/creature bodies
 #        Default: 10 (yards)
 #
+#    Visibility.RelocationLowerLimit
+#        Object's visibility update called, when distance between current object's position and position,
+#        where visiblity was updated last time, reaches RelocationLoverLimit value
+#        Default: 10 (yards)
+#
+#    Visibility.AIRelocationNotifyDelay
+#        Delay time between creature AI reactions on nearby movements
+#        Default: 1000 (milliseconds)
 #
 ###################################################################################################################
 
@@ -1148,6 +1156,8 @@ Visibility.Distance.BGArenas      = 180
 Visibility.Distance.InFlight      = 100
 Visibility.Distance.Grey.Unit   = 1
 Visibility.Distance.Grey.Object = 10
+Visibility.RelocationLowerLimit    = 10
+Visibility.AIRelocationNotifyDelay = 1000
 
 ###################################################################################################################
 # SERVER RATES

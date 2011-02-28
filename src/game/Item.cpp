@@ -963,6 +963,21 @@ bool Item::IsFitToSpellRequirements(SpellEntry const* spellInfo) const
     if(!equippedItems)
         return true;
 
+    // Enchant spells only use Effect[0] (patch 3.3.2)
+    if (proto->IsVellum())
+    {
+        if (const SpellEffectEntry* effect = spellInfo->GetSpellEffect(EFFECT_INDEX_0))
+        {
+            // EffectItemType[0] is the associated scroll itemID, if a scroll can be made
+            if (effect->Effect != SPELL_EFFECT_ENCHANT_ITEM || effect->EffectItemType == 0)
+                return false;
+
+            // Other checks do not apply to vellum enchants, so return final result
+            return ((proto->SubClass == ITEM_SUBCLASS_WEAPON_ENCHANTMENT && equippedItems->EquippedItemClass == ITEM_CLASS_WEAPON) ||
+                    (proto->SubClass == ITEM_SUBCLASS_ARMOR_ENCHANTMENT && equippedItems->EquippedItemClass == ITEM_CLASS_ARMOR));
+        }
+    }
+
     if (equippedItems->EquippedItemClass != -1)             // -1 == any item class
     {
         if(equippedItems->EquippedItemClass != int32(proto->Class))
