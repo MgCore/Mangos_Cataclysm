@@ -4074,6 +4074,7 @@ void Spell::SendResurrectRequest(Player* target)
     data << uint8(0);
 
     data << uint8(m_caster->GetTypeId() == TYPEID_PLAYER ? 0 : 1);
+    data << uint32(target->GetResurrectionSpellId()); //SkyFire 4.0.6
     target->GetSession()->SendPacket(&data);
 }
 

@@ -432,9 +432,10 @@ void PlayerMenu::SendQuestGiverQuestList(QEmote eEmote, const std::string& Title
 
 void PlayerMenu::SendQuestGiverStatus( uint8 questStatus, ObjectGuid npcGUID )
 {
-    WorldPacket data( SMSG_QUESTGIVER_STATUS, 9 );
+    WorldPacket data(SMSG_QUESTGIVER_STATUS, 12); //SkyFire 4.0.6
+    //WorldPacket data( SMSG_QUESTGIVER_STATUS, 9 );
     data << npcGUID;
-    data << uint8(questStatus);
+    data << uint32(questStatus); //SkyFire 4.0.6
 
     GetMenuSession()->SendPacket( &data );
     DEBUG_LOG( "WORLD: Sent SMSG_QUESTGIVER_STATUS for %s", npcGUID.GetString().c_str());
