@@ -8237,7 +8237,11 @@ void Player::SendLoot(ObjectGuid guid, LootType loot_type)
     // need know merged fishing/corpse loot type for achievements
     loot->loot_type = loot_type;
 
-    WorldPacket data(SMSG_LOOT_RESPONSE, (9+50));           // we guess size
+    // Hack Fix
+    //WorldPacket data(SMSG_LOOT_RESPONSE, (9+50));           // we guess size
+    WorldPacket data(SMSG_MULTIPLE_PACKETS, (9+50+2));           // we guess size
+
+    data << uint16(SMSG_LOOT_RESPONSE);   //SkyFire 4.0.6 fix
     data << ObjectGuid(guid);
     data << uint8(loot_type);
     data << LootView(*loot, this, permission);

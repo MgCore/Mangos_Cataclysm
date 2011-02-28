@@ -627,7 +627,10 @@ void WorldSession::SendListInventory(ObjectGuid vendorguid)
 
     uint8 count = 0;
 
-    WorldPacket data( SMSG_LIST_INVENTORY, (8+1+numitems*8*4) );
+    // Hack Fix  SkyFire 4.0.6
+    WorldPacket data(SMSG_MULTIPLE_PACKETS, (8+1+numitems*9*4+1*numitems+2));
+    data << uint16(SMSG_LIST_INVENTORY);
+    //WorldPacket data( SMSG_LIST_INVENTORY, (8+1+numitems*8*4) );
     data << ObjectGuid(vendorguid);
 
     size_t count_pos = data.wpos();

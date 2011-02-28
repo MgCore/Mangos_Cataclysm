@@ -173,7 +173,6 @@ void WorldSession::SendTrainerList(ObjectGuid guid, const std::string& strTitle)
     WorldPacket data( SMSG_TRAINER_LIST, 8+4+4+maxcount*38 + strTitle.size()+1);
     data << ObjectGuid(guid);
     data << uint32(trainer_type);
-    data << uint32(0);   //SkyFire 4.0.6
     data << uint32(1);   //SkyFire 4.0.6
 
 
