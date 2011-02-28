@@ -36,6 +36,9 @@ enum Opcodes
 {
     NUM_OPCODE_HANDLERS = (0xFFFF+1),
     UNKNOWN_OPCODE = NUM_OPCODE_HANDLERS, // must be >= NUM_OPCODE_HANDLERS
+    SMSG_INIT_CURRENCY                               = 0x279,  //尚不清楚情况
+    SMSG_UPDATE_CURRENCY                             = 0x278,  //尚不清楚情况
+    SMSG_UPDATE_CURRENCY_WEEK_LIMIT                  = 0x277,  //尚不清楚情况
     SMSG_COMPRESSED_ACHIEVEMENT_DATA                 = 0x280,
     SMSG_COMPRESSED_RESPOND_INSPECT_ACHIEVEMENTS     = 0x281,
     CMSG_STABLE_SWAP_PET                             = 0x275,
@@ -787,7 +790,7 @@ enum Opcodes
     CMSG_BATTLEFIELD_STATUS                          = 0x0101,  // 257   - 4.0.3.13329
     SMSG_BATTLEFIELD_STATUS                          = 0x018B8, //
     CMSG_BATTLEFIELD_PORT                            = 0x100EF, //
-    MSG_INSPECT_HONOR_STATS                          = 0x100F0, //
+    CMSG_INSPECT_HONOR_STATS                         = 0x100F0, //
     CMSG_BATTLEMASTER_HELLO                          = 0x06D57, //
     CMSG_MOVE_START_SWIM_CHEAT                       = 0x026C0, // 4.0.6a 13623
     CMSG_MOVE_STOP_SWIM_CHEAT                        = 0x06988, // 4.0.6a 13623
