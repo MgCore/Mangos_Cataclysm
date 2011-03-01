@@ -2774,9 +2774,19 @@ SpellAuraProcResult Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura
 
 SpellAuraProcResult Unit::HandleProcTriggerSpellAuraProc(Unit *pVictim, uint32 damage, Aura* triggeredByAura, SpellEntry const *procSpell, uint32 procFlags, uint32 procEx, uint32 cooldown)
 {
-    if (!pVictim || !procSpell || !auraSpellInfo)
+    if (!pVictim)
     {
-        sLog.outError("May crash here andleProcTriggerSpellAuraProc");
+        sLog.outDebug("Crash if found no pVictim, Unit::HandleProcTriggerSpellAuraProc");
+        return SPELL_AURA_PROC_FAILED;
+    }
+    if (!triggeredByAura )
+    {
+        sLog.outDebug("Crash if found no triggeredByAura, Unit::HandleProcTriggerSpellAuraProc");
+        return SPELL_AURA_PROC_FAILED;
+    }
+    if (!procSpell )
+    {
+		sLog.outDebug("Crash if found no procSpell, Unit::HandleProcTriggerSpellAuraProc");
         return SPELL_AURA_PROC_FAILED;
     }
     // Get triggered aura spell info
