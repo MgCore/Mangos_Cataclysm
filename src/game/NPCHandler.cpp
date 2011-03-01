@@ -228,9 +228,10 @@ void WorldSession::SendTrainerList(ObjectGuid guid, const std::string& strTitle)
 void WorldSession::HandleTrainerBuySpellOpcode( WorldPacket & recv_data )
 {
     ObjectGuid guid;
-    uint32 spellId = 0;
+    uint32 spellId, unk = 0;
 
-    recv_data >> guid >> spellId;
+    // unk uint32 added in 4.0.1
+    recv_data >> guid >> unk >> spellId;
     DEBUG_LOG("WORLD: Received CMSG_TRAINER_BUY_SPELL Trainer: %s, learn spell id is: %u", guid.GetString().c_str(), spellId);
 
     Creature *unit = GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_TRAINER);
