@@ -560,10 +560,16 @@ void WorldSession::HandleBuyItemOpcode( WorldPacket & recv_data )
 {
     DEBUG_LOG( "WORLD: Received CMSG_BUY_ITEM" );
     ObjectGuid vendorGuid;
+    uint8 unk;
     uint32 item, slot, count;
-    uint8 unk1;
+    uint64 unk1;
+    uint8 unk2;
 
-    recv_data >> vendorGuid >> item >> slot >> count >> unk1;
+    recv_data >> vendorGuid;
+    recv_data >> unk;                                       // 4.0.6
+    recv_data >> item >> slot >> count;
+    recv_data >> unk1;                                      // 4.0.6
+    recv_data >> unk2;
 
     // client side expected counting from 1, and we send to client vendorslot+1 already
     if (slot > 0)
