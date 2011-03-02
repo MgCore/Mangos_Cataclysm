@@ -161,8 +161,8 @@ enum Opcodes
     CMSG_GROUP_ACCEPT                                = 0x0368C, // 4.0.6a 13623
     CMSG_GROUP_DECLINE                               = 0x0B4CC, // 4.0.6a 13623
     SMSG_GROUP_DECLINE                               = 0x0ABAC, // 4.0.6a 13623
-    CMSG_GROUP_UNINVITE                              = 0x0E3C8, //
-    CMSG_GROUP_UNINVITE_GUID                         = 0x0E3C8, // 4.0.6a 13623
+    CMSG_GROUP_UNINVITE                              = 0x0E3C8, // 58312 - 4.0.6.13623
+    CMSG_GROUP_UNINVITE_GUID                         = 0x076,
     SMSG_GROUP_UNINVITE                              = 0x03ACC, // 4.0.6a 13623
     CMSG_GROUP_SET_LEADER                            = 0x0B6E0, // 4.0.6a 13623
     SMSG_GROUP_SET_LEADER                            = 0x0E88C, // 4.0.6a 13623
@@ -213,7 +213,7 @@ enum Opcodes
     CMSG_JOIN_CHANNEL                                = 0x00002, // 4.0.6a 13623
     CMSG_LEAVE_CHANNEL                               = 0x0000B, // 4.0.6a 13623
     SMSG_CHANNEL_NOTIFY                              = 0x07CAC, // 4.0.6a 13623
-    CMSG_CHANNEL_LIST                                = 0x07FE0, // 4.0.6a 13623
+    CMSG_CHANNEL_LIST                                = 0x01A88, // 6792  - 4.0.3.13329   //strawberry
     SMSG_CHANNEL_LIST                                = 0x069E0, // 4.0.6a 13623
     CMSG_CHANNEL_PASSWORD                            = 0x0080A, // 4.0.6a 13623
     CMSG_CHANNEL_SET_OWNER                           = 0x00800, // 4.0.6a 13623
@@ -248,8 +248,8 @@ enum Opcodes
     MSG_MOVE_START_STRAFE_RIGHT                      = 0x07DA4, // 4.0.6a 13623
     MSG_MOVE_STOP_STRAFE                             = 0x0F9A8, // 4.0.6a 13623
     MSG_MOVE_JUMP                                    = 0x065AC, // 4.0.6a 13623
-    MSG_MOVE_START_TURN_LEFT                         = 0x07880, // 4.0.6a 13623
-    MSG_MOVE_START_TURN_RIGHT                        = 0x0FCA8, // 4.0.6a 13623
+    MSG_MOVE_START_TURN_LEFT                         = 0x0B8C8, // 47304 - 4.0.6.13623  //strawberry
+    MSG_MOVE_START_TURN_RIGHT                        = 0x0F9E4, // 63972 - 4.0.6.13623  //strawberry
     MSG_MOVE_STOP_TURN                               = 0x0E2E8, // 4.0.6a 13623
     MSG_MOVE_START_PITCH_UP                          = 0x060E4, // 4.0.6a 13623
     MSG_MOVE_START_PITCH_DOWN                        = 0x0ADC4, // 4.0.6a 13623
