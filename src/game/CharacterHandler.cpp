@@ -545,6 +545,14 @@ void WorldSession::HandleCharDeleteOpcode( WorldPacket & recv_data )
     SendPacket( &data );
 }
 
+void WorldSession::HandleWorldLoginOpcode(WorldPacket& recv_data)
+{
+    sLog.outDebug("WORLD: Recvd World Login Message");
+    uint32 unk;
+    uint8 unk1;
+    recv_data >> unk >> unk1;
+}
+
 void WorldSession::HandlePlayerLoginOpcode( WorldPacket & recv_data )
 {
     ObjectGuid playerGuid;

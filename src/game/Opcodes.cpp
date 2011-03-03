@@ -34,6 +34,7 @@ void InitializeOpcodes()
     /*0x036*/ DEFINE_OPCODE_HANDLER( CMSG_CHAR_CREATE,                             STATUS_AUTHED,   PROCESS_THREADUNSAFE, &WorldSession::HandleCharCreateOpcode          );
     /*0x037*/ DEFINE_OPCODE_HANDLER( CMSG_CHAR_ENUM,                               STATUS_AUTHED,   PROCESS_THREADUNSAFE, &WorldSession::HandleCharEnumOpcode            );
     /*0x038*/ DEFINE_OPCODE_HANDLER( CMSG_CHAR_DELETE,                             STATUS_AUTHED,   PROCESS_THREADUNSAFE, &WorldSession::HandleCharDeleteOpcode          );
+    /*0x039*/ DEFINE_OPCODE_HANDLER( CMSG_WORLD_LOGIN,                             STATUS_AUTHED,   PROCESS_THREADUNSAFE, &WorldSession::HandleWorldLoginOpcode          );
     /*0x03D*/ DEFINE_OPCODE_HANDLER( CMSG_PLAYER_LOGIN,                            STATUS_AUTHED,   PROCESS_THREADUNSAFE, &WorldSession::HandlePlayerLoginOpcode         );
     /*0x04A*/ DEFINE_OPCODE_HANDLER( CMSG_PLAYER_LOGOUT,                           STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandlePlayerLogoutOpcode        );
     /*0x04B*/ DEFINE_OPCODE_HANDLER( CMSG_LOGOUT_REQUEST,                          STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleLogoutRequestOpcode       );

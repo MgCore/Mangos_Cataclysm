@@ -364,6 +364,7 @@ class MANGOS_DLL_SPEC WorldSession
         void HandleCharDeleteOpcode(WorldPacket& recvPacket);
         void HandleCharCreateOpcode(WorldPacket& recvPacket);
         void HandlePlayerLoginOpcode(WorldPacket& recvPacket);
+        void HandleWorldLoginOpcode(WorldPacket& recvPacket);
         void HandleCharEnum(QueryResult * result);
         void HandlePlayerLogin(LoginQueryHolder * holder);
 

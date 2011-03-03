@@ -409,7 +409,7 @@ enum Opcodes
     CMSG_REPOP_REQUEST                               = 0x0A9E4, // 4.0.6a 13623
     SMSG_RESURRECT_REQUEST                           = 0x0F3A0, // 4.0.6a 13623
     CMSG_RESURRECT_RESPONSE                          = 0x10065, // 0x0EA84 before is not correct
-    CMSG_LOOT                                        = 0x0FCEC, // 4.0.6a 13623
+    CMSG_LOOT                                        = 0x0FCEC, // 4.0.6a 13623  
     CMSG_LOOT_MONEY                                  = 0x079E0, // 4.0.6a 13623
     CMSG_LOOT_RELEASE                                = 0x03CE8, // 4.0.6a 13623
     SMSG_LOOT_RESPONSE                               = 0x0F38C, // 4.0.6a 13623
@@ -1390,7 +1390,7 @@ enum Opcodes
     CMSG_REDIRECT_AUTH_PROOF                         = 0x08C0A, //
     CMSG_AUTO_DECLINE_GUILD_INVITES                  = 0x00C7D, //
     CMSG_GROUP_SET_ROLES                             = 0x08509, // 4.0.6a 13623
-    CMSG_UNKNOWN_34056                               = 0x08508, // 
+    CMSG_WORLD_LOGIN                                 = 0x8508,  // 34056 - 4.0.6.13623, New in 406
     NUM_MSG_TYPES                                    = 0x102B7  // last unknown opcode + 1.
 };
 

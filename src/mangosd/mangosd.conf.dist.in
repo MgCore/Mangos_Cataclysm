@@ -6,36 +6,35 @@
 ConfVersion=2010100901
 
 ###################################################################################################################
-# CONNECTIONS AND DIRECTORIES
+# 连接和目录配置
 #
 #    RealmID
-#        RealmID must match the realmlist inside the realmd database
+#        登陆服务器设置。RealmID 必须匹配realmd库里面的 realmlist
 #
 #    DataDir
-#        Data directory setting.
-#        Important: DataDir needs to be quoted, as it is a string which may contain space characters.
-#        Example: "@CMAKE_INSTALL_PREFIX@/share/mangos"
+#        数据目录设置.
+#        重要说明:数据目录需要放在引号里面，因为字符串可能包含空格.
+#        例如: "D:\Mangos"
 #
 #    LogsDir
-#        Logs directory setting.
-#        Important: Logs dir must exists, or all logs need to be disabled
-#        Default: "" - no log directory prefix, if used log names isn't absolute path
-#        then logs will be stored in current directory for run program.
+#        日志文件目录设置.
+#        注意: 日志目录必需是已存在, 或所有日志是功能失效，否则报错
+#        默认: "" - 不起用日志目录功能, 默认在当前目录.
 #
 #
 #    LoginDatabaseInfo
 #    WorldDatabaseInfo
 #    CharacterDatabaseInfo
-#        Database connection settings for the world server.
-#        Default:
+#        世界服务器的数据库连接设置.
+#        默认:
 #                ---MYSQL---
-#                    hostname;port;username;password;database
+#                    主机地址(域名或IP）;端口;用户名;密码;数据库名称
 #                    .;somenumber;username;password;database - use named pipes at Windows
 #                        Named pipes: mySQL required adding "enable-named-pipe" to [mysqld] section my.ini
-#                    .;/path/to/unix_socket;username;password;database - use Unix sockets at Unix/Linux
+#                    .;/path/to/unix_socket;username;password;database - 使用Unix网络接口 Unix/Linux
 #                ---PGSQL---
-#                    hostname;port;username;password;database
-#                    .;/path/to/unix_socket/DIRECTORY or . for default path;username;password;database - use Unix sockets at Unix/Linux
+#                    主机地址(域名或IP）;端口;用户名;密码;数据库名称
+#                    .;/path/to/unix_socket/DIRECTORY or . 默认路径;username;password;database - 使用Unix网络接口 Unix/Linux
 #
 #	LoginDatabaseConnections
 #	WorldDatabaseConnections
@@ -43,16 +42,16 @@ ConfVersion=2010100901
 #		 Amount of connections to database which will be used for SELECT queries. Maximum 16 connections per database.
 #		 Please, note, for data consistency only one connection for each database is used for transactions and async SELECTs.
 #		 So formula to find out how many connections will be established: X = 筥connections + 1
-#		 Default: 1 connection for SELECT statements
+#		 默认: 1 connection for SELECT statements
 #
 #    MaxPingTime
-#        Settings for maximum database-ping interval (minutes between pings)
+#        设置最高ping数据库的时间间隔(分钟)
 #
 #    WorldServerPort
-#        Default WorldServerPort
+#        默认游戏运行端口
 #
 #    BindIP
-#        Bind World Server to IP/hostname
+#        设置绑定的IP(不做修改)
 #        This option is useful for running multiple worldd/realmd instances
 #        on different IP addresses using default ports.
 #        DO NOT CHANGE THIS UNLESS YOU _REALLY_ KNOW WHAT YOU'RE DOING
@@ -73,118 +72,118 @@ WorldServerPort = 8085
 BindIP = "0.0.0.0"
 
 ###################################################################################################################
-# PERFORMANCE SETINGS
+# 服务端性能设置
 #
 #    UseProcessors
-#        Used processors mask for multi-processors system (Used only at Windows)
-#        Default: 0 (selected by OS)
-#                 number (bitmask value of selected processors)
+#        在多线程系统 使用线程MASK(只在Windows系统下使用)
+#        默认: 0 (操作系统来选择)
+#                 举例: 数字
 #
 #    ProcessPriority
-#        Process priority setting (Used only at Windows)
-#        Default: 1 (HIGH)
-#                 0 (Normal)
+#        进程优先权设置(只在Windows系统下使用)
+#        默认: 1 (高优先)
+#                 0 (正常优先权)
 #
 #    Compression
-#        Compression level for update packages sent to client (1..9)
-#        Default: 1 (speed)
-#                 9 (best compression)
+#        发送到客户端的更新数据包的压缩级别(1到9)
+#        默认: 1 (速度快,不压缩)
+#                 9 (最好的压缩)
 #
 #    PlayerLimit
-#        Maximum number of players in the world. Excluding Mods, GM's and Admins
-#        Default: 100
-#                 0 (for infinite players)
-#                -1 (for Mods, GM's and Admins only)
-#                -2 (for GM's and Admins only)
-#                -3 (for Admins only)
+#        除GM之外 游戏最大在线玩家数限制
+#        默认: 100
+#                 0 (登陆无限制)
+#                -1 (仅仅允许 Mods, GM's 和 Admins 登陆)
+#                -2 (仅仅允许 GM's 和 Admins 登陆)
+#                -3 (仅仅允许 Admins 登陆)
 #
 #    SaveRespawnTimeImmediately
-#        Save respawn time for creatures at death and for gameobjects at use/open
-#        Default: 1 (save creature/gameobject respawn time without waiting grid unload)
-#                 0 (save creature/gameobject respawn time at grid unload)
+#        保存刷新时间 当生物死 当物体被打开或使用
+#        默认: 1 (不在网格卸载的时候保存人/物体的刷新时间)
+#                 0 (保存人/物体的刷新时间在网格卸载的时候)
 #
 #    MaxOverspeedPings
-#        Maximum overspeed ping count before player kick (minimum is 2, 0 used for disable check)
-#        Default: 2
+#        最大速度限制倍率(如果为0则关闭检查加速)
+#        默认: 2
 #
 #    GridUnload
-#        Unload grids (if you have lot memory you can disable it to speed up player move to new grids second time)
-#        Default: 1 (unload grids)
-#                 0 (do not unload grids)
+#        卸载Grids (如果里的内存够大,可以禁用,提高玩家第二次经过新Grids时候的速度)
+#        默认: 1 (卸载)
+#                 0 (不卸载)
 #
 #    GridCleanUpDelay
-#        Grid clean up delay (in milliseconds)
-#        Default: 300000 (5 min)
+#        默认地图网格清理延迟 (毫秒)
+#        默认: 300000 (5 分钟)
 #
 #    MapUpdateInterval
-#        Map update interval (in milliseconds)
-#        Default: 100
+#        默认地图更新间隔 (毫秒)
+#        默认: 100
 #
 #    ChangeWeatherInterval
-#        Weather update interval (in milliseconds)
-#        Default: 600000 (10 min)
+#        默认天气更新间隔 (毫秒)
+#        默认: 600000 (10 分钟)
 #
 #    PlayerSave.Interval
-#        Player save interval (in milliseconds)
-#        Default: 900000 (15 min)
+#        默认玩家数据保存间隔(毫秒)
+#        默认: 900000 (15 min)
 #
 #    PlayerSave.Stats.MinLevel
 #        Minimum level for saving character stats for external usage in database
-#        Default: 0  (do not save character stats)
+#        默认: 0  (do not save character stats)
 #                 1+ (save stats for characters with level 1+)
 #
 #    PlayerSave.Stats.SaveOnlyOnLogout
 #        Enable/Disable saving of character stats only on logout
-#        Default: 1 (only save on logout)
+#        默认: 1 (only save on logout)
 #                 0 (save on every player save)
 #
 #    vmap.enableLOS
 #    vmap.enableHeight
-#        Enable/Disable VMmap support for line of sight and height calculation
-#        Default: 0 (disable)
-#                 1 (enable)
+#        打开/关闭 VMmap 对视线和高度的推算支持
+#        默认: 0 (关闭)
+#                 1 (开启)
 #
 #    vmap.ignoreSpellIds
-#        These spells are ignored for LoS calculation
-#        List of ids with delimiter ','
+#        不进行视线推算的技能
+#        技能之间使用 ','分割
 #
 #    vmap.enableIndoorCheck
-#        Enable/Disable VMap based indoor check to remove outdoor-only auras (mounts etc.).
-#        Requires VMaps enabled to work.
-#        Default: 1 (Enabled)
+#        Vmap室内检查(为移除坐骑等室外BUFF服务）
+#        需要vmap已启用
+#        默认: 1 (Enabled)
 #                 0 (Disabled)
 #
 #
 #    DetectPosCollision
-#        Check final move position, summon position, etc for visible collision with other objects or
-#        wall (wall only if vmaps are enabled)
-#        Default: 1 (enable, required more CPU power usage)
-#                 0 (disable, less nice position selection but will less CPU power usage)
+#        检查最后的移动位置，传召的位置，为可见的其他物体碰撞或墙
+#        (墙只有vmaps已启用)
+#        默认: 1 (启用，需要更多的CPU功耗)
+#                 0 (禁用，不到好位置的选择，但较少的CPU功耗)
 #
 #    TargetPosRecalculateRange
-#        Max distance from movement target point (+moving unit size) and targeted object (+size)
-#        after that new target movmeent point calculated. Max: melee attack range (5), min: contact range (0.5)
-#        More distance let have better performence, less distance let have more sensitive reaction at target move.
-#        Default: 1.5
+#        最大距离目标点运动(+移动单位大小)和目标对象(+大小)。
+#        之后,新的目标移动点计算. 最大: 近战攻击范围(5),接触范围(0.5)
+#        更大的距离让有更好的性能,较小的距离让在目标移动时有更多的敏感反应
+#        默认: 1.5
 #
 #    UpdateUptimeInterval
-#        Update realm uptime period in minutes (for save data in 'uptime' table). Must be > 0
-#        Default: 10 (minutes)
+#        以分钟更新realmd运行时间 (保存在'uptime'数据表). 必须大于 > 0
+#        默认: 10 (分钟)
 #
 #    MaxCoreStuckTime
-#        Periodically check if the process got freezed, if this is the case force crash after the specified
+#        定时间检查进程是否僵死, 如果进程僵死，那么服务端将强制性的重新启动(在指定的时间内)
 #        amount of seconds. Must be > 0. Recommended > 10 secs if you use this.
-#        Default: 0 (Disabled)
+#        默认: 0 (关闭)
 #
 #    AddonChannel
-#        Permit/disable the use of the addon channel through the server
-#        (some client side addons can stop work correctly with disabled addon channel)
-#        Default: 1 (permit addon channel)
-#                 0 (do not permit addon channel)
+#        允许/禁用 使用addons频道通过服务器
+#        (一些客户端插件可以在禁止addon频道后仍然继续使用)
+#        默认: 1 (允许addon频道)
+#                 0 (不允许addon频道)
 #
 #    CleanCharacterDB
 #        Perform character db clean ups on start up
-#        Default: 1 (Enable)
+#        默认: 1 (Enable)
 #                 0 (Disabled)
 #
 ###################################################################################################################
@@ -217,41 +216,41 @@ CleanCharacterDB = 1
 # SERVER LOGGING
 #
 #    LogSQL
-#        Enable logging of GM commands - all SQL code will be written to a log file
-#        All commands are written to a file: YYYY-MM-DD_logSQL.sql
-#        If a new day starts (00:00:00) then a new file is created - the old file will not be deleted.
-#        Default: 1 - Write SQL code to logfile
-#                 0 - Do not log
+#        启用GM命令记录-所有的SQL代码都将被记录在日记文件中
+#        所有的命令记录文件都以日期方式命名: YYYY-MM-DD_logSQL.sql
+#        如果开始了新的一天 (00:00:00) 则会自动建立一个新的日期名文件 - 原来的旧文件不会被自动删除.
+#        默认: 1 - 记录SQL写入日志
+#                 0 - 不记录
 #
 #    PidFile
-#        World daemon PID file
-#        Default: ""             - do not create PID file
-#                 "./worldd.pid" - create PID file (recommended name)
+#        是否创建主控制器worldd系统进程档案记录 PID 文件
+#        默认: ""             - 留空为不合建PID文件
+#                 "./worldd.pid" - 创建PID文件为(worldd.pid)
 #
 #    LogLevel
-#        Server console level of logging
-#        0 = Minimum; 1 = Basic&Error; 2 = Detail; 3 = Full/Debug
-#        Default: 3
+#        服务器控制台记录显示的级别
+#        0 = 最小; 1 = 基础和错误; 2 = 详细; 3 = 完全或侦错
+#        默认: 3
 #
 #    LogTime
-#        Include time in server console output [hh:mm:ss]
-#        Default: 0 (no time)
-#                 1 (print time)
+#        包含时间,在服务器的控制台输入中 [hh:mm:ss]
+#        默认: 0 (不打印时间)
+#                 1 (打印时间)
 #
 #    LogFile
-#        Logfile name
-#        Default: "Server.log"
-#                 "" - Empty name disable creating log file
+#        记录文件的名字
+#        默认: "Server.log"
+#                 "" - 文件名为空 则不创建记录文件
 #
 #    LogTimestamp
-#        Logfile with timestamp of server start in name
-#        Default: 0 - no timestamp in name
-#                 1 - add timestamp in name in form Logname_YYYY-MM-DD_HH-MM-SS.Ext for Logname.Ext
+#        日志文件用服务器时间命名与否
+#        默认: 0 - 没有时间戳在名字
+#                 1 - 增加时间戳在名字在形式 日志文件名_YYYY-MM-DD_HH-MM-SS.Ext for Logname.Ext
 #
 #    LogFileLevel
-#        Server file level of logging
-#        0 = Minimum; 1 = Error; 2 = Detail; 3 = Full/Debug
-#        Default: 0
+#        记录文件的记录级别
+#        0 = 最小; 1 = 基础和错误; 2 = 详细; 3 = 完全或侦错
+#        默认: 0
 #
 #    LogFilter_AchievementUpdates
 #    LogFilter_CreatureMoves
@@ -259,9 +258,9 @@ CleanCharacterDB = 1
 #    LogFilter_VisibilityChanges
 #    LogFilter_Weather
 #    LogFilter_DbStrictedCheck
-#        Log filters (active by default)
-#        Default: 1 - not include with any log level
-#                 0 - include in log if log level permit
+#        日志过滤
+#        默认: 1 - 如果记录等级允许,则包含
+#                 0 - 任何记录等级都 不包含
 #
 #    LogFilter_PeriodicAffects
 #    LogFilter_PlayerMoves
@@ -272,66 +271,66 @@ CleanCharacterDB = 1
 #    LogFilter_Combat
 #    LogFilter_SpellCast
 #        Log filters (disabled by default, mostly debug only output affected cases)
-#        Default: 0 - include in log if log level permit
+#        默认: 0 - include in log if log level permit
 #                 1 - not include with any log level
 #
 #    WorldLogFile
-#        Packet logging file for the worldserver
-#        Default: "world.log"
+#        世界服务器封包记录日志文件(world.log)空为不记录
+#        默认: "world.log"
 #
 #    WorldLogTimestamp
-#        Logfile with timestamp of server start in name
-#        Default: 0 - no timestamp in name
-#                 1 - add timestamp in name in form Logname_YYYY-MM-DD_HH-MM-SS.Ext for Logname.Ext
+#        世界日志文件用服务器时间命名与否
+#        默认: 0 - 没有时间戳在名字
+#                 1 - 增加时间戳在名字在形式 日志文件名_YYYY-MM-DD_HH-MM-SS.Ext for Logname.Ext
 #
 #    DBErrorLogFile
-#        Log file of DB errors detected at server run
-#        Default: "DBErrors.log"
+#        记录数据库错误的文件名
+#        默认: "DBErrors.log"
 #
 #    CharLogFile
-#        Character operations logfile name
-#        Default: "Char.log"
-#                 "" - Empty name disable creating log file
+#        角色活动日志文件名设置
+#        默认: "Char.log"
+#                 "" - 留空表示不创建日志文件
 #
 #    CharLogTimestamp
-#        Logfile with timestamp of server start in name
-#        Default: 0 - no timestamp in name
-#                 1 - add timestamp in name in form Logname_YYYY-MM-DD_HH-MM-SS.Ext for Logname.Ext
+#        日志文件是否使用服务器时间戳来顺序命名
+#        默认: 0 - 不使用时间戳名
+#                 1 - 使用时间戳命名日志文件，如：将Logname.Ext存为：Logname_YYYY-MM-DD_HH-MM-SS.Ext
 #
 #    CharLogDump
-#        Write character dump before deleting in Char.log
-#        For restoration, cut character data from log starting from
-#        line == START DUMP == to line == END DUMP == (without its) in file and load it using loadpdump command
-#        Default: 0 - don't include dumping chars to log
-#                 1 - include dumping chars to log
+#        角色删除前是否同时清除在日志文件里的记录 Char.log
+#        为恢复角色剪切数据从日志开始连接 == START DUMP == to line == END DUMP ==
+#        line == START DUMP == to line == END DUMP == (without its) 在文件里加载它使用loadpdump命令
+#        默认: 0 - 不包含日志文件内的角色记录
+#                 1 - 包含日志文件内的记录
 #
 #    GmLogFile
-#        GM Log file of gm commands
-#        Default: "" (Disable)
+#        记录GM命令使用情况的 记录文件名
+#        默认: "" (关闭)
 #
 #    GmLogTimestamp
-#        GM Logfile with timestamp of server start in name
-#        Default: 0 - no timestamp in name
-#                 1 - add timestamp in name in form Logname_YYYY-MM-DD_HH-MM-SS.Ext for Logname.Ext
+#        日志文件是否使用服务器时间戳来顺序命名
+#        默认: 0 - 不使用时间戳名
+#                 1 - 使用时间戳命名日志文件，如：将Logname.Ext存为：Logname_YYYY-MM-DD_HH-MM-SS.Ext
 #
 #    GmLogPerAccount
-#        GM Logfiles with GM account id (Note: logs not created if GmLogFile not set)
-#        Default: 0 - add gm log data to single log file
-#                 1 - add gm log data to account specific log files with name
-#                     in form Logname_#ID_YYYY-MM-DD_HH-MM-SS.Ext
-#                     or form Logname_#ID.Ext
+#        GM 日志,根据GM的帐号ID来 (注意: 如果没有设置,那么GM日志将不会创建)
+#        默认: 0 - 增加GM日志在单独的文件中
+#                 1 - 根据帐号名来创建GM日志
+#                     例如 Logname_#ID_YYYY-MM-DD_HH-MM-SS.Ext
+#                     或则 Logname_#ID.Ext
 #
 #    RaLogFile
-#        Log file of RA commands
-#        Default: "Ra.log"
-#                 "" - Empty name for disable
+#        RA 命令的日志文件
+#        默认: "Ra.log"
+#                 "" - 留空为不记录
 #
 #    LogColors
-#        Color for messages (format "normal_color details_color debug_color error_color")
-#        Colors: 0 - BLACK, 1 - RED, 2 - GREEN,  3 - BROWN, 4 - BLUE, 5 - MAGENTA, 6 -  CYAN, 7 - GREY,
-#                8 - YELLOW, 9 - LRED, 10 - LGREEN, 11 - LBLUE, 12 - LMAGENTA, 13 - LCYAN, 14 - WHITE
-#        Default: "" - none colors
-#        Example: "13 7 11 9"
+#        控制台信息的颜色 (格式: "正常颜色 详情颜色 debug颜色 错误颜色)
+#        颜色: 0-黑色, 1-红,  2-绿,  3-棕,  4-蓝,  5-品红,  6-青绿,  7-灰色,
+#         8-黄,  9-淡红, 10-淡绿,  11-淡蓝, 12-淡品红, 13-淡青绿, 14-白色
+#        默认: "" 无颜色(白色)
+#        例如: "13 7 11 9"
 #
 ###################################################################################################################
 
@@ -366,36 +365,35 @@ GmLogFile = ""
 GmLogTimestamp = 0
 GmLogPerAccount = 0
 RaLogFile = ""
-LogColors = ""
+LogColors = "13 7 11 9"
 
 ###################################################################################################################
-# SERVER SETTINGS
+# 服务端设置
 #
 #    GameType
-#        Server realm style
-#        0 = NORMAL; 1 = PVP; 4 = NORMAL; 6 = RP; 8 = RPPVP
-#        also custom type: 16 FFA_PVP (free for all pvp mode like arena PvP in all zones except rest
-#        activated places and sanctuaries)
+#        服务器模式
+#        0 = 正常; 1 = PVP; 4 = 正常; 6 = RP; 8 = RPPVP
+#        自定义模式:: 16 FFA_PVP (自由PVP设置)
 #
 #    RealmZone
-#        Server realm zone (set allowed alphabet in character names/etc). See also Strict*Names options.
+#        服务器地区选择(设置允许人物名字允许的字符/等). See also Strict*Names options.
 #
-#    1 Development    - any language (Default)
-#    2 United States  - extended-Latin
+#    1 开发           - 任意语言 (默认)
+#    2 美国           - extended-Latin
 #    3 Oceanic        - extended-Latin
 #    4 Latin America  - extended-Latin
 #    5 Tournament     - basic-Latin at create, any at login
 #    6 Korea          - East-Asian
 #    7 Tournament     - basic-Latin at create, any at login
-#    8 English        - extended-Latin
-#    9 German         - extended-Latin
-#    10 French        - extended-Latin
-#    11 Spanish       - extended-Latin
-#    12 Russian       - Cyrillic
-#    13 Tournament    - basic-Latin at create, any at login
-#    14 Taiwan        - East-Asian
-#    15 Tournament    - basic-Latin at create, any at login
-#    16 China         - East-Asian
+#    8 英国           - extended-Latin
+#    9 德国           - extended-Latin
+#    10 法国          - extended-Latin
+#    11 西班牙        - extended-Latin
+#    12 俄国          - Cyrillic
+#    13 比赛          - basic-Latin at create, any at login
+#    14 台湾          - East-Asian
+#    15 比赛          - basic-Latin at create, any at login
+#    16 中国          - East-Asian
 #    17 CN1           - basic-Latin at create, any at login
 #    18 CN2           - basic-Latin at create, any at login
 #    19 CN3           - basic-Latin at create, any at login
@@ -404,34 +402,32 @@ LogColors = ""
 #    22 CN6           - basic-Latin at create, any at login
 #    23 CN7           - basic-Latin at create, any at login
 #    24 CN8           - basic-Latin at create, any at login
-#    25 Tournament    - basic-Latin at create, any at login
-#    26 Test Server   - any language
-#    27 Tournament    - basic-Latin at create, any at login
-#    28 QA Server     - any language
+#    25 比赛          - basic-Latin at create, any at login
+#    26 测试服        - 任何语言
+#    27 比赛          - basic-Latin at create, any at login
+#    28 QA服务器      - 任何语言
 #    29 CN9           - basic-Latin at create, any at login
 #
 #    Expansion
-#        Allow server use content from expansion
-#        Default: 2 - check expansion 2 maps existence, and if client support expansion 2 and account have
-#                     expansion 2 setting then allow visit expansion 2 maps, allow create new class character)
-#                 1 - check expansion 1 maps existence, and if client support expansion 1 and account have
-#                     expansion 1 setting then allow visit expansion 1 maps, allow create new races character)
-#                 0 - not check expansion maps existence, not allow wisit its, not allow create new race or new class
-#                     characters, ignore account expansion setting)
+#        开放大灾变功能
+#        默认: 3 - 如果客户端是大灾变，允许创建大灾变种族和职业。
+#                 2 - 如果客户端是WLK，允许创建WLK职业种族。
+#                 1 - 允许创建TBC职业种族。
+#                 0 - 允许创建基本的职业种族
 #
 #    DBC.Locale
-#        DBC Language Settings
-#        0 = English; 1 = Korean; 2 = French; 3 = German; 4 = Chinese; 5 = Taiwanese; 6 = Spanish; 7 = Spanish Mexico
-#        8 = Russian; 255 = Auto Detect (Default)
+#        DBC 语言设置(根据客户端解压的DBC表的不同自行定义)
+#        0 = 英语; 1 = 韩语; 2 = 法语; 3 = 德语; 4 = 中文; 5 = 繁体中文; 6 = 西班牙; 7 = 西班牙墨西哥
+#        8 = 俄语; 255 = 自动选择 (默认)
 #
 #    DeclinedNames
-#    Allow russian clients to set and use declined names
-#    Default: 0 - do not use declined names, except when the Russian RealmZone is set
-#         1 - use declined names
+#    允许俄罗斯客户端建立并使用下降的名字
+#    默认: 0 - 不允许使用下降的名字, 除非俄罗斯RealmZone已经设置好
+#         1 - 使用declined名字
 #
 #    StrictPlayerNames
-#        Limit player name to language specific symbols set, not allow create characters, and set rename request and disconnect at not allowed symbols name
-#        Default: 0 disable (but limited server timezone dependent client check)
+#        限制玩家游戏名字语言的设置, 不允许创建角色, 并设置重命名要求和断开时不允许符号名称
+#        默认: 0 disable (but limited server timezone dependent client check)
 #                 1 basic latin characters  (strict)
 #                 2 realm zone specific (strict). See RealmZone setting.
 #                   Note: In any case if you want correctly see character name at client this client must have apporopriate fonts
@@ -440,7 +436,7 @@ LogColors = ""
 #
 #    StrictCharterNames
 #        Limit guild/arena team charter names to language specific symbols set, not allow create charters with allowed symbols in name
-#        Default: 0 disable
+#        默认: 0 disable
 #                 1 basic latin characters  (strict)
 #                 2 realm zone specific (strict). See RealmZone setting.
 #                   Note: In any case if you want correctly see character name at client this client must have apporopriate fonts
@@ -449,7 +445,7 @@ LogColors = ""
 #
 #    StrictPetNames
 #        Limit pet names to language specific symbols set
-#        Default: 0 disable
+#        默认: 0 disable
 #                 1 basic latin characters  (strict)
 #                 2 realm zone specific (strict). See RealmZone setting.
 #                   Note: In any case if you want correctly see character name at client this client must have apporopriate fonts
@@ -457,276 +453,277 @@ LogColors = ""
 #                 3 basic latin characters + server timezone specific
 #
 #    MinPlayerName
-#        Minimal name length (1..12)
-#        Default: 2
+#        最小的玩家名称的长度 (1..12)
+#        默认: 2
 #
 #    MinCharterName
-#        Minimal name length (1..24)
-#        Default: 2
+#        最小的人物名称长度 (1..24)
+#        默认: 2
 #
 #    MinPetName
-#        Minimal name length (1..12)
-#        Default: 2
+#        最小的宠物名称长度 (1..12)
+#        默认: 2
 #
 #    CharactersCreatingDisabled
-#        Disable characters creating for specific team or any (non-player accounts not affected)
-#        Default: 0 - enabled
-#                 1 - disabled only for Alliance
-#                 2 - disabled only for Horde
-#                 3 - disabled for both teams
+#        禁止人物创建特殊的队伍或则任何 (没有玩家的帐户不受影响)
+#        默认: 0 - 启用
+#                 1 - 仅仅限制联盟
+#                 2 - 仅仅限制部落
+#                 3 - 限制两者
 #
 #    CharactersPerAccount
-#        Limit numbers of characters per account (at all realms).
+#        每个account的帐号可以建立的人物数(指一个realmd，多个服务端).
 #        Note: this setting limit character creating at _current_ realm base at characters amount at all realms
-#        Default: 50
-#                The number must be >= CharactersPerRealm
+#        默认: 50
+#                这个数量必须大于等于 >= CharactersPerRealm
 #
 #    CharactersPerRealm
-#        Limit numbers of characters for account at realm
-#        Default: 10 (client limitation)
-#                The number must be between 1 and 10
+#        realmd中的每个帐号可以建立的最多的人物数
+#        默认: 10 (客户端限制)
+#                数量必须在 1 到 10 之间
 #
 #    HeroicCharactersPerRealm
-#        Limit numbers of heroic class characters for account at realm
-#        Default: 1
-#                The number must be between 0 (not allowed) and 10
+#        每个帐号最多能创建多少个英雄职业
+#        默认: 1
+#                数量必须在 0 (不允许0) 到 10 之间
 #
 #    MinLevelForHeroicCharacterCreating
-#        Limit creating heroic characters only for account with another character of specific level (ignored for GM accounts)
-#                 0  - not require any existed character
-#                 1  - require at least any character existed
-#        Default: 55 - default requirement
+#        创建死亡骑士的时候,是否需要帐号下其他人物的等级超过此设置 (不限制GM帐号)
+#                 0  - 不需求有其他任何人物
+#                 1  - 至少要有一个其他人物
+#        默认: 55 - 需要拥有其他任务,并高于55级
 #
 #
 #    SkipCinematics
 #        Disable in-game script movie at first character's login(allows to prevent buggy intro in case of custom start location coordinates)
-#        Default: 0 - show intro for each new characrer
+#        默认: 0 - show intro for each new characrer
 #                 1 - show intro only for first character of selected race
 #                 2 - disable intro show in all cases
 #
 #    MaxPlayerLevel
-#        Max level that can be reached by player for experience (in range from 1 to 100).
-#        Change not recommended
-#        Default: 80
+#        玩家获得经验能升到的最高等级(必须在 1 到 255).
+#        不推荐去修改它
+#        默认: 80
 #
 #    StartPlayerLevel
-#        Staring level that have character at creating (in range 1 to MaxPlayerLevel)
-#        Default: 1
+#        创建人物等级 (范围在1到最高等级之间(1-最高限制之间))
+#        默认: 1
 #
 #    StartHeroicPlayerLevel
-#        Staring level that have character of heroic class at creating (in range 1 to MaxPlayerLevel)
-#        Default: 55
+#        英雄职业DK的出生等级 (范围在1到最高等级之间)
+#        默认: 55
 #
 #    StartPlayerMoney
-#        Amount of money that new players will start with.
-#        If you want to start with silver, use for example 100 (100 copper = 1 silver)
-#        Default: 0
+#        新人物出生的金钱数量.
+#        计算单位以铜币计量, 一银币等于 100铜币 (100 铜 = 1 银)
+#        默认: 0
 #
 #    MaxHonorPoints
-#        Max honor points that player can have, multiplied by 100.
-#        Default: 400000
+#        玩家最多能拥有的荣誉点数.
+#        默认: 75000
 #
 #    StartHonorPoints
-#        Amount of honor that new players will start with
-#        Default: 0
+#        新人物出生的荣誉点数
+#        默认: 0
 #
 #    MaxJusticePoints
-#        Max justice points that player can have, multiplied by 100.
-#        Default: 400000
+#        玩家最多能拥有的公正点数.
+#        默认: 400000
 #
 #    StartJusticePoints
-#        Amount of justice points that new players will start with
-#        Default: 0
+#        玩家新建立人物的公正点数
+#        默认: 0
 #
 #    InstantLogout
-#        Enable or disable instant logout for security level (0..4) or high (NOT in combat/while dueling/while falling)
-#        Default: 1 (Mods/GMs/Admins)
+#        允许或则禁止在副本中注销的帐号权限 (0..4) 或则更高 (不在战斗中/决斗时/下降时)
+#        默认: 1 (GM1/管理员/超级管理员)
 #
 #    AllFlightPaths
-#        Players will start with all flight paths (Note: ALL flight paths, not only player's team)
-#        Default: 0 (false)
-#                 1 (true)
+#        创建人物时开通所有的飞行路径 (注意: 所有的飞行路径, not only player's team)
+#        默认: 0 (关闭)
+#                 1 (开启)
 #
 #    AlwaysMaxSkillForLevel
-#        Players will automatically gain max level dependent (weapon/defense) skill when logging in, leveling up etc.
-#        Default: 0 (false)
-#                 1 (true)
+#        当玩家登陆时,升级时将自动获得最高等级的 (武器/防御) 技能.
+#        默认: 0 (关闭)
+#                 1 (开启)
 #
 #    ActivateWeather
-#        Activate weather system
-#        Default: 1 (true)
-#                 0 (false)
+#        是否开启天气系统
+#        默认: 1 (开启)
+#                 0 (关闭)
 #
 #    CastUnstuck
-#        Allow cast or not Unstuck spell at .start or client Help option use
-#        Default: 1 (true)
+#        是否允许使用.start来解卡死
+#        默认: 1 (true)
 #                 0 (false)
 #
 #    MaxSpellCastsInChain
 #        Max amount triggered spell casts in chain by one caster, prevent stack overflow crash
 #        Too Low value will make some correct triggered casts fail
 #                 0 (no limit)
-#        Default: 10
+#        默认: 10
 #
 #   BirthdayTime
 #        Set to birthday (date in unix time), By default 28th August 2005, when MaNGOS got it抯 name
-#        Default: 1125180000
+#        默认: 1125180000
 #
 #    Instance.IgnoreLevel
-#        Ignore level requirement to enter instance
-#        Default: 0 (false)
-#                 1 (true)
+#        是否取消进入副本的等级限制
+#        默认: 0 (不取消)
+#                 1 (取消)
 #
 #    Instance.IgnoreRaid
-#        Ignore raid requirement to enter instance
-#        Default: 0 (false)
-#                 1 (true)
+#        是否取消进入副本团队限制
+#        默认: 0 (不取消)
+#                 1 (取消)
 #
 #    Instance.ResetTimeHour
-#        The hour of the day (0-23) when the global instance resets occur.
-#        Default: 4
+#        需要多少小时，每天 (0-23) 重置副本.
+#        默认: 4
 #
 #    Instance.UnloadDelay
-#        Unload the instance map from memory after some time if no players are inside.
-#        Default: 1800000 (miliseconds 30 minutes)
-#                 0 (instance maps are kept in memory until they are reset)
+#        当没有玩家在该副本地图中时,卸载副本地图在内存中的占用.
+#        默认: 1800000 (1800000=30分钟)
+#                 0 (副本地图始终加载到内存中,直到副本重置)
 #
 #    Quests.LowLevelHideDiff
-#        Quest level difference to hide for player low level quests:
+#        玩家可以看到NPC 头上的感叹号的任务等级比自己低的级数:
 #        if player_level > quest_level + LowLevelQuestsHideDiff then quest "!" mark not show for quest giver
-#        Default: 4
-#                -1 (show all available quests marks)
+#        默认: 4
+#                -1 (可以显示所有比自己等级低的任务的感叹号)
 #
 #    Quests.HighLevelHideDiff
-#        Quest level difference to hide for player high level quests:
+#        玩家可以看到NPC 头上的感叹号的任务等级比自己高的级数:
 #        if player_level < quest_min_level - HighLevelQuestsHideDiff then quest "!" mark not show for quest giver
-#        Default: 7
-#                -1 (show all available quests marks)
+#        默认: 7
+#                -1 (显示所有比自己等级高的任务地感叹号)
 #
 #    Quests.Daily.ResetHour
 #        Hour when daily quests reset (0..23)
-#        Default: 6
+#        默认: 6
 #
 #    Quests.Weekly.ResetWeekDay
 #        Week day when daily quests reset (0..6) 0 == Sunday
-#        Default: 3
+#        默认: 3
 #
 #    Quests.Weekly.ResetHour
 #        Hour in one from weekly days when weekly quests reset (0..23)
-#        Default: 6
+#        默认: 6
 #
 #    Quests.IgnoreRaid
 #        Non-raid quests allowed in raids
-#        Default: 0 (not allowed)
+#        默认: 0 (not allowed)
 #                 1 (allowed)
 #
 #    Guild.EventLogRecordsCount
 #        Count of guild event log records stored in guild_eventlog table
 #        Increase to store more guild events in table, minimum is 100
 #        You can set it to very high value to prevent oldest guild events to be rewritten by latest guild events - but it can slow down performance
-#        Default: 100
+#        默认: 100
 #
 #    Guild.BankEventLogRecordsCount
 #        Count of guild_bank event log records stored in guild_bank_eventlog table
 #        Increase to store more guild_bank events in table - minimum is 25 (GUILD_BANK_MAX_LOGS) for each guild_bank tab
 #        Useful when you don't want old log events to be overwritten by new, but increasing can slow down performance
-#        Default: 25
+#        默认: 25
 #
 #    TimerBar.Fatigue.GMLevel
-#        Disable/enable fatigue for security level (0..4) or high
-#        Default: 4 (None)
+#        关闭/开启 虚弱 在哪些帐号等级才开启 (0..4) 或则更高
+#        默认: 4 (无)
 #
 #    TimerBar.Fatigue.Max
-#        Fatigue max timer value (in secs)
-#        Default: 60 (1 minute)
-#                  0 (instant death)
+#        虚弱的最长时间 (秒)
+#        默认: 60 (1 分钟)
+#                  0 (立即死亡)
 #
 #    TimerBar.Breath.GMLevel
-#        Disable/enable waterbreathing for security level (0..4) or high
-#        Default: 4 (None)
+#        禁止/允许 水下呼吸的安全帐号等级 (0..4) 或则更高
+#        默认: 4 (无)
 #
 #    TimerBar.Breath.Max
-#        Waterbreathing max timer value (in secs)
-#        Default: 180
-#                   0 (instant underwater breathing damage start)
+#        水下呼吸最长时间 (秒)
+#        默认: 180
+#                   0 (即时水下呼吸损害的开始)
 #
 #    TimerBar.Fire.GMLevel
-#        Disable/enable lava fire damage for security level (0..4) or high
-#        Default: 4 (None)
+#        禁止/允许 熔岩火焰伤害的安全帐号等级 (0..4) 或则更高
+#        默认: 4 (无)
 #
 #    TimerBar.Fire.Max
-#        Lava damage delay max timer value (in secs)
-#        Default:  1
-#                  0 (instant in lava damage start)
+#        熔岩火焰伤害的延迟时间 (秒)
+#        默认:  1
+#                  0 (即时熔岩火焰伤害的开始)
 #
 #    MaxPrimaryTradeSkill
-#        Max count that player can learn the primary trade skill.
-#        Default: 2
-#        Max : 10
+#        玩家最多可以学的 商业技能.
+#        默认: 2
+#        最大 : 10
 #
 #    MinPetitionSigns
-#        Min signatures count to creating guild (0..9).
-#        Default: 9
+#        建立公会所需的最少玩家签名个数 (0..9).
+#        默认: 9
 #
 #    MaxGroupXPDistance
-#        Max distance to creature for group memeber to get XP at creature death.
-#        Default: 74
+#        小队成员在生物死亡 获得经验的 最大距离(同怪物的距离).
+#        默认: 74
 #
 #    MailDeliveryDelay
-#        Mail delivery delay time for item sending
-#        Default: 3600 sec (1 hour)
+#        如果邮寄物品延时多久收到
+#        默认: 3600 sec (1 小时)
 #
 #    MassMailer.SendPerTick
 #        Max amount mail send each tick from mails list scheduled for mass mailer proccesing.
 #        More mails increase server load but speedup mass mail proccess. Normal tick length: 50 msecs, so 20 ticks in sec and 200 mails in sec by default.
-#        Default: 10
+#        默认: 10
 #
 #    SkillChance.Prospecting
-#        For prospecting skillup impossible by default, but can be allowed as custom setting
-#        Default: 0 - no skilups
-#                 1 - skilups possible
+#        默认情况下不可能提升预测技能, 但是可以使用配置来启用
+#        默认: 0 - 不可以提升
+#                 1 - 可以提升
 #
 #    SkillChance.Milling
 #        For milling skillup impossible by default, but can be allowed as custom setting
-#        Default: 0 - no skilups
+#        默认: 0 - no skilups
 #                 1 - skilups possible
 #
 #    OffhandCheckAtTalentsReset
-#        Talent reset can change offhand weapon restrictions for equip slots.
-#        Default: 0 - recheck offhand slot weapon only at zone update
-#                 1 - recheck offhand slot weapon at talent reset also
+#        天赋重置副手武器限制会改变对装备槽.
+#        默认: 0 - 检查副手武器的插槽仅仅在地区更新的时候
+#                 1 - 检查副手武器的插槽同时也在重置天赋的时候
 #
 #    PetUnsummonAtMount
 #        Persmanent pet will unsummoned at player mount
 #                 0 - unsummon only for flying mounts
-#        Default: 1 - unsummon for any mount
+#        默认: 1 - unsummon for any mount
 #
 #    ClientCacheVersion
-#        Client cache version for client cache data reset. Use any different from DB value and not recently used for triggering reset.
-#        Default: 0 (use DB value from world DB db_version.cache_id field)
+#        客户端缓存版客户端缓存数据重置. 使用任何不同的DB值,而不是最近用于触发重置.
+#        默认: 0 (使用 Mangos库的db_version表的cache_id字段值)
 #
 #    Event.Announce
-#        Default: 0 (false)
-#                 1 (true)
+#        事件公告
+#        默认: 0 (关闭)
+#                 1 (开启)
 #
 #    BeepAtStart
-#        Beep at mangosd start finished (mostly work only at Unix/Linux systems)
-#        Default: 1 (true)
-#                 0 (false)
+#        在mangos启动完毕后蜂鸣一声(通常只在Unix nux系统下工作)
+#        默认: 1 (开启)
+#                 0 (关闭)
 #
 #    ShowProgressBars
 #        Control show progress bars for load steps at server startup
-#        Default: 1 (true)
+#        默认: 1 (true)
 #                 0 (false)
 #
 #    WaitAtStartupError
 #        After startup error report wait <Enter> or some time before continue (and possible close console window)
 #                 -1 (wait until <Enter> press)
-#        Default:  0 (not wait)
+#        默认:  0 (not wait)
 #                  N (>0, wait N secs)
 #
 #    Motd
-#        Message of the Day. Displayed at worldlogin for every user ('@' for a newline).
+#        每日消息。当玩家进入游戏的时候显示在聊天窗口的信息 ('@' 增加新的一行).
 #
 ###################################################################################################################
 
@@ -795,15 +792,15 @@ Event.Announce = 0
 BeepAtStart = 1
 ShowProgressBars = 1
 WaitAtStartupError = 0
-Motd = "Welcome to the Massive Network Game Object Server."
+Motd = "欢迎来到芒果中国"
 
 ###################################################################################################################
-# PLAYER INTERACTION
+# 玩家交互设置
 #
 #    AllowTwoSide.Accounts
-#        Allow or not accounts to create characters in the 2 teams in any game type.
-#                 0 (Not allowed)
-#        Default: 1 (Allowed)
+#        是否运行同1个帐号 建立不2个不同阵营的角色 GM号为始终为 允许.
+#                 0 (不允许)
+#        默认: 1 (允许)
 #
 #    AllowTwoSide.Interaction.Chat
 #    AllowTwoSide.Interaction.Channel
@@ -811,26 +808,24 @@ Motd = "Welcome to the Massive Network Game Object Server."
 #    AllowTwoSide.Interaction.Guild
 #    AllowTwoSide.Interaction.Auction
 #    AllowTwoSide.Interaction.Mail
-#        Allow or not common :chat(say,yell);channel(chat)group(join)guild(join);merge all auction houses for players from
-#        different teams, send mail to different team.
-#        Default: 0 (Not allowed)
-#                 1 (Allowed)
+#        是否允许 不同阵营间的 聊天 频道聊天 组队 交易(不包含世界聊天部分)
+#        默认: 0 (不允许)
+#                 1 (允许)
 #
 #    AllowTwoSide.WhoList
-#        Allow or not show player from both team in who list.
-#        Default: 0 (Not allowed)
-#                 1 (Allowed)
+#        是否在在线玩家列表里显示敌对阵营玩家.
+#        默认: 0 (不允许)
+#                 1 (允许)
 #
 #    AllowTwoSide.AddFriend
-#        Allow or not adding friends from other team in friend list.
-#        Default: 0 (Not allowed)
-#                 1 (Allowed)
+#        是否允许不同阵营里的人加入好友.
+#        默认: 0 (不允许)
+#                 1 (允许)
 #
 #    TalentsInspecting
-#        Allow other players see character talents in inspect dialog (Characters in Gamemaster mode can
-#        inspect talents always)
-#        Default: 1 (allow)
-#                 0 (not allow)
+#        允许其他玩家查看角色天赋对话框(GM角色总是被允许)
+#        默认: 1 (允许)
+#                 0 (不允许)
 #
 ###################################################################################################################
 
@@ -846,44 +841,44 @@ AllowTwoSide.AddFriend = 0
 TalentsInspecting = 1
 
 ###################################################################################################################
-# CREATURE SETTINGS
+# 生物设置
 #
 #    ThreatRadius
-#        Radius for creature to evade after being pulled away from combat start point
-#        If ThreatRadius is less than creature aggro radius then aggro radius will be used
-#        Default: 100 yards
+#        多少码外后怪物失去战斗侦测点
+#        如果ThreatRadius小于怪物的侦测范围那么侦测就会启用
+#        默认: 100 码
 #
 #    Rate.Creature.Aggro
-#        Aggro radius percent or off.
-#        Default: 1   - 100%
+#        生物攻击侦测范围.
+#        默认: 1   - 100%
 #                 1.5 - 150%
-#                 0   - off (0%)
+#                 0   - 关闭 (0%)
 #
 #    CreatureFamilyFleeAssistanceRadius
 #        Radius which creature will use to seek for a near creature for assistance. Creature will flee to this creature.
-#        Default: 30
+#        默认: 30
 #                 0   - off
 #
 #    CreatureFamilyAssistanceRadius
-#        Radius which creature will use to call assistance without moving
-#        Default: 10
-#                 0   - off
+#        同类生物(家族)协助攻击侦测范围
+#        默认: 10
+#                 0   - 关闭
 #
 #    CreatureFamilyAssistanceDelay
-#        Reaction time for creature assistance call
-#        Default: 1500 (1.5s)
+#        同类生物(家族)协助攻击侦测时间
+#        默认: 1500 (1.5秒)
 #
 #    CreatureFamilyFleeDelay
 #        Time during which creature can flee when no assistant found
-#        Default: 7000 (7s)
+#        默认: 7000 (7s)
 #
 #    WorldBossLevelDiff
-#        Difference for boss dynamic level with target
-#        Default: 3
+#        BOSS与目标等级差距等级
+#        默认: 3
 #
 #    Corpse.EmptyLootShow
 #        If target can have loot (or can be skining after loot) but no loot generated still show loot window
-#        Default: 1 (show)
+#        默认: 1 (show)
 #                 0 (not show)
 #
 #    Corpse.Decay.NORMAL
@@ -891,48 +886,48 @@ TalentsInspecting = 1
 #    Corpse.Decay.ELITE
 #    Corpse.Decay.RAREELITE
 #    Corpse.Decay.WORLDBOSS
-#        Seconds until creature corpse will decay without being looted or skinned (not used when creature does not have loot initially)
-#        Default: 300, 900, 600, 1200, 3600
+#        生物死亡后,尸体停留时间长度(秒).
+#        默认: 300, 900, 600, 1200, 3600
 #
 #    Rate.Corpse.Decay.Looted
 #         Controls how long the creature corpse stays after it had been looted, as a multiplier of its Corpse.Decay.* config.
-#         Default: 0.0 (will use modifier /3 of the creatures spawntimesecs when 0.0)
+#         默认: 0.0 (will use modifier /3 of the creatures spawntimesecs when 0.0)
 #
 #    Rate.Creature.Normal.Damage
 #    Rate.Creature.Elite.Elite.Damage
 #    Rate.Creature.Elite.RAREELITE.Damage
 #    Rate.Creature.Elite.WORLDBOSS.Damage
 #    Rate.Creature.Elite.RARE.Damage
-#        Creature Damage Rates.
-#        Examples: 2 - creatures will damage 2x, 1.7 - 1.7x.
+#        生物物理伤害比率.
+#        例如: 2 - 表示2倍攻击率, 1.7 - 1.7x.
 #
 #    Rate.Creature.Normal.SpellDamage
 #    Rate.Creature.Elite.Elite.SpellDamage
 #    Rate.Creature.Elite.RAREELITE.SpellDamage
 #    Rate.Creature.Elite.WORLDBOSS.SpellDamag
 #    Rate.Creature.Elite.RARE.SpellDamage
-#        Creature Spell Damage Rates.
-#        Examples: 2 - creatures will damage with spells 2x, 1.7 - 1.7x.
+#        生物技能伤害比率.
+#        例如: 2 - 2倍魔法技能伤害倍数, 1.7 - 1.7x.
 #
 #    Rate.Creature.Normal.HP
 #    Rate.Creature.Elite.Elite.HP
 #    Rate.Creature.Elite.RAREELITE.HP
 #    Rate.Creature.Elite.WORLDBOSS.HP
 #    Rate.Creature.Elite.RARE.HP
-#        Creature Health Ammount Modifier.
-#        Examples: 2 - creatures have 2x health, 1.7 - 1.7x.
+#        生物生命值比率.
+#        例如: 2 - 提高到2倍生命值, 1.7 - 1.7x.
 #
 #    ListenRange.Say
-#        Distance from player to listen text that creature (or other world object) say
-#        Default: 25
+#        玩家能看到生物说话的距离 (或则其他世界物体说话内容) 
+#        默认: 25
 #
 #    ListenRange.TextEmote
-#        Distance from player to listen textemote that creature (or other world object) say
-#        Default: 25
+#        玩家能看到生物表情的距离 (或则其他世界物体)
+#        默认: 25
 #
 #    ListenRange.Yell
-#        Distance from player to listen text that creature (or other world object) yell
-#        Default: 300
+#        玩家能听到生物呼喊的距离 (或则其他世界物体)
+#        默认: 300
 #
 ###################################################################################################################
 
@@ -970,18 +965,18 @@ ListenRange.TextEmote = 40
 ListenRange.Yell = 300
 
 ###################################################################################################################
-# CHAT SETTINGS
+# 聊天系统设置
 #
 #    ChatFakeMessagePreventing
-#        Chat protection from creating fake messages using a lot spaces (other invisible symbols),
-#        not applied to addon language messages, but can prevent working old addons
-#        that use normal languages for sending data to another clients.
-#        Default: 0 (disable fake messages preventing)
-#                 1 (enable fake messages preventing)
+#        天制造假讯息保护控制,防止占用更多空间,针对（其他无形的符号),
+#        不适用于插件语言讯息，但是可能防止运作总是添加物品名等形式寄发数据
+#        即使用正常语言将数据发送到其它客户.
+#        默认: 0 (不检查假消息)
+#              1 (查检假消息)
 #
 #    ChatStrictLinkChecking.Severity
 #        Check chat messages for ingame links to spells, items, quests, achievements etc.
-#        Default: 0 (disable link checking)
+#        默认: 0 (disable link checking)
 #                 1 (check if only valid pipe commands are used. This prevents posting pictures for example)
 #                 2 (verifiy that pipe commands are used in a correct order)
 #                 3 (check if color, entry and name don't contradict each other. For correct work, please assure
@@ -989,31 +984,31 @@ ListenRange.Yell = 300
 #
 #    ChatStrictLinkChecking.Kick
 #        Defines, what should be done if a message is considered to contain invalid pipe commands.
-#        Default: 0 (silently ignore message)
+#        默认: 0 (silently ignore message)
 #                 1 (kick players who sent invalid formed messages)
 #
 #    ChatFlood.MessageCount
-#        Chat anti-flood protection, haste message count to activate protection
-#        Default: 10
-#                 0 (disable anti-flood protection)
+#        防刷屏开关,多少条违规信息激活保护
+#        默认: 10
+#              0 (为关闭防刷屏)
 #
 #    ChatFlood.MessageDelay
-#        Chat anti-flood protection, minimum message delay to count message
-#        Default: 1 (in secs)
+#        防刷屏开关,多少秒间隔开始计算为违规信息
+#        默认: 1 (秒)
 #
 #    ChatFlood.MuteTime
-#        Chat anti-flood protection, mute time at activation flood protection (not saved)
-#        Default: 10 (in secs)
+#        防刷屏开关,禁言时间
+#        默认: 10 (秒)
 #
 #    Channel.RestrictedLfg
-#        Restrict use LookupForGroup channel only registered in LFG tool players
-#        Default: 1 (allow join to channel only if active in LFG)
-#                 0 (allow join to channel in any time)
+#        寻求组队频道(LookupForGroup)设置,仅登记并再现在LFG(寻求组队)对话窗口的玩家
+#        默认: 1 (必须使用命令:"/lfg 4"激活LFG(寻求组队)频道的情况才准许加入频道)
+#                 0 (准许任何时侯加入对频道)
 #
 #    Channel.SilentlyGMJoin
-#        Silently join GM characters (security level > 1) to channels
-#        Default: 0 (join announcement in normal way)
-#                 1 (GM join without announcement)
+#        设置1级以上的GM人物加入时是否采用各频道
+#        默认: 0 (以正常方式加入公告)
+#                 1 (GM加入,不用公告)
 #
 ###################################################################################################################
 
@@ -1027,70 +1022,70 @@ Channel.RestrictedLfg = 1
 Channel.SilentlyGMJoin = 0
 
 ###################################################################################################################
-# GAME MASTER SETTINGS
+# 游戏管理员设置
 #
 #    GM.LoginState
-#        GM mode at login
-#        Default: 2 (last save state)
-#                 0 (disable)
-#                 1 (enable)
+#        GM模式在登陆时状态
+#        默认: 2 (上次离开时状态)
+#                 0 (总是关)
+#                 1 (总是开)
 #
 #    GM.Visible
-#        GM visibility at login
-#        Default: 2 (last save state)
-#                 0 (invisible)
-#                 1 (visible)
+#        GM登陆时的隐身状态
+#        默认: 2 (上次离开时状态)
+#                 0 (隐身)
+#                 1 (可见)
 #
 #    GM.AcceptTickets
-#        Is GM accepting tickets from player by default or not.
-#        Default: 2 (last save state)
-#                 0 (disable)
-#                 1 (enable)
+#        是否允许GM 接收玩家的报告.
+#        默认: 2 (最后保存状态)
+#                 0 (关闭)
+#                 1 (开启)
 #
 #    GM.Chat
-#        GM chat mode at login
-#        Default: 2 (last save state)
-#                 0 (disable)
-#                 1 (enable)
+#        GM聊天模式,在登陆的时候
+#        默认: 2 (最后保存状态)
+#                 0 (关闭)
+#                 1 (开启)
 #
 #    GM.WhisperingTo
-#        Is GM accepting whispers from player by default or not.
-#        Default: 2 (last save state)
-#                 0 (disable)
-#                 1 (enable)
+#        GM默认是否接受玩家的悄悄话.
+#        默认: 2 (最后保存状态)
+#                 0 (不接受)
+#                 1 (接受)
 #
 #    GM.InGMList.Level
-#        Max GM level showed in GM list (if visible) in non-GM state (.gm off)
-#                 0 (none)
-#                 1 (only moderators)
-#                 2 (only gamemasters)
-#        Default: 3 (anyone)
+#        是否显示指定等级的GM等级的显示列表 (当GM隐身时) 或则 (.gm off)
+#                 0 (仅玩家)
+#                 1 (普通GM)
+#                 2 (高级GM)
+#        默认: 3 (所有)
 #
 #    GM.InWhoList.Level
-#        Max GM level showed in who list (if visible).
-#                 0 (only players)
-#                 1 (only moderators)
-#                 2 (only gamemasters)
-#        Default: 3 (anyone)
+#        是否显示指定等级的GM名单 (当GM隐身时).
+#                 0 (仅玩家)
+#                 1 (普通GM)
+#                 2 (高级GM)
+#        默认: 3 (所有)
 #
 #    GM.LogTrade
-#        Include GM trade and trade slot enchanting operations in GM log if it enable
-#        Default: 1 (include)
-#                 0 (not include)
+#        如果打开 则在GM LOG里记录GM的交易和交易信息
+#        默认: 1 (记录)
+#                 0 (不记录)
 #
 #    GM.StartLevel
-#        GM starting level (1-100)
-#        Default: 1
+#        GM出生等级 (1-100)
+#        默认: 1
 #
 #    GM.LowerSecurity
 #        Disallow a lower security member to interact with a higher one using commands
-#        Default: 0 (disable)
+#        默认: 0 (disable)
 #                 1 (enable)
 #
 #    GM.AllowAchievementGain
-#        If enabled it allows gaining achievements for GM characters
-#        Default: 1 (enable)
-#                 0 (disable)
+#        是否允许GM获得系统成就
+#        默认: 1 (允许)
+#                 0 (不允许)
 #
 ###################################################################################################################
 
@@ -1107,45 +1102,44 @@ GM.LowerSecurity         = 0
 GM.AllowAchievementGain  = 1
 
 ###################################################################################################################
-# VISIBILITY AND RADIUSES
+# 可见度和侦测范围设置
 #
 #    Visibility.GroupMode
-#        Group visibility modes
-#        Default: 0 (standard setting: only members from same group can 100% auto detect invisible player)
-#                 1 (raid members 100% auto detect invisible player from same raid)
-#                 2 (players from same team can 100% auto detect invisible player)
+#        团队可见模式
+#        默认: 0 (s标准设置：只有同一个团队的队友才可以100%侦测隐形玩家)
+#                 1 (只有同一个小队的队友才可以100%侦测隐形玩家)
+#                 2 (同一阵营的队友可以100%侦测隐形玩家)
 #
 #    Visibility.Distance.Continents
 #    Visibility.Distance.Instances
 #    Visibility.Distance.BGArenas
-#        Visibility distance for different ingame object in different maps.
-#        Visibility on continents on offy ~90 yards. In BG/Arenas ~180. For instances default ~120.
-#        Max limited by active player zone: ~ 333
-#        Min limit is max aggro radius (45) * Rate.Creature.Aggro
+#        在不同的地图可视范围距离.
+#        在普通大陆的可视距离 ~90 码. 在战场/竞技场  ~180. 在副本的可视范围默认为 ~120.
+#        最大距离: ~ 333
+#        最低是最大 aggro 半径 (45) * Rate.Creature.Aggro
 #
 #    Visibility.Distance.InFlight
-#        Visible distance for player in flight
-#        Min limit is 0 (not show any objects)
+#        玩家在飞行中的可见距离
+#        最低限度是 0 (没有显示任何物体)
 #
 #    Visibility.Distance.Grey.Unit
-#        Visibility grey distance for creatures/players (fast changing objects)
-#        addition to appropriate object type Visibility.Distance.* use in case visibility removing to
-#        object (except corpse around distances) If D is distance and G is grey distance then object
-#        make visible if distance to it <= D but make non visible if distance > D+G
-#        Default: 1 (yard)
+#        可见性灰色距离为 生物/玩家 (快速的改变的对象)
+#        除了适当的目标类型可见.距离* 其它都清除(除尸体周围距离)
+#        如果是距离并且 G 是灰色距离 那么对象将是可见的如果距离到它 <= D 否则不可见，如果距离 > D+G
+#        默认: 1 (码)
 #
 #    Visibility.Distance.Grey.Object
-#        Visibility grey distance for dynobjects/gameobjects/corpses/creature bodies
-#        Default: 10 (yards)
+#        可见灰色距离 for dynobjects/gameobjects/corpses/creature bodies
+#        默认: 10 (码)
 #
 #    Visibility.RelocationLowerLimit
 #        Object's visibility update called, when distance between current object's position and position,
 #        where visiblity was updated last time, reaches RelocationLoverLimit value
-#        Default: 10 (yards)
+#        默认: 10 (yards)
 #
 #    Visibility.AIRelocationNotifyDelay
 #        Delay time between creature AI reactions on nearby movements
-#        Default: 1000 (milliseconds)
+#        默认: 1000 (milliseconds)
 #
 ###################################################################################################################
 
@@ -1160,7 +1154,7 @@ Visibility.RelocationLowerLimit    = 10
 Visibility.AIRelocationNotifyDelay = 1000
 
 ###################################################################################################################
-# SERVER RATES
+# 服务端倍率设置
 #
 #    Rate.Health
 #    Rate.Mana
@@ -1170,12 +1164,12 @@ Visibility.AIRelocationNotifyDelay = 1000
 #    Rate.RunicPower.Loss
 #    Rate.Focus
 #    Rate.Energy (Rogue)
-#        Health and power regeneration and rage income from damage.
-#        Default: 1
+#        血和能量的恢复及受伤获得的怒气(倍数).
+#        默认: 1
 #
 #    Rate.Skill.Discovery
 #         Skill Discovery Rates
-#         Default: 1
+#         默认: 1
 #
 #    Rate.Drop.Item.Poor
 #    Rate.Drop.Item.Normal
@@ -1186,133 +1180,133 @@ Visibility.AIRelocationNotifyDelay = 1000
 #    Rate.Drop.Item.Artifact
 #    Rate.Drop.Item.Referenced
 #    Rate.Drop.Money
-#         Drop rates (items by quality and money)
-#         Default: 1
+#         金钱和物品掉落倍数(各种物品品质掉率)
+#         默认: 1
 #
 #    Rate.XP.Kill
 #    Rate.XP.Quest
 #    Rate.XP.Explore
-#        XP rates
-#        Default: 1
+#        杀怪,任务,探索地图 获得经验 乘以的倍数
+#        默认: 1
 #
 #    Rate.Rest.InGame
 #    Rate.Rest.Offline.InTavernOrCity
 #    Rate.Rest.Offline.InWilderness
-#        Resting points grow rates (1 - normal, 2 - double rate, 0.5 - half rate, etc) from standard values
+#        精力条增长倍数 (1 - 正常, 2 - 两倍增长, 0.5 - 半倍增长, etc) 与正常被数相比较
 #
 #    Rate.Damage.Fall
-#        Damage after fall rate. (1 - standard, 2 - double damage, 0.5 - half damage, etc)
+#        空中跌落伤害倍数. (1 - 标准, 2 - 两倍伤害, 0.5 - 一半伤害, etc)
 #
 #    Rate.Auction.Time
 #    Rate.Auction.Deposit
 #    Rate.Auction.Cut
-#        Auction rates (auction time, deposit get at auction start, auction cut from price at auction end)
+#        拍卖率(拍卖时间, 开始拍卖时的存款倍率, 在拍卖结束拍卖价格削减比例)
 #
 #    Auction.Deposit.Min
 #        Minimum auction deposit size in copper
-#        Default: 100 (1 silver)
+#        默认: 100 (1 silver)
 #
 #    Rate.Honor
-#        Honor gain rate
+#        荣誉增长倍数
 #
 #    Rate.Mining.Amount
 #    Rate.Mining.Next
-#        Mining Rates (Mining.Amount changes minimum/maximum usetimes of a deposit,
+#        矿物 倍数 (Mining.Amount changes minimum/maximum usetimes of a deposit,
 #        Mining.Next changes chance to have next use of a deposit)
 #
 #    Rate.Talent
-#        Talent Point rates
-#        Default: 1
+#        天赋增加倍数
+#        默认: 1
 #
 #    Rate.Reputation.Gain
-#         Reputation Gain rate
-#         Default: 1
+#         荣誉增加倍数
+#         默认: 1
 #
 #    Rate.Reputation.LowLevel.Kill
 #         Reputation Gain form low level kill (grey creture)
-#         Default: 1
+#         默认: 1
 #
 #    Rate.Reputation.LowLevel.Quest
-#         Reputation Gain rate
-#         Default: 1
+#         荣誉倍率设置(低等级任务)
+#         默认: 1
 #
 #    Rate.InstanceResetTime
-#        Multiplier for the number of days in between global raid/heroic instance resets.
-#        Default: 1
+#        数字乘以instance_template表中的reset_delay得到的天数,reset_delay如果为零,则采用DBC中的重置天数.
+#        默认: 1
 #
 #    SkillGain.Crafting
 #    SkillGain.Defense
 #    SkillGain.Gathering
 #    SkillGain.Weapon
 #         crafting/defense/gathering/weapon skills gain at skill grow (1,2,...)
-#         Default: 1
+#         默认: 1
 #
 #    SkillChance.Orange
 #    SkillChance.Yellow
 #    SkillChance.Green
 #    SkillChance.Grey
-#        Skill chance values (0..100)
-#        Default: 100-75-25-0
+#        技能熟练度提升几率 (0..100)
+#        默认: 100-75-25-0
 #
 #    SkillChance.MiningSteps
 #    SkillChance.SkinningSteps
-#         For skinning and Mining chance decrease with skill level.
-#         Default: 0  - no decrease
-#                  75 - in 2 times each 75 skill points
+#         关于剥皮和采矿机会减少与技能水平.
+#         默认: 0  - 不减少
+#                  75 - 每75点技能点在2以内
 #
 #    SkillFail.Loot.Fishing
 #         For fishing instead fail provided junk loot
-#         Default: 1 (enabled)
+#         默认: 1 (enabled)
 #                  0 (disabled)
 #
 #    SkillFail.Gain.Fishing
 #         For fishing skill gain possible at fail also
-#         Default: 1 (enabled)
+#         默认: 1 (enabled)
 #                  0 (disabled)
 #
 #    SkillFail.Possible.FishingPool
 #         For fishing pool impossible fail from low skill by default
-#         Default: 0 (disabled)
+#         默认: 0 (disabled)
 #                  1 (enabled)
 #
 #    DurabilityLossChance.Damage
 #         Chance lost one from equiped items durability point at damage apply or receive.
-#         Default: 0.5 (100/0.5 = 200) Each 200 damage apply one from 19 possible equipped items
+#         默认: 0.5 (100/0.5 = 200) Each 200 damage apply one from 19 possible equipped items
 #
 #    DurabilityLossChance.Absorb
 #         Chance lost one from armor items durability point at damage absorb.
-#         Default: 0.5 (100/0.5 = 200) Each 200 absorbs apply one from 15 possible armor equipped items
+#         默认: 0.5 (100/0.5 = 200) Each 200 absorbs apply one from 15 possible armor equipped items
 #
 #    DurabilityLossChance.Parry
 #         Chance lost weapon durability point at parry.
-#         Default: 0.05 (100/0.05 = 2000) Each 2000 parry attacks main weapon lost point
+#         默认: 0.05 (100/0.05 = 2000) Each 2000 parry attacks main weapon lost point
 #
 #    DurabilityLossChance.Block
 #         Chance lost sheild durability point at damage block.
-#         Default: 0.05 (100/0.05 = 2000) Each 2000 partly or full blocked attacks shield lost point
+#         默认: 0.05 (100/0.05 = 2000) Each 2000 partly or full blocked attacks shield lost point
 #
 #    Death.SicknessLevel
-#         Starting Character start gain sickness at spirit resurrection (1 min)
-#         Default: 11
-#                  -10 - character will have full time (10min) sickness at 1 level
-#                  maxplayerlevel+1 - character will not have sickness at any level
+#         玩家复活虚弱时间配置 (1 min)
+#         默认: 11
+#                  -10 - 玩家将是完整的10分钟 (10min)虚弱时间 at 1 level
+#                  maxplayerlevel+1 - 最大等級+1，就不會有虛弱时间限制
 #
 #    Death.CorpseReclaimDelay.PvP
 #    Death.CorpseReclaimDelay.PvE
 #         Enabled/disabled increase corpse reclaim delay at often PvP/PvE deaths
-#         Default: 1 (enabled)
+#         默认: 1 (enabled)
 #                  0 (disabled)
 #
 #    Death.Bones.World
 #    Death.Bones.BattlegroundOrArena
 #         Enable/disable creating bones instead corpse at resurrection (in normal zones/instacnes, or battleground/arenas)
-#         Default: 1 (enabled)
+#         默认: 1 (enabled)
 #                  0 (disabled)
 #
 #    Death.Ghost.RunSpeed.World
 #    Death.Ghost.RunSpeed.Battleground
 #         Modifies the speed of player's ghosts, removed upon reviving, not permanent/saved, in non-BG and BG maps
-#         Default: 1.0 (normal speed)
+#         默认: 1.0 (normal speed)
 #
 ###################################################################################################################
 
@@ -1379,37 +1373,37 @@ Death.Ghost.RunSpeed.World = 1.0
 Death.Ghost.RunSpeed.Battleground = 1.0
 
 ###################################################################################################################
-# BATTLEGROUND CONFIG
+# 战场配置系统
 #
 #    Battleground.CastDeserter
-#        Cast Deserter spell at player who leave battleground in progress
-#        Default: 1 (enable)
-#                 0 (disable)
+#        在私自离开战场场地情况下，是否设置或取消逃兵技能
+#        默认: 1 (开启)
+#                 0 (关闭)
 #
 #    Battleground.QueueAnnouncer.Join
 #        Enable queue announcer posting to chat at join
-#        Default: 0 (not send)
+#        默认: 0 (not send)
 #                 1 (send to joined player only)
 #                 2 (send to all players)
 #
 #    Battleground.QueueAnnouncer.Start
 #        Enable queue announcer posting to chat at BG start
-#        Default: 0 (disable)
+#        默认: 0 (disable)
 #                 1 (enable)
 #
 #    Battleground.InvitationType
-#        Set Battleground invitation type
-#        Default: 0 (normal - invite as much players to bg as possible, don't bother with ballance)
+#        设置战场邀请类型
+#        默认: 0 (normal - invite as much players to bg as possible, don't bother with ballance)
 #                 1 (Experimental - don't allow to invite much more players of one faction)
 #
 #    Battleground.PrematureFinishTimer
 #        The time to end the bg if there are less than MinPlayersPerTeam on one side in milliseconds
-#        Default: 300000 (5 minutes)
+#        默认: 300000 (5 minutes)
 #                 0 - disable (not recommended)
 #
 #    BattleGround.PremadeGroupWaitForMatch
 #        The time in which premade group of 1 faction waits in BG Queue for premade group of other faction
-#        Default: 1800000 (30 minutes)
+#        默认: 1800000 (30 minutes)
 #                 0 - disable premade group matches (group always added to bg team in normal way)
 #
 ###################################################################################################################
@@ -1422,55 +1416,55 @@ BattleGround.PrematureFinishTimer = 300000
 BattleGround.PremadeGroupWaitForMatch = 1800000
 
 ###################################################################################################################
-# ARENA CONFIG
+# 竞技场配置系统
 #
 #    Arena.MaxRatingDifference
 #        The maximum rating difference between two groups in rated matches
-#        Default: 150 (enable, recommended)
+#        默认: 150 (enable, recommended)
 #                 0 (disable, rating difference is discarded)
 #
 #    Arena.RatingDiscardTimer
 #        After the specified milliseconds has passed,
 #        rating information will be discarded when selecting teams for matches
 #        also initiates an update by this timer
-#        Default: 600000 (10 minutes, recommended)
+#        默认: 600000 (10 minutes, recommended)
 #                 0 (disable)
 #
 #    Arena.AutoDistributePoints
 #        Set if arena points should be distributed automatically, or by GM command
-#        Default: 0 (disable) (recommended): use gm command or sql query to distribute the points
+#        默认: 0 (disable) (recommended): use gm command or sql query to distribute the points
 #                 1 (enable)  arena points are distributed automatically
 #
 #    Arena.AutoDistributeInterval
 #        How often should the distribution take place
 #        If automatic distribution is enabled in days
-#        Default: 7 (weekly)
+#        默认: 7 (weekly)
 #
 #    Arena.QueueAnnouncer.Join
 #        Enable arena queue announcer posting to chat at join
-#        Default: 0 (disable)
+#        默认: 0 (disable)
 #                 1 (enable)
 #
 #    Arena.QueueAnnouncer.Exit
 #        Enable arena queue announcer posting to chat at exit
-#        Default: 0 (disable)
+#        默认: 0 (disable)
 #                 1 (enable)
 #
 #    Arena.ArenaSeason.ID
-#        Current area season id show in client
-#        Default: 1
+#        当前在客户端显示的竞技场季度
+#        默认: 1
 #
 #    Arena.ArenaSeasonPrevious.ID
 #        Previous area season id show in client
-#        Default: 0
+#        默认: 0
 #
 #    Arena.StartRating
-#        Default Rating at team creation
-#        Default: -1 (use season dependent default value)
+#        默认 Rating at team creation
+#        默认: -1 (use season dependent default value)
 #
 #    Arena.StartPersonalRating
-#        Default Personal Rating at team creation
-#        Default: -1 (use season dependent default value)
+#        默认 Personal Rating at team creation
+#        默认: -1 (use season dependent 默认 value)
 #
 ###################################################################################################################
 
@@ -1486,28 +1480,28 @@ Arena.StartRating = -1
 Arena.StartPersonalRating = -1
 
 ###################################################################################################################
-# NETWORK CONFIG
+# 网络线程设置
 #
 #    Network.Threads
-#         Number of threads for network, recommend 1 thread per 1000 connections.
-#         Default: 1
+#         开启多少个网络线程 ,每一个线程能建立1000个连接.
+#         默认: 1
 #
 #    Network.OutKBuff
 #         The size of the output kernel buffer used ( SO_SNDBUF socket option, tcp manual ).
-#         Default: -1 (Use system default setting)
+#         默认: -1 (Use system default setting)
 #
 #    Network.OutUBuff
 #         Userspace buffer for output. This is amount of memory reserved per each connection.
-#         Default: 65536
+#         默认: 65536
 #
 #    Network.TcpNoDelay:
 #         TCP Nagle algorithm setting
-#         Default: 0 (enable Nagle algorithm, less traffic, more latency)
+#         默认: 0 (enable Nagle algorithm, less traffic, more latency)
 #                  1 (TCP_NO_DELAY, disable Nagle algorithm, more traffic but less latency)
 #
 #    Network.KickOnBadPacket
 #         Kick player on bad packet format.
-#         Default: 0 - do not kick
+#         默认: 0 - do not kick
 #                  1 - kick
 #
 ###################################################################################################################
@@ -1519,52 +1513,52 @@ Network.TcpNodelay = 1
 Network.KickOnBadPacket = 0
 
 ###################################################################################################################
-# CONSOLE, REMOTE ACCESS AND SOAP
+#  控制台设置
 #
 #    Console.Enable
-#        Enable console
-#        Default: 1 - on
+#        控制台开关
+#        默认: 1 - on
 #                 0 - off
 #
 #    Ra.Enable
-#        Enable remote console
-#        Default: 0 - off
+#        远程控制台开关
+#        默认: 0 - off
 #                 1 - on
 #
 #    Ra.IP
-#        Default remote console ip address, use 0.0.0.0 for every address
+#        默认远程控制IP地址,0.0.0.0为所有IP皆可
 #
 #    Ra.Port
-#        Default remote console port
-#        Default: 3443
+#        默认远程控制台端口
+#        默认: 3443
 #
 #    Ra.MinLevel
-#        Minimum level that's required to login,3 by default
-#        Default: 3 (Administrator)
+#        远程控制台连接到服务器所需要的GM等级,默认为3(管理员)
+#        默认: 3 (Administrator)
 #
 #    Ra.Secure
-#        Kick client on wrong pass
+#        踢出用户，如果他输入了错误的密码 (仅限远程控制台)
 #                 0 - off
-#        Default: 1 - on
+#        默认: 1 - on
 #
 #    Ra.Stricted
 #        Not allow execute console level only commands remotly by RA
 #                 0 - off
-#        Default: 1 - on
+#        默认: 1 - on
 #
 #
 #    SOAP.Enable
 #        Enable soap service
-#        Default: 0 - off
+#        默认: 0 - off
 #                 1 - on
 #
 #    SOAP.IP
 #        Bound SOAP service ip address, use 0.0.0.0 to access from everywhere
-#        Default: 127.0.0.1
+#        默认: 127.0.0.1
 #
 #    SOAP.Port
 #        SOAP port
-#        Default: 7878
+#        默认: 7878
 #
 ###################################################################################################################
 
@@ -1583,14 +1577,14 @@ SOAP.Port = 7878
 ###################################################################################################################
 #    CharDelete.Method
 #        Character deletion behavior
-#        Default: 0  - Completely remove the character from the database
+#        默认: 0  - Completely remove the character from the database
 #                 1  - Unlinking, the character gets unlinked from the account,
 #                      the name gets freed up and appears as deleted ingame
 #
 #    CharDelete.MinLevel
 #        Character gets deleted by CharDelete.Method=0 when the character
 #        hasn't the specified level yet.
-#        Default: 0  - For all characters the specified mode will be used
+#        默认: 0  - For all characters the specified mode will be used
 #                 1+ - Only for players which have reached the specified level
 #                      will be deleted by the specified mode.
 #                      the rest will be deleted by CharDelete.Method=0
@@ -1598,7 +1592,7 @@ SOAP.Port = 7878
 #    CharDelete.KeepDays
 #        Define the amount of days for which the characters are kept in the database before
 #        they will be removed
-#        Default: 30
+#        默认: 30
 #                 0  - Don't delete any characters, they stay in the database forever.
 #
 ###################################################################################################################
