@@ -282,8 +282,8 @@ enum Opcodes
     MSG_MOVE_SET_PITCH                               = 0x0EBA0, // 4.0.6a 13623
     MSG_MOVE_WORLDPORT_ACK                           = 0x02FC0, // 4.0.6a 13623
     SMSG_MONSTER_MOVE                                = 0x0F1A4, // 4.0.6a 13623
-    SMSG_MOVE_WATER_WALK                             = 0xE1A4,  // 57764 - 4.0.6.13623
-    SMSG_MOVE_LAND_WALK                              = 0x375E,  // - 4.0.3.13329
+    SMSG_MOVE_WATER_WALK                             = 0x02E84, // 4.0.6a 13623
+    SMSG_MOVE_LAND_WALK                              = 0x02084, // 4.0.6a 13623
     MSG_MOVE_SET_RAW_POSITION_ACK                    = 0xF4A0,  // 62624 - 4.0.6.13623
     CMSG_MOVE_SET_RAW_POSITION                       = 0x0F0C8, // 4.0.6a 13623
     SMSG_FORCE_RUN_SPEED_CHANGE                      = 0x0F1CC, // 4.0.6a 13623
@@ -842,8 +842,8 @@ enum Opcodes
     SMSG_SPLINE_MOVE_NORMAL_FALL                     = 0x6C77,  // 27767 - 4.0.3.13329
     SMSG_SPLINE_MOVE_SET_HOVER                       = 0x3E74,  // 15988 - 4.0.3.13329
     SMSG_SPLINE_MOVE_UNSET_HOVER                     = 0x0E5F,  // 3679  - 4.0.3.13329
-    SMSG_SPLINE_MOVE_WATER_WALK                      = 0xEE74,  // 61044 - 4.0.3.13329
-    SMSG_SPLINE_MOVE_LAND_WALK                       = 0x3676,  // 13942 - 4.0.3.13329
+    SMSG_SPLINE_MOVE_WATER_WALK                      = 0x061C0, // 4.0.6a 13623
+    SMSG_SPLINE_MOVE_LAND_WALK                       = 0x0A7C8, // 4.0.6a 13623
     SMSG_SPLINE_MOVE_START_SWIM                      = 0x0674,  // 1652  - 4.0.3.13329
     SMSG_SPLINE_MOVE_STOP_SWIM                       = 0x055F,  // 1375  - 4.0.3.13329
     SMSG_SPLINE_MOVE_SET_RUN_MODE                    = 0xEE7C,  // 61052 - 4.0.3.13329
