@@ -60,9 +60,9 @@
  */
 void WorldSession::HandleSendMail(WorldPacket & recv_data )
 {
-    uint64 mailbox, unk3;
+    uint64 mailbox, unk3, money, COD;
     std::string receiver, subject, body;
-    uint32 unk1, unk2, money, COD;
+    uint32 unk1, unk2;
     uint8 unk4;
     recv_data >> mailbox;
     recv_data >> receiver;
@@ -129,7 +129,7 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data )
 
     uint32 cost = items_count ? 30 * items_count : 30;      // price hardcoded in client
 
-    uint32 reqmoney = cost + money;
+    uint64 reqmoney = cost + money;
 
     if (pl->GetMoney() < reqmoney)
     {
@@ -516,8 +516,10 @@ void WorldSession::HandleMailTakeMoney(WorldPacket & recv_data )
 {
     uint64 mailbox;
     uint32 mailId;
+    uint64 unk;
     recv_data >> mailbox;
     recv_data >> mailId;
+    recv_data >> unk;                                       // 4.0.6
 
     if (!GetPlayer()->GetGameObjectIfCanInteractWith(mailbox, GAMEOBJECT_TYPE_MAILBOX))
         return;
@@ -610,10 +612,10 @@ void WorldSession::HandleGetMailList(WorldPacket & recv_data )
                 break;
         }
 
-        data << uint32((*itr)->COD);                        // COD
+        data << uint64((*itr)->COD);                        // COD
         data << uint32(0);                                  // unknown, probably changed in 3.3.3
         data << uint32((*itr)->stationery);                 // stationery (Stationery.dbc)
-        data << uint32((*itr)->money);                      // copper
+        data << uint64((*itr)->money);                      // copper
         data << uint32((*itr)->checked);                    // flags
         data << float(((*itr)->expire_time-time(NULL))/DAY);// Time
         data << uint32((*itr)->mailTemplateId);             // mail template (MailTemplate.dbc)

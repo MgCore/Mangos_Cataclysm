@@ -284,7 +284,7 @@ enum Opcodes
     SMSG_MONSTER_MOVE                                = 0x0F1A4, // 4.0.6a 13623
     SMSG_MOVE_WATER_WALK                             = 0x02E84, // 4.0.6a 13623
     SMSG_MOVE_LAND_WALK                              = 0x02084, // 4.0.6a 13623
-    MSG_MOVE_SET_RAW_POSITION_ACK                    = 0xF4A0,  // 62624 - 4.0.6.13623
+    MSG_MOVE_SET_RAW_POSITION_ACK                    = 0x0F4A0, // 62624 - 4.0.6.13623
     CMSG_MOVE_SET_RAW_POSITION                       = 0x0F0C8, // 4.0.6a 13623
     SMSG_FORCE_RUN_SPEED_CHANGE                      = 0x0F1CC, // 4.0.6a 13623
     CMSG_FORCE_RUN_SPEED_CHANGE_ACK                  = 0x026C8, // 4.0.6a 13623
@@ -650,7 +650,7 @@ enum Opcodes
     CMSG_MAIL_RETURN_TO_SENDER                       = 0x065A4, // 4.0.6a 13623
     CMSG_MAIL_DELETE                                 = 0x07DE4, // 4.0.6a 13623
     CMSG_MAIL_CREATE_TEXT_ITEM                       = 0x0FAE4, // 4.0.6a 13623
-    SMSG_SPELLLOGMISS                                = 0xBDA4,  // 48548 - 4.0.6.13623
+    SMSG_SPELLLOGMISS                                = 0x0BDA4, // 48548 - 4.0.6.13623
     SMSG_SPELLLOGEXECUTE                             = 0x0B6E8, // 4.0.6a 13623
     SMSG_DEBUGAURAPROC                               = 0x100B6, //
     SMSG_PERIODICAURALOG                             = 0x03388, // 
@@ -1390,7 +1390,7 @@ enum Opcodes
     CMSG_REDIRECT_AUTH_PROOF                         = 0x08C0A, //
     CMSG_AUTO_DECLINE_GUILD_INVITES                  = 0x00C7D, //
     CMSG_GROUP_SET_ROLES                             = 0x08509, // 4.0.6a 13623
-    CMSG_WORLD_LOGIN                                 = 0x8508,  // 34056 - 4.0.6.13623, New in 406
+    CMSG_WORLD_LOGIN                                 = 0x08508, // 34056 - 4.0.6.13623, New in 406
     NUM_MSG_TYPES                                    = 0x102B7  // last unknown opcode + 1.
 };
 

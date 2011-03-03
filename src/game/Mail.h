@@ -307,9 +307,9 @@ struct Mail
     /// The time at which this mail (was/will be) delivered
     time_t deliver_time;
     /// The amount of money contained in this mail.
-    uint32 money;
+    uint64 money;
     /// The amount of money the receiver has to pay to get this mail.
-    uint32 COD;
+    uint64 COD;
     /// The time at which this mail was read.
     uint32 checked;
     /// The state of this mail.
