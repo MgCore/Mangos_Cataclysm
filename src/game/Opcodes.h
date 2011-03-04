@@ -222,7 +222,7 @@ enum Opcodes
     CMSG_CHANNEL_UNMODERATOR                         = 0x00809, // 4.0.6a 13623
     CMSG_CHANNEL_MUTE                                = 0x00023, // 4.0.6a 13623
     CMSG_CHANNEL_UNMUTE                              = 0x00841, // 4.0.6a 13623
-    CMSG_CHANNEL_INVITE                              = 0x00021, // 4.0.6a 13623
+    CMSG_CHANNEL_INVITE                              = 0x00020, // 4.0.6a 13623
     CMSG_CHANNEL_KICK                                = 0x00068, // 4.0.6a 13623
     CMSG_CHANNEL_ROSTER_INFO                         = 0x00069, // 4.0.6a 13623
     CMSG_CHANNEL_BAN                                 = 0x0000A, // 4.0.6a 13623
@@ -428,7 +428,7 @@ enum Opcodes
     CMSG_DUEL_CANCELLED                              = 0x06F8C, // 4.0.6a 13623
     SMSG_MOUNTRESULT                                 = 0x06E7C, //
     SMSG_DISMOUNTRESULT                              = 0x0D77D, //
-    SMSG_PUREMOUNT_CANCELLED_OBSOLETE                = 0x0054E, // 
+    SMSG_PUREMOUNT_CANCELLED_OBSOLETE                = 0x0054E, // 4.0.6a 13623
     CMSG_MOUNTSPECIAL_ANIM                           = 0x0755D, //
     SMSG_MOUNTSPECIAL_ANIM                           = 0x02388, // 4.0.6a 13623
     SMSG_PET_TAME_FAILURE                            = 0x0FDA8, // 4.0.6a 13623
@@ -466,9 +466,9 @@ enum Opcodes
     CMSG_QUESTLOG_SWAP_QUEST                         = 0x10068, //
     CMSG_QUESTLOG_REMOVE_QUEST                       = 0x0EDA8, // 4.0.6a 13623
     SMSG_QUESTLOG_FULL                               = 0x0618C, // 4.0.6a 13623
-    SMSG_QUESTUPDATE_FAILED                          = 0x0DC5D, //
-    SMSG_QUESTUPDATE_FAILEDTIMER                     = 0x03F5D, //
-    SMSG_QUESTUPDATE_COMPLETE                        = 0xE588,  // 58760 - 4.0.6.13623
+    SMSG_QUESTUPDATE_FAILED                          = 0x0E588, // 4.0.6a 13623
+    SMSG_QUESTUPDATE_FAILEDTIMER                     = 0x0f7CC, // 4.0.6a 13623
+    SMSG_QUESTUPDATE_COMPLETE                        = 0x0EDa0, // 4.0.6a 13623
     SMSG_QUESTUPDATE_ADD_KILL                        = 0x0ADA0, // 4.0.6a 13623
     SMSG_QUESTUPDATE_ADD_ITEM                        = 0x1006B, // 4.0.6a 13623
     CMSG_QUEST_CONFIRM_ACCEPT                        = 0x06FCC, // 4.0.6a 13623
@@ -494,7 +494,7 @@ enum Opcodes
     SMSG_NEW_TAXI_PATH                               = 0x0AE5E, //
     CMSG_TRAINER_LIST                                = 0x0E5AC, // 4.0.6a 13623
     SMSG_TRAINER_LIST                                = 0x0BBE0, // 4.0.6a 13623
-    CMSG_TRAINER_BUY_SPELL                           = 0x0FDC8, //
+    CMSG_TRAINER_BUY_SPELL                           = 0x0FDC8, // 4.0.6a 13623
     SMSG_TRAINER_BUY_SUCCEEDED                       = 0x1B3,
     SMSG_TRAINER_BUY_FAILED                          = 0x06DEC, // 4.0.6a 13623
     CMSG_BINDER_ACTIVATE                             = 0x0A48C, // 4.0.6a 13623
@@ -1193,14 +1193,14 @@ enum Opcodes
     CMSG_COMPLETE_MOVIE                              = 0x0E188, // 4.0.6a 13623
     CMSG_SET_GLYPH_SLOT                              = 0x101D4, //
     CMSG_SET_GLYPH                                   = 0x101D5, //
-    SMSG_ACHIEVEMENT_EARNED                          = 0xF5E4,  // 62948 - 4.0.6.13623
+    SMSG_ACHIEVEMENT_EARNED                          = 0x0F5E4, // 4.0.6a 13623
     SMSG_DYNAMIC_DROP_ROLL_RESULT                    = 0x101D7, //
-    SMSG_CRITERIA_UPDATE                             = 0x0AFC8, // 45000 - 4.0.6.13623
+    SMSG_CRITERIA_UPDATE                             = 0x0AFC8, // 4.0.6a 13623 
     CMSG_QUERY_INSPECT_ACHIEVEMENTS                  = 0x028EC, //
     SMSG_RESPOND_INSPECT_ACHIEVEMENTS                = 0x101DA, //
     CMSG_DISMISS_CONTROLLED_VEHICLE                  = 0x0E3C0, // 4.0.6a 13623
     CMSG_COMPLETE_ACHIEVEMENT_CHEAT                  = 0x101DC, //
-    SMSG_QUESTUPDATE_ADD_PVP_KILL                    = 0x05D55, //
+    SMSG_QUESTUPDATE_ADD_PVP_KILL                    = 0x078E0, // 4.0.6a 13623
     CMSG_SET_CRITERIA_CHEAT                          = 0x101DD, //
     SMSG_CALENDAR_UPDATE_INVITE_LIST3                = 0x04E7F, //
     CMSG_UNITANIMTIER_CHEAT                          = 0x101DE, //
