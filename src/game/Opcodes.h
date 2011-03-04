@@ -1193,9 +1193,9 @@ enum Opcodes
     CMSG_COMPLETE_MOVIE                              = 0x0E188, // 4.0.6a 13623
     CMSG_SET_GLYPH_SLOT                              = 0x101D4, //
     CMSG_SET_GLYPH                                   = 0x101D5, //
-    SMSG_ACHIEVEMENT_EARNED                          = 0x101D6, //
+    SMSG_ACHIEVEMENT_EARNED                          = 0xF5E4,  // 62948 - 4.0.6.13623
     SMSG_DYNAMIC_DROP_ROLL_RESULT                    = 0x101D7, //
-    SMSG_CRITERIA_UPDATE                             = 0x00470, // 
+    SMSG_CRITERIA_UPDATE                             = 0x0AFC8, // 45000 - 4.0.6.13623
     CMSG_QUERY_INSPECT_ACHIEVEMENTS                  = 0x028EC, //
     SMSG_RESPOND_INSPECT_ACHIEVEMENTS                = 0x101DA, //
     CMSG_DISMISS_CONTROLLED_VEHICLE                  = 0x0E3C0, // 4.0.6a 13623
@@ -1214,7 +1214,7 @@ enum Opcodes
     CMSG_PET_LEARN_TALENT                            = 0x0A7A0, // 4.0.6a 13623
     CMSG_PET_UNLEARN_TALENTS                         = 0x08F5D, //
     SMSG_SET_PHASE_SHIFT                             = 0x022ED, // 4.0.6a 13623
-    SMSG_ALL_ACHIEVEMENT_DATA                        = 0x0FF9D, //
+    SMSG_ALL_ACHIEVEMENT_DATA                        = 0x0400E, // 16398 - 4.0.6.13623, Special(0x41)
     CMSG_FORCE_SAY_CHEAT                             = 0x101E7, //
     SMSG_HEALTH_UPDATE                               = 0x02AA8, // 4.0.6a 13623
     SMSG_POWER_UPDATE                                = 0x065E8, // 4.0.6a 13623
@@ -1247,8 +1247,8 @@ enum Opcodes
     CMSG_CHANGE_SEATS_ON_CONTROLLED_VEHICLE          = 0x0E988, // 4.0.6a 13623
     CMSG_HEARTH_AND_RESURRECT                        = 0x10009, //
     SMSG_ON_CANCEL_EXPECTED_RIDE_VEHICLE_AURA        = 0x03380, // 4.0.6a 13623
-    SMSG_CRITERIA_DELETED                            = 0x101F4, //
-    SMSG_ACHIEVEMENT_DELETED                         = 0x101F5, //
+    SMSG_CRITERIA_DELETED                            = 0x0AF84, // 44932 - 4.0.6.13623
+    SMSG_ACHIEVEMENT_DELETED                         = 0x0E6A0, // 59040 - 4.0.6.13623
     CMSG_SERVER_INFO_QUERY                           = 0x101F6, //
     SMSG_SERVER_INFO_RESPONSE                        = 0x101F7, //
     CMSG_CHECK_LOGIN_CRITERIA                        = 0x101F8, //
@@ -1346,7 +1346,7 @@ enum Opcodes
     UMSG_UNKNOWN_1278                                = 0x4FE,   // not found 10596
     CMSG_READY_FOR_ACCOUNT_DATA_TIMES                = 0x07DA8, // 4.0.6a 13623
     CMSG_QUERY_QUESTS_COMPLETED                      = 0x0FE5E, //
-    SMSG_QUERY_QUESTS_COMPLETED_RESPONSE             = 0x1023D, //
+    SMSG_QUERY_QUESTS_COMPLETED_RESPONSE             = 0x0F1E8, // 61928 - 4.0.6.13623, response to 0xFE5E
     CMSG_GM_REPORT_LAG                               = 0x03FA0, // 4.0.6a 13623
     UMSG_UNKNOWN_1283                                = 0x503,
     UMSG_UNKNOWN_1284                                = 0x504,
