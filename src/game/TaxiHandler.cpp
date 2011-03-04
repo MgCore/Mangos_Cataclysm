@@ -102,7 +102,9 @@ void WorldSession::SendTaxiMenu( Creature* unit )
 
     DEBUG_LOG( "WORLD: CMSG_TAXINODE_STATUS_QUERY %u ",curloc);
 
-    WorldPacket data( SMSG_SHOWTAXINODES, (4+8+4+8*4) );
+    //WorldPacket data( SMSG_SHOWTAXINODES, (4+8+4+8*4) );
+    WorldPacket data(SMSG_MULTIPLE_PACKETS, (4 + 8 + 4 + 8 * 4 + 2));//SkyFire fix 4.0.6
+    data << uint16(SMSG_SHOWTAXINODES);
     data << uint32( 1 );
     data << unit->GetObjectGuid();
     data << uint32( curloc );
