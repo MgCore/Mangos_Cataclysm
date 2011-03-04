@@ -468,7 +468,7 @@ enum Opcodes
     SMSG_QUESTLOG_FULL                               = 0x0618C, // 4.0.6a 13623
     SMSG_QUESTUPDATE_FAILED                          = 0x0E588, // 4.0.6a 13623
     SMSG_QUESTUPDATE_FAILEDTIMER                     = 0x0f7CC, // 4.0.6a 13623
-    SMSG_QUESTUPDATE_COMPLETE                        = 0x0EDa0, // 4.0.6a 13623
+    SMSG_QUESTUPDATE_COMPLETE                        = 0x0EDA0, // 4.0.6a 13623
     SMSG_QUESTUPDATE_ADD_KILL                        = 0x0ADA0, // 4.0.6a 13623
     SMSG_QUESTUPDATE_ADD_ITEM                        = 0x1006B, // 4.0.6a 13623
     CMSG_QUEST_CONFIRM_ACCEPT                        = 0x06FCC, // 4.0.6a 13623
@@ -477,7 +477,7 @@ enum Opcodes
     CMSG_LIST_INVENTORY                              = 0x0EDC8, // 4.0.6a 13623
     SMSG_LIST_INVENTORY                              = 0x0F8AC, // 4.0.6a 13623
     CMSG_SELL_ITEM                                   = 0x063A4, // 4.0.6a 13623
-    SMSG_SELL_ITEM                                   = 0x037AC, // 4.0.6a 13623
+    SMSG_SELL_ITEM                                   = 0x6CE8,    // 14252 - 4.0.6.13623
     CMSG_BUY_ITEM                                    = 0x0EA84, // 4.0.6a 13623
     CMSG_BUY_ITEM_IN_SLOT                            = 0x1A3,
     SMSG_BUY_ITEM                                    = 0x069CC, // 27084 - 4.0.6.13623
