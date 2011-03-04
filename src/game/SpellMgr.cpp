@@ -981,12 +981,12 @@ SpellCastResult GetErrorAtShapeshiftedCast (SpellEntry const *spellInfo, uint32 
         else if (shapeShift && shapeShift->Stances != 0)    // needs other shapeshift
             return SPELL_FAILED_ONLY_SHAPESHIFT;
     }
-    else
+    /*else
     {
         // needs shapeshift
         if(!(spellInfo->AttributesEx2 & SPELL_ATTR_EX2_NOT_NEED_SHAPESHIFT) && shapeShift && shapeShift->Stances != 0)
             return SPELL_FAILED_ONLY_SHAPESHIFT;
-    }
+    }*/  //SkyFire fix 4.0.6
 
     return SPELL_CAST_OK;
 }

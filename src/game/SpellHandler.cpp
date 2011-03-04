@@ -400,7 +400,7 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
             spellInfo = actualSpellInfo;
     }
 
-    Spell *spell = new Spell(mover, spellInfo, true);
+    Spell *spell = new Spell(mover, spellInfo, false);
     spell->m_cast_count = cast_count;                       // set count of casts
     spell->prepare(&targets);
 }
