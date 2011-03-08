@@ -246,6 +246,8 @@ void InitializeOpcodes()
     /*0x238*/ DEFINE_OPCODE_HANDLER( CMSG_SEND_MAIL,                               STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleSendMail                  );
     /*0x23A*/ DEFINE_OPCODE_HANDLER( CMSG_GET_MAIL_LIST,                           STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleGetMailList               );
     /*0x23C*/ DEFINE_OPCODE_HANDLER( CMSG_BATTLEFIELD_LIST,                        STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleBattlefieldListOpcode     );
+    /*0x23D*/ DEFINE_OPCODE_HANDLER( SMSG_BATTLEFIELD_LIST,                        STATUS_NEVER,    PROCESS_THREADUNSAFE, &WorldSession::Handle_ServerSide               );
+    /*0x23E*/ DEFINE_OPCODE_HANDLER( CMSG_BATTLEFIELD_JOIN,                        STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleBattlemasterJoinOpcode    );
     /*0x243*/ DEFINE_OPCODE_HANDLER( CMSG_ITEM_TEXT_QUERY,                         STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleItemTextQuery             );
     /*0x245*/ DEFINE_OPCODE_HANDLER( CMSG_MAIL_TAKE_MONEY,                         STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleMailTakeMoney             );
     /*0x246*/ DEFINE_OPCODE_HANDLER( CMSG_MAIL_TAKE_ITEM,                          STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleMailTakeItem              );
@@ -318,7 +320,6 @@ void InitializeOpcodes()
     /*0x2E7*/ DEFINE_OPCODE_HANDLER( CMSG_WARDEN_DATA,                             STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleWardenDataOpcode          );
     /*0x2E9*/ DEFINE_OPCODE_HANDLER( MSG_BATTLEGROUND_PLAYER_POSITIONS,            STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleBattleGroundPlayerPositionsOpcode);
     /*0x2EA*/ DEFINE_OPCODE_HANDLER( CMSG_PET_STOP_ATTACK,                         STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandlePetStopAttack             );
-    /*0x2EE*/ DEFINE_OPCODE_HANDLER( CMSG_BATTLEMASTER_JOIN,                       STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleBattlemasterJoinOpcode    );
     /*0x2F0*/ DEFINE_OPCODE_HANDLER( CMSG_PET_UNLEARN,                             STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandlePetUnlearnOpcode          );
     /*0x2F3*/ DEFINE_OPCODE_HANDLER( CMSG_PET_SPELL_AUTOCAST,                      STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandlePetSpellAutocastOpcode    );
     /*0x2FC*/ DEFINE_OPCODE_HANDLER( CMSG_GUILD_INFO_TEXT,                         STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleGuildChangeInfoTextOpcode );

@@ -300,7 +300,7 @@ void WorldSession::HandleBattlefieldListOpcode( WorldPacket &recv_data )
 {
     DEBUG_LOG( "WORLD: Recvd CMSG_BATTLEFIELD_LIST Message");
 
-    uint32 bgTypeId;
+    uint8 bgTypeId;
     recv_data >> bgTypeId;                                  // id from DBC
 
     uint8 fromWhere;
