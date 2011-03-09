@@ -154,7 +154,7 @@ void InitializeOpcodes()
     /*0x11D*/ DEFINE_OPCODE_HANDLER( CMSG_SET_TRADE_ITEM,                          STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleSetTradeItemOpcode        );
     /*0x11E*/ DEFINE_OPCODE_HANDLER( CMSG_CLEAR_TRADE_ITEM,                        STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleClearTradeItemOpcode      );
     /*0x11F*/ DEFINE_OPCODE_HANDLER( CMSG_SET_TRADE_GOLD,                          STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleSetTradeGoldOpcode        );
-    /*0x125*/ DEFINE_OPCODE_HANDLER( CMSG_SET_FACTION_ATWAR,                       STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleSetFactionAtWarOpcode           );
+    /*0x125*/ DEFINE_OPCODE_HANDLER( CMSG_SET_FACTION_ATWAR,                       STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleSetFactionAtWarOpcode     );
     /*0x128*/ DEFINE_OPCODE_HANDLER( CMSG_SET_ACTION_BUTTON,                       STATUS_LOGGEDIN, PROCESS_THREADUNSAFE, &WorldSession::HandleSetActionButtonOpcode     );
     /*0x12E*/ DEFINE_OPCODE_HANDLER( CMSG_CAST_SPELL,                              STATUS_LOGGEDIN, PROCESS_THREADSAFE,   &WorldSession::HandleCastSpellOpcode           );
     /*0x12F*/ DEFINE_OPCODE_HANDLER( CMSG_CANCEL_CAST,                             STATUS_LOGGEDIN, PROCESS_THREADSAFE,   &WorldSession::HandleCancelCastOpcode          );

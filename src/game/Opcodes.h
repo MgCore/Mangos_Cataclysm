@@ -346,7 +346,7 @@ enum Opcodes
     CMSG_UNACCEPT_TRADE                              = 0x00F93, // 3987  - 4.0.6.13623
     CMSG_CANCEL_TRADE                                = 0x00013, // 4.0.6a 13623
     CMSG_SET_TRADE_ITEM                              = 0x00811, // 2065  - 4.0.6.13623
-    CMSG_CLEAR_TRADE_ITEM                            = 0x00611, // 1553  - 4.0.6.13623, UNSURE
+    CMSG_CLEAR_TRADE_ITEM                            = 0x10052, //                  before the number 0x00611 is not correct.
     CMSG_SET_TRADE_GOLD                              = 0x00793, // 1939 - 4.0.6.1362
     SMSG_TRADE_STATUS                                = 0x10053, //
     SMSG_TRADE_STATUS_EXTENDED                       = 0x10054, //
